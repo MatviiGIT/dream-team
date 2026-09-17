@@ -157,11 +157,6 @@ export function simulateMatch(
       if (scoringHome) homeGoals += 1;
       else awayGoals += 1;
 
-      if (scorer) {
-        scorer.goals += 1;
-        scorer.appearances += 0;
-      }
-
       events.push({
         id: `event_goal_${seed}_${minute}_${homeGoals}_${awayGoals}`,
         minute,
