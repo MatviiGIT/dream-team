@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Formation, GameState, Mentality, Pressing, Tempo, DefensiveLine, Width } from './domain/types';
+import type { GameState, Tactics } from './domain/types';
 import { clubOrder } from './data/initialWorld';
 import { createCareer, getNextFixture, playNextRound } from './game/career';
 import { deleteGame, loadGame, saveGame } from './storage/gameStorage';
@@ -81,26 +81,19 @@ function App() {
 
         <nav className="tabs" aria-label="Game sections">
           {tabs.map((item) => (
-            <button
-              key={item}
-              className={tab === item ? 'tab active' : 'tab'}
-              onClick={() => setTab(item)}
-            >
+            <button key={item} className={tab === item ? 'tab active' : 'tab'} onClick={() => setTab(item)}>
               {item}
             </button>
           ))}
         </nav>
 
-        {tab === 'Overview' && (
-          <Overview
-            game={game}
-            nextFixture={nextFixture}
-            onPlay={() => setGame(playNextRound(game))}
-          />
-        )}
+        {tab === 'Overview' && <Overview game={game} nextFixture={nextFixture} onPlay={() => setGame(playNextRound(game))} />}
         {tab === 'Squad' && <Squad game={game} />}
         {tab === 'Tactics' && (
-          <Tactics game={game} onChange={(tactic) => setGame({ ...game, clubs: { ...game.clubs, [club.id]: { ...club, tactic } } })} />
+          <Tactics
+            game={game}
+            onChange={(tactic) => setGame({ ...game, clubs: { ...game.clubs, [club.id]: { ...club, tactic } } })}
+          />
         )}
         {tab === 'Table' && <LeagueTable game={game} />}
       </main>
@@ -125,9 +118,7 @@ function StartScreen(props: {
         <div className="hero-badge">DT</div>
         <div className="eyebrow">BROWSER FOOTBALL SIMULATION</div>
         <h1>Build your <span>Dream Team.</span></h1>
-        <p className="hero-copy">
-          Manage a club, shape your tactics, simulate every match and write your own football history over the seasons.
-        </p>
+        <p className="hero-copy">Manage a club, shape your tactics, simulate every match and write your own football history over the seasons.</p>
 
         <div className="form-grid">
           <label>
@@ -148,9 +139,7 @@ function StartScreen(props: {
             Continue {saved.clubs[saved.clubId]?.name} · Season {saved.season}
           </button>
         )}
-        <div className="starter-note">
-          MVP: automatic match simulation · league table · squad · tactics · local save
-        </div>
+        <div className="starter-note">MVP: automatic match simulation · league table · squad · tactics · local save</div>
       </div>
     </div>
   );
@@ -163,38 +152,34 @@ function Overview({ game, nextFixture, onPlay }: { game: GameState; nextFixture?
   const opponentId = nextFixture ? (nextFixture.homeTeamId === game.clubId ? nextFixture.awayTeamId : nextFixture.homeTeamId) : undefined;
   const opponent = opponentId ? game.clubs[opponentId] : undefined;
   const home = nextFixture?.homeTeamId === game.clubId;
+  const row = game.table.find((item) => item.teamId === game.clubId);
 
   return (
     <div className="dashboard-grid">
       <section className="card next-match">
         <div className="section-title-row">
-          <div>
-            <div className="eyebrow">NEXT MATCH</div>
-            <h2>{nextFixture ? `Matchday ${game.currentRound}` : 'Season complete'}</h2>
-          </div>
-          <span className="match-tag">{home ? 'HOME' : 'AWAY'}</span>
+          <div><div className="eyebrow">NEXT MATCH</div><h2>{nextFixture ? `Matchday ${game.currentRound}` : 'Season complete'}</h2></div>
+          {nextFixture && <span className="match-tag">{home ? 'HOME' : 'AWAY'}</span>}
         </div>
         {opponent ? (
           <>
             <div className="fixture-line">
-              <div className="team-side"><div className="team-badge" style={{ background: clubColor(club) }}>{club.shortName}</div><strong>{club.name}</strong></div>
+              <div className="team-side"><div className="team-badge" style={{ background: club.color }}>{club.shortName}</div><strong>{club.name}</strong></div>
               <div className="vs">VS</div>
-              <div className="team-side"><div className="team-badge" style={{ background: clubColor(opponent) }}>{opponent.shortName}</div><strong>{opponent.name}</strong></div>
+              <div className="team-side"><div className="team-badge" style={{ background: opponent.color }}>{opponent.shortName}</div><strong>{opponent.name}</strong></div>
             </div>
             <button className="primary-button full" onClick={onPlay}>Simulate matchday</button>
           </>
-        ) : (
-          <div className="empty-state">No scheduled match remains in this season.</div>
-        )}
+        ) : <div className="empty-state">No scheduled match remains in this season.</div>}
       </section>
 
       <section className="card stat-card">
         <div className="eyebrow">SEASON SNAPSHOT</div>
         <div className="stat-grid">
           <Stat label="Table position" value={`${currentTablePosition}`} suffix="th" />
-          <Stat label="Played" value={`${game.table.find((row) => row.teamId === game.clubId)?.played ?? 0}`} />
-          <Stat label="Wins" value={`${game.table.find((row) => row.teamId === game.clubId)?.wins ?? 0}`} />
-          <Stat label="Points" value={`${game.table.find((row) => row.teamId === game.clubId)?.points ?? 0}`} />
+          <Stat label="Played" value={`${row?.played ?? 0}`} />
+          <Stat label="Wins" value={`${row?.wins ?? 0}`} />
+          <Stat label="Points" value={`${row?.points ?? 0}`} />
         </div>
       </section>
 
@@ -261,9 +246,9 @@ function Squad({ game }: { game: GameState }) {
   );
 }
 
-function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: typeof game.clubs[string]['tactic']) => void }) {
+function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tactics) => void }) {
   const tactic = game.clubs[game.clubId].tactic;
-  const fields: Array<[string, keyof typeof tactic, string[]]> = [
+  const fields: Array<[string, keyof Tactics, string[]]> = [
     ['Formation', 'formation', ['4-3-3', '4-4-2', '4-2-3-1']],
     ['Mentality', 'mentality', ['Very Defensive', 'Defensive', 'Balanced', 'Attacking', 'Very Attacking']],
     ['Tempo', 'tempo', ['Slow', 'Normal', 'Fast']],
@@ -279,7 +264,7 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: typeo
         {fields.map(([label, key, options]) => (
           <label key={key} className="tactic-field">
             {label}
-            <select value={tactic[key]} onChange={(event) => onChange({ ...tactic, [key]: event.target.value as never })}>
+            <select value={tactic[key]} onChange={(event) => onChange({ ...tactic, [key]: event.target.value as Tactics[typeof key] })}>
               {options.map((option) => <option key={option} value={option}>{option}</option>)}
             </select>
           </label>
@@ -332,15 +317,9 @@ function createClubLabels(): Record<string, string> {
   };
 }
 
-function clubColor(club: { color: string }): string {
-  return club.color;
-}
-
 function formatMoney(value: number): string {
   if (value >= 1_000_000) return `€${(value / 1_000_000).toFixed(1)}m`;
   return `€${Math.round(value / 1000)}k`;
 }
 
 export default App;
-
-void (null as unknown as Formation | Mentality | Tempo | Pressing | DefensiveLine | Width);
