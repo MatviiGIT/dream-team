@@ -425,3 +425,8 @@ Then:
 - Changed the upcoming-fixtures modal to use a strict viewport-bounded height instead of relying on content-driven sizing.
 - Made the fixture list a zero-basis flex scroll region (`height: 0` + `flex: 1`) so all 14 rounds scroll inside the window without pushing the modal itself beyond the viewport.
 - Kept the modal header and «Закрыть» action fixed outside the scrolling fixture list.
+
+### 2026-09-19 — Calendar modal portal rendering
+- Moved the full «Ближайшие туры» modal out of the dashboard DOM subtree and render it through a React portal directly under `document.body`.
+- This makes the calendar overlay independent of dashboard containment/overflow and guarantees that it covers the complete game viewport like Match Center.
+- The fixed-height internal fixture list and bottom «Закрыть» action remain in place, so scrolling the calendar cannot expose or activate underlying tabs.
