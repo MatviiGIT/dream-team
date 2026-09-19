@@ -404,3 +404,9 @@ Then:
 ### 2026-09-19 — Match Center timeline card alignment
 - Renamed the Match Center chronology entry-card class so it no longer collides with the global timeline list styles.
 - This removes the unintended top offset/overflow behavior that made the chronology entry card sit lower than the statistics and player-rating cards.
+
+### 2026-09-19 — Matchday flow + summary readability
+- Increased the main Match Center summary typography and card height so xG, possession, shots and Player of the Match are readable without shrinking the interface elsewhere.
+- Refined the Overview next-match panel into a clearer matchday entry point with explicit round progress, home/away context and a ready-for-match status.
+- Renamed the primary action from «Симулировать матч» to «Играть матч» to make the career loop feel like entering the next fixture rather than opening a developer-facing simulation control.
+- Kept this pass presentation-only: no new saved game parameters or simulation rules were introduced.
