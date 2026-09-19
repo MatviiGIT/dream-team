@@ -308,3 +308,7 @@ Then:
 - Reserve players recover fitness after each round and their form gradually returns toward neutral.
 - Added a compact «Тонус» value to the squad roster so rotation decisions are visible before a match.
 - The match simulator still uses only the selected starting XI, so fatigue and form now make lineup rotation materially useful.
+
+### 2026-09-19 — Dashboard layout stability fix
+- Prevented the overview dashboard itself from gaining/removing a scrollbar when match data changes, which could shift the grid and make surrounding menu/card geometry jump after a simulation.
+- Reserved scrollbar space on the dashboard and isolated the manager profile card's layout so changes inside it cannot trigger broader reflow.
