@@ -1,6 +1,7 @@
 import type { Club, Fixture, GameState, MatchResult, TableRow } from '../domain/types';
 import { clubOrder, createInitialWorld } from '../data/initialWorld';
 import { simulateMatch } from '../simulation/matchSimulator';
+import { createCareerId } from '../storage/gameStorage';
 
 function generateFixtures(teamIds: string[]): Fixture[] {
   const teams = [...teamIds];
@@ -31,7 +32,7 @@ function generateFixtures(teamIds: string[]): Fixture[] {
 
   const secondHalf = fixtures.map((fixture, index) => ({
     ...fixture,
-    id: `${fixture.id}_r${rounds}`,
+    id: `${fixture.id}_r${rounds}_${index}`,
     round: fixture.round + rounds,
     homeTeamId: fixture.awayTeamId,
     awayTeamId: fixture.homeTeamId,
@@ -87,12 +88,16 @@ function applyResult(table: TableRow[], result: MatchResult): TableRow[] {
 }
 
 export function createCareer(managerName: string, clubId: string): GameState {
+  const name = managerName.trim();
+  if (!name) throw new Error('Manager name is required.');
+
   const world = createInitialWorld();
   const now = new Date().toISOString();
 
   return {
-    saveVersion: 1,
-    managerName: managerName.trim() || 'Manager',
+    saveVersion: 2,
+    careerId: createCareerId(),
+    managerName: name,
     clubId,
     season: 1,
     currentRound: 1,
@@ -111,6 +116,7 @@ export function playNextRound(state: GameState): GameState {
 
   let table = state.table;
   let playerMatch: MatchResult | undefined;
+
   const fixtures = state.fixtures.map((fixture) => {
     if (fixture.round !== state.currentRound || fixture.played) return fixture;
 
@@ -129,9 +135,7 @@ export function playNextRound(state: GameState): GameState {
 
   const nextRound = state.currentRound + 1;
   const isSeasonComplete = nextRound > 14;
-  const freshFixtures = isSeasonComplete
-    ? generateFixtures(clubOrder)
-    : fixtures;
+  const freshFixtures = isSeasonComplete ? generateFixtures(clubOrder) : fixtures;
 
   return {
     ...state,
