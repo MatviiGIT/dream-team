@@ -154,6 +154,12 @@ export const ru = {
     draws: 'Н',
     losses: 'П',
     points: 'ОЧК',
+    position: 'Позиция',
+    placeSuffix: '-я',
+    goalDifference: 'Разница',
+    form: 'Форма',
+    recentForm: 'Последние 5',
+    remaining: (count: number) => 'Осталось ' + count + ' туров',
   },
   matchCenter: {
     eyebrow: 'ЦЕНТР МАТЧА',
