@@ -7,6 +7,7 @@ import { ru } from './i18n/ru';
 
 const tabs = ['overview', 'squad', 'tactics', 'table'] as const;
 type Tab = (typeof tabs)[number];
+type Theme = 'aurora' | 'midnight' | 'light';
 
 const clubLabels: Record<string, string> = {
   northbridge: 'Northbridge FC',
@@ -93,6 +94,15 @@ function App() {
   const [managerName, setManagerName] = useState('');
   const [selectedClub, setSelectedClub] = useState<string>(clubOrder[5]);
   const [nameError, setNameError] = useState('');
+  const [theme, setTheme] = useState<Theme>(() => {
+    const saved = localStorage.getItem('dream-team:theme');
+    return saved === 'midnight' || saved === 'light' ? saved : 'aurora';
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('dream-team:theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     if (!game) return;
@@ -156,6 +166,8 @@ function App() {
         onStart={startCareer}
         onOpen={openCareer}
         onDelete={removeCareer}
+        theme={theme}
+        onThemeChange={setTheme}
       />
     );
   }
@@ -238,6 +250,8 @@ function StartScreen(props: {
   onStart: () => void;
   onOpen: (career: StoredCareer) => void;
   onDelete: (careerId: string) => void;
+  theme: Theme;
+  onThemeChange: (theme: Theme) => void;
 }) {
   return (
     <div className="start-screen">
@@ -338,6 +352,54 @@ function StartScreen(props: {
               <span>{ru.career.emptyDescription}</span>
             </div>
           )}
+        </section>
+
+        <section className="settings-card card">
+          <div>
+            <div className="eyebrow">{ru.settings.eyebrow}</div>
+            <h2>{ru.settings.title}</h2>
+          </div>
+
+          <div className="settings-group">
+            <span className="settings-label">{ru.settings.language}</span>
+            <div className="settings-options language-options">
+              <button className="setting-option active" type="button">
+                <strong>{ru.settings.russian}</strong>
+                <span>{ru.settings.available}</span>
+              </button>
+              <button className="setting-option disabled" type="button" disabled>
+                <strong>{ru.settings.english}</strong>
+                <span>{ru.settings.comingSoon}</span>
+              </button>
+              <button className="setting-option disabled" type="button" disabled>
+                <strong>{ru.settings.german}</strong>
+                <span>{ru.settings.comingSoon}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="settings-group">
+            <span className="settings-label">{ru.settings.theme}</span>
+            <div className="settings-options theme-options">
+              {([
+                ['aurora', ru.settings.aurora],
+                ['midnight', ru.settings.midnight],
+                ['light', ru.settings.light],
+              ] as const).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={props.theme === value ? 'setting-option theme-option active' : 'setting-option theme-option'}
+                  onClick={() => props.onThemeChange(value)}
+                >
+                  <span className={`theme-swatch theme-${value}`} />
+                  <strong>{label}</strong>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="settings-footnote">{ru.settings.note}</div>
         </section>
       </main>
     </div>
@@ -587,8 +649,8 @@ function Squad({ game }: { game: GameState }) {
 
 function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tactics) => void }) {
   const tactic = game.clubs[game.clubId].tactic;
-  const fields: Array<[string, keyof Tactics, string[]]> = [
-    [ru.tactics.formation, 'formation', ['4-3-3', '4-4-2', '4-2-3-1']],
+  const formations: Tactics['formation'][] = ['4-3-3', '4-4-2', '4-2-3-1'];
+  const fields: Array<[string, Exclude<keyof Tactics, 'formation'>, string[]]> = [
     [ru.tactics.mentality, 'mentality', [ru.tactics.options.veryDefensive, ru.tactics.options.defensive, ru.tactics.options.balanced, ru.tactics.options.attacking, ru.tactics.options.veryAttacking]],
     [ru.tactics.tempo, 'tempo', [ru.tactics.options.slow, ru.tactics.options.normal, ru.tactics.options.fast]],
     [ru.tactics.pressing, 'pressing', [ru.tactics.options.low, ru.tactics.options.medium, ru.tactics.options.high]],
@@ -597,11 +659,38 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
   ];
 
   return (
-    <section className="card content-card">
+    <section className="card content-card tactics-panel">
       <div className="section-title-row">
         <div><div className="eyebrow">{ru.tactics.eyebrow}</div><h2>{ru.tabs.tactics}</h2></div>
         <span className="muted">{ru.tactics.hint}</span>
       </div>
+
+      <div className="formation-block">
+        <div className="formation-heading">
+          <div>
+            <span>{ru.tactics.formation}</span>
+            <small>{ru.tactics.formationHint}</small>
+          </div>
+          <strong>{tactic.formation}</strong>
+        </div>
+
+        <div className="formation-options">
+          {formations.map((formation) => (
+            <button
+              key={formation}
+              type="button"
+              className={tactic.formation === formation ? 'formation-option active' : 'formation-option'}
+              onClick={() => onChange({ ...tactic, formation })}
+            >
+              <div className="formation-mini">
+                <span /><span /><span /><span /><span />
+              </div>
+              <strong>{formation}</strong>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="tactic-grid">
         {fields.map(([label, key, options]) => (
           <label key={key} className="tactic-field">
@@ -612,6 +701,7 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
           </label>
         ))}
       </div>
+
       <div className="tactic-explainer">
         <strong>{ru.tactics.howItWorks}</strong>
         <span>{ru.tactics.explanation}</span>
