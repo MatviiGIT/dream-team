@@ -307,7 +307,6 @@ function StartScreen(props: {
 
           <main className="start-layout">
             <section className="start-hero">
-              <div className="hero-badge">DT</div>
               <div className="eyebrow">{ru.start.eyebrow}</div>
               <h1>{ru.start.titleLineOne}<span>{ru.start.titleLineTwo}</span></h1>
               <div className="latest-update">
@@ -786,23 +785,23 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
   const formations: Tactics['formation'][] = ['4-3-3', '4-4-2', '4-2-3-1'];
   const formationPositions: Record<Tactics['formation'], Array<[number, number]>> = {
     '4-3-3': [
-      [50, 88],
-      [16, 68], [38, 68], [62, 68], [84, 68],
-      [25, 45], [50, 45], [75, 45],
-      [18, 20], [50, 16], [82, 20],
+      [50, 90],
+      [16, 72], [38, 72], [62, 72], [84, 72],
+      [28, 49], [50, 46], [72, 49],
+      [18, 20], [50, 14], [82, 20],
     ],
     '4-4-2': [
-      [50, 88],
-      [16, 68], [38, 68], [62, 68], [84, 68],
-      [16, 45], [38, 45], [62, 45], [84, 45],
-      [35, 18], [65, 18],
+      [50, 90],
+      [16, 72], [38, 72], [62, 72], [84, 72],
+      [16, 48], [38, 48], [62, 48], [84, 48],
+      [34, 17], [66, 17],
     ],
     '4-2-3-1': [
-      [50, 88],
-      [16, 68], [38, 68], [62, 68], [84, 68],
-      [34, 51], [66, 51],
+      [50, 90],
+      [16, 72], [38, 72], [62, 72], [84, 72],
+      [34, 53], [66, 53],
       [18, 34], [50, 31], [82, 34],
-      [50, 12],
+      [50, 13],
     ],
   };
   const fields: Array<{
