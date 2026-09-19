@@ -468,3 +468,12 @@ Then:
 - Fixed the Squad reserve-card grid: the markup has five data elements, so the grid now explicitly uses five columns instead of relying on an implicit fifth column.
 - Increased reserve-card avatar, name/position, OVR and fitness readability and added controlled fit-status badges.
 - Added responsive fallbacks that collapse secondary reserve information on very narrow screens instead of allowing overlap.
+
+### 2026-09-19 — Match score and squad consistency cleanup
+- Compact match scores now use a fixed numeric presentation such as `1 : 0` instead of a long dash, with tabular-number spacing to prevent visual jumping.
+- The right-side season preview was removed from Overview because season/round context is already present in the club header.
+- Fullscreen was moved from the floating bottom-right corner into the left navigation action row beside Career, avoiding overlap with Squad content.
+- Verified that generated squads use two goalkeeper slots in the 18-player position template.
+- Fixed the deeper starting-XI issue: initial lineups are built by formation role, so exactly one GK starts and the second GK stays available as a reserve.
+- Existing saved lineups with duplicate/missing goalkeepers are repaired on migration/load; ordinary formation changes are not treated as a lineup corruption and are left alone.
+- Expanded reserve-card layout remains active on non-Overview screens so player position, name, OVR, fitness and fit-status do not collide.
