@@ -786,8 +786,10 @@ function MatchCenter({
   const goalEvents = match.events.filter((event) => event.type === 'goal');
   const homeGoals = goalEvents.filter((event) => event.teamId === match.homeTeamId);
   const awayGoals = goalEvents.filter((event) => event.teamId === match.awayTeamId);
-  const homePlayerStats = getMatchPlayerStats(game, match, match.homeTeamId);
-  const awayPlayerStats = getMatchPlayerStats(game, match, match.awayTeamId);
+  const homePlayerStats = getMatchPlayerStats(game, match, match.homeTeamId)
+    .sort((a, b) => b.rating - a.rating);
+  const awayPlayerStats = getMatchPlayerStats(game, match, match.awayTeamId)
+    .sort((a, b) => b.rating - a.rating);
 
   const scorerText = (event: MatchResult['events'][number]) => {
     const player = event.playerId ? game.players[event.playerId]?.name : undefined;
@@ -915,7 +917,7 @@ function MatchCenter({
                 <div className="eyebrow">{ru.matchCenter.playerRatings}</div>
                 <h3>{ru.matchCenter.playerRatingsTitle}</h3>
               </div>
-              <span className="muted">{ru.matchCenter.playerRatingsHint}</span>
+              <span className="muted">{ru.matchCenter.playerRatingsHint} · {ru.matchCenter.bestFirst}</span>
             </div>
 
             {match.playerStats ? (
