@@ -718,7 +718,7 @@ function UpcomingCalendar({ game }: { game: GameState }) {
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => {
           if (event.target === event.currentTarget) setCalendarOpen(false);
         }}>
-          <section className="modal-window" role="dialog" aria-modal="true" aria-labelledby="calendar-title">
+          <section className="modal-window calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-title">
             <div className="modal-header">
               <div>
                 <div className="eyebrow">{ru.overview.calendarPanel}</div>
