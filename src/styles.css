@@ -3150,3 +3150,14 @@ tbody tr.your-club td { color: #e0f4ec; }
     grid-template-columns: 20px minmax(0,1fr) 38px 30px 30px 30px;
   }
 }
+
+/* Keep the three Match Center body sections inside the fixed modal height. */
+.match-center-body {
+  grid-template-rows: minmax(0, 1fr) minmax(178px, .72fr);
+}
+@media (max-width: 760px) {
+  .match-center-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(185px, .9fr) minmax(175px, .65fr) minmax(300px, 1fr);
+  }
+}
