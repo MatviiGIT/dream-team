@@ -765,6 +765,8 @@ function getMatchPlayerStats(
     .filter((stats): stats is MatchPlayerStats => Boolean(stats));
 }
 
+type MatchDetailPanel = 'timeline' | 'stats' | 'ratings';
+
 function MatchCenter({
   game,
   match,
@@ -778,6 +780,7 @@ function MatchCenter({
   round: number;
   onClose: () => void;
 }) {
+  const [detailPanel, setDetailPanel] = useState<MatchDetailPanel | null>(null);
   const home = game.clubs[match.homeTeamId];
   const away = game.clubs[match.awayTeamId];
   const userGoals = match.homeTeamId === game.clubId ? match.homeGoals : match.awayGoals;
@@ -813,6 +816,116 @@ function MatchCenter({
         <span className="match-player-rating-stat"><small>{ru.matchCenter.shotsShort}</small><strong>{stats.shots}</strong></span>
       </div>
     );
+  };
+
+  const renderDetail = () => {
+    if (detailPanel === 'timeline') {
+      return (
+        <section className="match-detail-modal" role="dialog" aria-modal="true" aria-labelledby="match-detail-title">
+          <div className="match-detail-header">
+            <div>
+              <div className="eyebrow">{ru.matchCenter.eventsLabel}</div>
+              <h3 id="match-detail-title">{ru.matchCenter.timeline}</h3>
+            </div>
+            <button className="modal-close" type="button" onClick={() => setDetailPanel(null)} aria-label={ru.common.close}>×</button>
+          </div>
+          <div className="match-detail-timeline">
+            {match.events.map((event) => (
+              <div className="match-center-event" key={event.id}>
+                <span className="minute">{event.minute}'</span>
+                <span className={`event-dot ${event.type}`}></span>
+                <span>{eventText(game, event)}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    if (detailPanel === 'stats') {
+      return (
+        <section className="match-detail-modal match-detail-stats-modal" role="dialog" aria-modal="true" aria-labelledby="match-detail-title">
+          <div className="match-detail-header">
+            <div>
+              <div className="eyebrow">{ru.matchCenter.stats}</div>
+              <h3 id="match-detail-title">{ru.matchCenter.statsTitle}</h3>
+            </div>
+            <button className="modal-close" type="button" onClick={() => setDetailPanel(null)} aria-label={ru.common.close}>×</button>
+          </div>
+
+          <div className="match-stat-list">
+            <div>
+              <span>{ru.matchCenter.xg}</span>
+              <strong>{match.homeXg.toFixed(2)} — {match.awayXg.toFixed(2)}</strong>
+            </div>
+            <div>
+              <span>{ru.matchCenter.possession}</span>
+              <strong>{match.homePossession}% — {match.awayPossession}%</strong>
+            </div>
+            <div>
+              <span>{ru.matchCenter.shots}</span>
+              <strong>{match.homeShots} — {match.awayShots}</strong>
+            </div>
+          </div>
+
+          <div className="match-detail-teams">
+            <div>
+              <span>{ru.matchCenter.home}</span>
+              <strong>{home?.name ?? ru.common.unknownClub}</strong>
+            </div>
+            <div>
+              <span>{ru.matchCenter.away}</span>
+              <strong>{away?.name ?? ru.common.unknownClub}</strong>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    if (detailPanel === 'ratings') {
+      return (
+        <section className="match-detail-modal match-detail-ratings-modal" role="dialog" aria-modal="true" aria-labelledby="match-detail-title">
+          <div className="match-detail-header">
+            <div>
+              <div className="eyebrow">{ru.matchCenter.playerRatings}</div>
+              <h3 id="match-detail-title">{ru.matchCenter.playerRatingsTitle}</h3>
+            </div>
+            <div className="match-detail-header-meta">
+              <span>{ru.matchCenter.playerRatingsHint}</span>
+              <span>{ru.matchCenter.bestFirst}</span>
+              <button className="modal-close" type="button" onClick={() => setDetailPanel(null)} aria-label={ru.common.close}>×</button>
+            </div>
+          </div>
+
+          {match.playerStats ? (
+            <div className="match-player-rating-columns">
+              <div className="match-player-rating-team home">
+                <div className="match-player-rating-team-header">
+                  <strong>{home?.shortName ?? '—'}</strong>
+                  <span>{ru.matchCenter.rating} · {ru.matchCenter.goals} · {ru.matchCenter.assists} · {ru.matchCenter.shotsShort}</span>
+                </div>
+                <div className="match-player-rating-list">
+                  {homePlayerStats.map(ratingRow)}
+                </div>
+              </div>
+              <div className="match-player-rating-team away">
+                <div className="match-player-rating-team-header">
+                  <strong>{away?.shortName ?? '—'}</strong>
+                  <span>{ru.matchCenter.rating} · {ru.matchCenter.goals} · {ru.matchCenter.assists} · {ru.matchCenter.shotsShort}</span>
+                </div>
+                <div className="match-player-rating-list">
+                  {awayPlayerStats.map(ratingRow)}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="empty-state">{ru.matchCenter.playerRatingsEmpty}</div>
+          )}
+        </section>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -864,93 +977,54 @@ function MatchCenter({
           </div>
         </div>
 
-        <div className="match-center-body">
-          <section className="match-center-panel">
-            <div className="section-title-row">
-              <div>
-                <div className="eyebrow">{ru.matchCenter.eventsLabel}</div>
-                <h3>{ru.matchCenter.timeline}</h3>
-              </div>
+        <div className="match-center-menu-grid">
+          <button className="match-center-menu-card timeline" type="button" onClick={() => setDetailPanel('timeline')}>
+            <span className="match-center-menu-icon">◷</span>
+            <div>
+              <div className="eyebrow">{ru.matchCenter.eventsLabel}</div>
+              <strong>{ru.matchCenter.timeline}</strong>
+              <span>{ru.matchCenter.eventCount(match.events.length)}</span>
             </div>
-            <div className="match-center-timeline">
-              {match.events.map((event) => (
-                <div className="match-center-event" key={event.id}>
-                  <span className="minute">{event.minute}'</span>
-                  <span className={`event-dot ${event.type}`}></span>
-                  <span>{eventText(game, event)}</span>
-                </div>
-              ))}
-            </div>
-          </section>
+            <span className="match-center-menu-arrow">→</span>
+          </button>
 
-          <section className="match-center-panel match-center-stats">
-            <div className="eyebrow">{ru.matchCenter.stats}</div>
-            <h3>{ru.matchCenter.statsTitle}</h3>
-            <div className="match-stat-list">
-              <div>
-                <span>{ru.matchCenter.xg}</span>
-                <strong>{match.homeXg.toFixed(2)} — {match.awayXg.toFixed(2)}</strong>
-              </div>
-              <div>
-                <span>{ru.matchCenter.possession}</span>
-                <strong>{match.homePossession}% — {match.awayPossession}%</strong>
-              </div>
-              <div>
-                <span>{ru.matchCenter.shots}</span>
-                <strong>{match.homeShots} — {match.awayShots}</strong>
-              </div>
+          <button className="match-center-menu-card stats" type="button" onClick={() => setDetailPanel('stats')}>
+            <span className="match-center-menu-icon">↗</span>
+            <div>
+              <div className="eyebrow">{ru.matchCenter.stats}</div>
+              <strong>{ru.matchCenter.statsTitle}</strong>
+              <span>{ru.matchCenter.statsPreview(match.homePossession, match.awayPossession)}</span>
             </div>
+            <span className="match-center-menu-arrow">→</span>
+          </button>
 
-            <div className="match-center-key">
-              <span>{ru.matchCenter.home}</span>
-              <strong>{home?.shortName ?? '—'}</strong>
+          <button className="match-center-menu-card ratings" type="button" onClick={() => setDetailPanel('ratings')}>
+            <span className="match-center-menu-icon">★</span>
+            <div>
+              <div className="eyebrow">{ru.matchCenter.playerRatings}</div>
+              <strong>{ru.matchCenter.playerRatingsTitle}</strong>
+              <span>{ru.matchCenter.playerRatingsPreview}</span>
             </div>
-            <div className="match-center-key away">
-              <span>{ru.matchCenter.away}</span>
-              <strong>{away?.shortName ?? '—'}</strong>
-            </div>
-          </section>
-
-          <section className="match-center-panel match-center-player-ratings">
-            <div className="section-title-row">
-              <div>
-                <div className="eyebrow">{ru.matchCenter.playerRatings}</div>
-                <h3>{ru.matchCenter.playerRatingsTitle}</h3>
-              </div>
-              <span className="muted">{ru.matchCenter.playerRatingsHint} · {ru.matchCenter.bestFirst}</span>
-            </div>
-
-            {match.playerStats ? (
-              <div className="match-player-rating-columns">
-                <div className="match-player-rating-team home">
-                  <div className="match-player-rating-team-header">
-                    <strong>{home?.shortName ?? '—'}</strong>
-                    <span>{ru.matchCenter.rating} · {ru.matchCenter.goals} · {ru.matchCenter.assists} · {ru.matchCenter.shotsShort}</span>
-                  </div>
-                  <div className="match-player-rating-list">
-                    {homePlayerStats.map(ratingRow)}
-                  </div>
-                </div>
-                <div className="match-player-rating-team away">
-                  <div className="match-player-rating-team-header">
-                    <strong>{away?.shortName ?? '—'}</strong>
-                    <span>{ru.matchCenter.rating} · {ru.matchCenter.goals} · {ru.matchCenter.assists} · {ru.matchCenter.shotsShort}</span>
-                  </div>
-                  <div className="match-player-rating-list">
-                    {awayPlayerStats.map(ratingRow)}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="empty-state">{ru.matchCenter.playerRatingsEmpty}</div>
-            )}
-          </section>
+            <span className="match-center-menu-arrow">→</span>
+          </button>
         </div>
 
         <button className="primary-button full match-center-action" type="button" onClick={onClose}>
           {ru.matchCenter.continueButton}
         </button>
       </section>
+
+      {detailPanel && (
+        <div
+          className="match-detail-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setDetailPanel(null);
+          }}
+        >
+          {renderDetail()}
+        </div>
+      )}
     </div>
   );
 }
