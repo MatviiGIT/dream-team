@@ -629,7 +629,6 @@ function Overview({
           <div><span>{ru.overview.managerReputation}</span><strong>—</strong></div>
           <div><span>{ru.overview.seasons}</span><strong>{Math.max(0, game.season - 1)}</strong></div>
         </div>
-        <div className="future-note">{ru.overview.futureNote}</div>
       </section>
     </div>
   );
