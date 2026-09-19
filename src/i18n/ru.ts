@@ -37,7 +37,6 @@ export const ru = {
     emptyDescription: 'Создай первую карьеру — она появится здесь автоматически.',
     continueButton: 'Продолжить',
     saveNumber: 'Сейв',
-    saveHint: 'Номер указан на каждой карточке',
     delete: 'Удалить карьеру',
     deleteConfirmPrefix: 'Удалить карьеру тренера',
   },
@@ -69,6 +68,9 @@ export const ru = {
     timelineEmpty: 'Симулируй первый матч, чтобы увидеть события.',
     calendarPanel: 'БЛИЖАЙШИЕ ТУРЫ',
     calendarTitle: 'Календарь',
+    openButton: 'Открыть',
+    calendarCount: (count: number) => `${count} ближайших матчей`,
+    calendarEmpty: 'Ближайших матчей нет.',
     managerPanel: 'ПРОФИЛЬ ТРЕНЕРА',
     managerTitle: 'Личная статистика',
     managerRole: 'Главный тренер',
@@ -135,5 +137,6 @@ export const ru = {
   },
   common: {
     unknownClub: 'команда',
+    close: 'Закрыть',
   },
 } as const;
