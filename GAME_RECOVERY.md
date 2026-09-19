@@ -211,3 +211,12 @@ Then:
 - Do not make the manager name optional again.
 - Do not replace automatic simulation with direct player control unless explicitly requested.
 - Do not bypass the localization layer for growing amounts of UI text.
+
+
+### 2026-09-19 — Tactics + start settings
+- Replaced the formation dropdown with large selectable formation cards so the current scheme is always visible.
+- Added a start-menu settings area using the previously unused lower space.
+- Added working browser-persisted themes: Aurora, Midnight and Light.
+- Added language controls with Russian active and English/German marked as coming soon.
+- Fixed the in-game ambient background so it continuously rotates through soft colors behind the interface rather than appearing static.
+- Kept the career-selection start menu itself free of animated ambient movement.
