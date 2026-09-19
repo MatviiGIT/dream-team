@@ -888,6 +888,14 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
               onClick={() => onChange({ ...tactic, formation })}
             >
               <div className="formation-mini" aria-label={formation}>
+                <span className="pitch-mark pitch-half-line" aria-hidden="true" />
+                <span className="pitch-mark pitch-center-circle" aria-hidden="true" />
+                <span className="pitch-box pitch-penalty-top" aria-hidden="true" />
+                <span className="pitch-box pitch-six-top" aria-hidden="true" />
+                <span className="pitch-goal pitch-goal-top" aria-hidden="true" />
+                <span className="pitch-box pitch-penalty-bottom" aria-hidden="true" />
+                <span className="pitch-box pitch-six-bottom" aria-hidden="true" />
+                <span className="pitch-goal pitch-goal-bottom" aria-hidden="true" />
                 {formationPositions[formation].map(([left, top, role], index) => (
                   <span
                     key={index}
