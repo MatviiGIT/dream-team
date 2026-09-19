@@ -68,7 +68,17 @@ export interface MatchEvent {
   type: 'goal' | 'chance' | 'yellow' | 'substitution' | 'injury' | 'half-time' | 'full-time';
   teamId: string;
   playerId?: string;
+  assistPlayerId?: string;
   description: string;
+}
+
+export interface MatchPlayerStats {
+  playerId: string;
+  minutes: number;
+  rating: number;
+  shots: number;
+  goals: number;
+  assists: number;
 }
 
 export interface MatchResult {
@@ -83,6 +93,7 @@ export interface MatchResult {
   homePossession: number;
   awayPossession: number;
   events: MatchEvent[];
+  playerStats?: Record<string, MatchPlayerStats>;
 }
 
 export interface Fixture {
