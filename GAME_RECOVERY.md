@@ -340,3 +340,8 @@ Then:
 - Match Center is fixed to the game viewport and scrolls only its internal event list, so it cannot participate in dashboard sizing or reintroduce the previous post-match layout shift.
 - Closing Match Center returns the player to the updated Overview, where the season table, latest result, timeline and next fixture remain available.
 - Added all new user-facing strings to the Russian localization layer.
+
+
+### 2026-09-19 — Match Center round metadata
+- Match Center now stores the exact season and round from before simulation, so a final-round result remains labeled with the season and round that were actually played.
+- Added an internal mobile overflow guard so the Match Center's event/stat panels remain usable on short screens.
