@@ -320,3 +320,9 @@ Then:
 ### 2026-09-19 — Removed unstable manager placeholder
 - Removed the temporary «Здесь появятся расширенная репутация...» note from the manager-profile card because the second dashboard row is intentionally compact and the note could be clipped or alter perceived card height.
 - Kept the manager card as a compact fixed-layout dashboard panel; the future trainer progression content will return when it has real data and interaction.
+
+### 2026-09-19 — Dashboard intrinsic-size hard lock
+- Removed intrinsic content sizing from dashboard row calculations by changing all dashboard tracks to `minmax(0, fr)` tracks.
+- Forced every dashboard card to fill its assigned track with `height: 100%` and `max-height: 100%`.
+- Added layout containment to the dashboard so changing match/event content cannot propagate size calculations back into the dashboard shell.
+- Applied equivalent fixed track logic to tablet and mobile layouts.
