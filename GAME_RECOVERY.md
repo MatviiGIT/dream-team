@@ -283,3 +283,10 @@ Then:
 - Added a roster panel beside the pitch so the Squad screen is the main place for lineup management.
 
 - Completed the team-sheet pitch markings after moving the formation view out of Tactics, including full penalty areas and goals on the new large pitch.
+
+
+### 2026-09-19 — Visual refinement pass
+- Unified the in-game topbar, club header and navigation with the same layered dark visual language and semantic accent colors.
+- Added subtle card hover depth, cleaner active-tab indicators and more consistent table row treatments.
+- Refined the team-sheet field, player markers and roster cards so the Squad screen reads as a single polished management surface.
+- Polished formation and tactic controls with clearer hover/open states and stronger visual hierarchy.
