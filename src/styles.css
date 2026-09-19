@@ -1408,3 +1408,121 @@ tbody tr.your-club td { color: #e0f4ec; }
   .latest-result { gap: 11px; }
   .latest-result strong { font-size: 25px; }
 }
+
+/* Start screen: one fixed design canvas */
+.start-screen {
+  width: 100vw;
+  height: 100dvh;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.start-stage-frame {
+  width: 100vw;
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.start-stage {
+  width: 1440px;
+  height: 900px;
+  flex: 0 0 auto;
+  position: relative;
+  overflow: hidden;
+  padding: 24px 30px;
+  display: flex;
+  flex-direction: column;
+  transform-origin: center center;
+  background:
+    radial-gradient(circle at 8% 5%, rgba(85, 214, 180, .08), transparent 26%),
+    radial-gradient(circle at 91% 10%, rgba(117, 167, 255, .09), transparent 25%),
+    linear-gradient(180deg, #09151e 0%, #071018 100%);
+}
+.start-toolbar {
+  position: relative;
+  top: auto;
+  right: auto;
+  z-index: 5;
+  flex: 0 0 50px;
+  min-height: 50px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.start-layout {
+  width: 100%;
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+.start-hero {
+  grid-column: span 7;
+  min-height: 0;
+  padding: 8px 12px 8px 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.start-hero h1 {
+  margin: 8px 0 16px;
+  font-size: 72px;
+  line-height: .94;
+  letter-spacing: -.07em;
+  max-width: 690px;
+}
+.hero-badge {
+  width: 58px;
+  height: 58px;
+  margin-bottom: 20px;
+}
+.latest-update {
+  max-width: 650px;
+  margin-top: 16px;
+  padding: 15px 17px;
+}
+.latest-update h2 {
+  margin: 7px 0 5px;
+  font-size: 19px;
+}
+.start-panel {
+  grid-column: span 5;
+  min-width: 0;
+  min-height: 0;
+  padding: 26px;
+  overflow: hidden;
+}
+.form-stack { gap: 13px; margin-top: 20px; }
+.saves-section {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.saves-heading { margin-bottom: 10px; }
+.career-grid {
+  width: 100%;
+  min-height: 0;
+  max-height: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: min-content;
+  gap: 12px;
+  overflow: auto;
+  padding: 2px 4px 4px 0;
+}
+.career-card {
+  min-width: 0;
+  padding: 15px;
+}
