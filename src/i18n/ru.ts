@@ -173,6 +173,7 @@ export const ru = {
     playerRatings: 'ОЦЕНКИ ИГРОКОВ',
     playerRatingsTitle: 'Индивидуальная статистика',
     playerRatingsHint: 'Стартовый состав · 90 минут',
+    bestFirst: 'лучший → худший',
     rating: 'Оценка',
     goals: 'Голы',
     assists: 'Ассисты',
