@@ -110,10 +110,10 @@ button, input, select {
   min-height: 0;
   width: min(1180px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 28px 0 42px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-gutter: stable;
+  padding: 24px 0 30px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .content::-webkit-scrollbar,
 .timeline::-webkit-scrollbar,
@@ -209,13 +209,41 @@ button, input, select {
 }
 
 .dashboard-grid {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(300px, .85fr);
-  gap: 16px;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
-.dashboard-grid > .card { padding: 24px; }
-.next-match { min-height: 300px; }
-.content-card { padding: 24px; }
+.dashboard-grid > .card {
+  min-width: 0;
+  min-height: 0;
+  padding: 22px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.next-match { grid-column: span 7; }
+.stat-card { grid-column: span 5; }
+.last-match-card { grid-column: span 5; }
+.events-card { grid-column: span 7; }
+.calendar-card { grid-column: span 7; }
+.manager-card { grid-column: span 5; }
+.content-card {
+  height: 100%;
+  min-height: 0;
+  padding: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.content-card > .player-list,
+.content-card > .table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
 .section-title-row {
   display: flex;
   justify-content: space-between;
@@ -364,10 +392,11 @@ button, input, select {
 }
 
 .timeline {
+  flex: 1 1 auto;
+  min-height: 0;
   margin-top: 15px;
   display: grid;
   gap: 3px;
-  max-height: 270px;
   overflow: auto;
   padding-right: 6px;
 }
@@ -498,10 +527,11 @@ tbody tr.your-club td { color: #e0f4ec; }
 .start-screen {
   width: 100%;
   height: 100dvh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   position: relative;
-  padding: 42px 28px 68px;
+  padding: 28px 28px 30px;
+  display: flex;
+  flex-direction: column;
   background:
     radial-gradient(circle at 8% 5%, rgba(85, 214, 180, .08), transparent 26%),
     radial-gradient(circle at 91% 10%, rgba(117, 167, 255, .09), transparent 25%),
@@ -519,10 +549,13 @@ tbody tr.your-club td { color: #e0f4ec; }
 
 .start-layout {
   width: min(1180px, 100%);
+  height: 100%;
+  min-height: 0;
   margin: auto;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr);
-  gap: 44px 58px;
+  grid-template-rows: minmax(0, 1fr) minmax(150px, .48fr);
+  gap: 24px 58px;
   align-items: center;
   position: relative;
   z-index: 1;
@@ -595,12 +628,35 @@ tbody tr.your-club td { color: #e0f4ec; }
 .form-stack input[aria-invalid="true"] { border-color: rgba(239, 113, 136, .55); }
 .form-error { color: #ff9bae; font-size: 11px; font-weight: 650; }
 
-.saves-section { grid-column: 1 / -1; }
-.saves-heading { margin-bottom: 15px; }
+.saves-section {
+  grid-column: 1 / -1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.saves-heading { margin-bottom: 12px; flex: 0 0 auto; }
+.saves-hint {
+  color: #75909f;
+  font-size: 11px;
+  text-align: right;
+}
+.career-index {
+  margin-top: 8px;
+  color: #72dfc2;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .04em;
+}
 .career-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: start;
   gap: 14px;
+  padding: 2px 4px 4px 0;
 }
 .career-card {
   padding: 17px;
@@ -648,7 +704,9 @@ tbody tr.your-club td { color: #e0f4ec; }
   font-size: 11px;
 }
 .empty-careers {
-  padding: 34px;
+  flex: 1 1 auto;
+  min-height: 120px;
+  padding: 28px;
   display: grid;
   justify-items: center;
   gap: 7px;
@@ -668,28 +726,147 @@ tbody tr.your-club td { color: #e0f4ec; }
 .empty-careers strong { font-size: 14px; }
 .empty-careers span { color: var(--muted); font-size: 12px; }
 
+.calendar-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  margin-top: 13px;
+  display: grid;
+  gap: 7px;
+}
+.calendar-row {
+  display: grid;
+  grid-template-columns: 34px 46px minmax(0, 1fr) 42px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .025);
+}
+.calendar-round {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(85, 214, 180, .1);
+  color: #80e5cb;
+  font-size: 11px;
+  font-weight: 900;
+}
+.calendar-venue {
+  color: #8da4b2;
+  font-size: 10px;
+  font-weight: 800;
+}
+.calendar-opponent {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #d4dfe5;
+  font-size: 12px;
+  font-weight: 750;
+}
+.calendar-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #071018;
+  font-size: 8px;
+  font-weight: 950;
+}
+.future-tag {
+  padding: 5px 7px;
+  border-radius: 7px;
+  background: rgba(163, 139, 255, .1);
+  color: #b7a8ff;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .08em;
+}
+.future-note {
+  margin-top: 11px;
+  color: #748b9a;
+  font-size: 10px;
+  line-height: 1.4;
+}
+.manager-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(85, 214, 180, .09), rgba(117, 167, 255, .07));
+  border: 1px solid var(--line);
+}
+.manager-avatar {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #55d6b4, #75a7ff);
+  color: #06120f;
+  font-size: 16px;
+  font-weight: 950;
+}
+.manager-profile strong { display: block; font-size: 14px; }
+.manager-profile span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
+.manager-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 12px;
+  gap: 8px;
+}
+.manager-stats div {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .025);
+}
+.manager-stats span { display: block; color: var(--muted); font-size: 10px; }
+.manager-stats strong { display: block; margin-top: 5px; font-size: 18px; }
 :focus-visible {
   outline: 2px solid rgba(117, 167, 255, .85);
   outline-offset: 2px;
 }
 
 @media (max-width: 980px) {
-  .start-layout { grid-template-columns: 1fr; }
+  .start-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) minmax(150px, .55fr);
+  }
   .start-hero { padding-top: 8px; }
   .career-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .dashboard-grid { grid-template-columns: 1fr; }
+  .dashboard-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+  .next-match { grid-column: span 4; }
+  .stat-card { grid-column: span 2; }
+  .last-match-card { grid-column: span 3; }
+  .events-card { grid-column: span 3; }
+  .calendar-card { grid-column: span 3; }
+  .manager-card { grid-column: span 3; }
 }
 
 @media (max-width: 760px) {
   .topbar { min-height: 70px; padding: 10px 16px; }
   .topbar-meta { gap: 7px; }
   .topbar-meta > span:nth-child(3) { display: none; }
-  .content { width: min(100% - 24px, 1180px); padding-top: 18px; }
+  .content { width: min(100% - 24px, 1180px); padding: 18px 0 20px; }
   .club-header { align-items: stretch; }
   .budget-block { min-width: 170px; }
   .career-grid { grid-template-columns: 1fr; }
-  .start-screen { padding: 28px 16px 50px; }
-  .start-layout { gap: 25px; }
+  .start-screen { padding: 22px 16px; }
+  .start-layout { gap: 18px; grid-template-rows: minmax(0, 1fr) minmax(130px, .52fr); }
+  .dashboard-grid > .card { padding: 18px; }
 }
 
 @media (max-width: 620px) {
@@ -701,7 +878,15 @@ tbody tr.your-club td { color: #e0f4ec; }
   .budget-block { min-width: 0; text-align: left; }
   .tabs { width: 100%; }
   .tab { flex: 1 0 auto; }
-  .dashboard-grid > .card, .content-card { padding: 19px; }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .next-match, .stat-card, .last-match-card, .events-card, .calendar-card, .manager-card {
+    grid-column: span 1;
+  }
+  .dashboard-grid > .card, .content-card { padding: 17px; }
   .tactic-grid { grid-template-columns: 1fr; gap: 13px; }
   .fixture-line { grid-template-columns: 1fr 42px 1fr; gap: 7px; }
   .team-side strong { font-size: 12px; }
