@@ -1532,37 +1532,128 @@ function TacticChoice({
   );
 }
 
+type TableFormResult = 'W' | 'D' | 'L';
+
+function getClubForm(game: GameState, teamId: string): TableFormResult[] {
+  return game.fixtures
+    .filter((fixture) =>
+      fixture.played &&
+      fixture.result &&
+      (fixture.homeTeamId === teamId || fixture.awayTeamId === teamId)
+    )
+    .sort((a, b) => b.round - a.round)
+    .slice(0, 5)
+    .map((fixture) => {
+      const result = fixture.result!;
+      const goalsFor = fixture.homeTeamId === teamId ? result.homeGoals : result.awayGoals;
+      const goalsAgainst = fixture.homeTeamId === teamId ? result.awayGoals : result.homeGoals;
+      return goalsFor > goalsAgainst ? 'W' : goalsFor === goalsAgainst ? 'D' : 'L';
+    });
+}
+
+function TableForm({ results }: { results: TableFormResult[] }) {
+  return (
+    <div className="table-form" aria-label={ru.table.form}>
+      {[...results].reverse().map((result, index) => (
+        <span key={result + '-' + index} className={'table-form-dot ' + result}>
+          {result}
+        </span>
+      ))}
+      {!results.length && <span className="table-form-empty">—</span>}
+    </div>
+  );
+}
+
 function LeagueTable({ game }: { game: GameState }) {
   const rows = useMemo(() => [...game.table], [game.table]);
+  const userRow = rows.find((row) => row.teamId === game.clubId);
+  const userPosition = userRow ? rows.findIndex((row) => row.teamId === game.clubId) + 1 : 0;
+  const userForm = useMemo(() => getClubForm(game, game.clubId), [game]);
+  const remaining = userRow ? Math.max(0, 14 - userRow.played) : 14;
 
   return (
-    <section className="card content-card">
-      <div className="section-title-row">
-        <div><div className="eyebrow">{ru.table.eyebrow}</div><h2>{ru.tabs.table}</h2></div>
-        <span className="muted">{ru.app.season} {game.season}</span>
+    <section className="card content-card content-table">
+      <div className="section-title-row table-page-header">
+        <div>
+          <div className="eyebrow">{ru.table.eyebrow}</div>
+          <h2>{ru.tabs.table}</h2>
+        </div>
+        <span className="table-season-pill">
+          {ru.app.season} {game.season} · {ru.app.round} {game.currentRound}
+        </span>
+      </div>
+
+      <div className="table-overview">
+        <div className="table-overview-card position">
+          <span>{ru.table.position}</span>
+          <strong>{userPosition || '—'}<small>{userPosition ? ru.table.placeSuffix : ''}</small></strong>
+        </div>
+        <div className="table-overview-card points">
+          <span>{ru.table.points}</span>
+          <strong>{userRow?.points ?? 0}</strong>
+        </div>
+        <div className="table-overview-card matches">
+          <span>{ru.table.played}</span>
+          <strong>{userRow?.played ?? 0}<small>/ 14</small></strong>
+        </div>
+        <div className="table-overview-card goal-difference">
+          <span>{ru.table.goalDifference}</span>
+          <strong>{(userRow ? userRow.goalsFor - userRow.goalsAgainst : 0) > 0 ? '+' : ''}{userRow ? userRow.goalsFor - userRow.goalsAgainst : 0}</strong>
+        </div>
+        <div className="table-overview-card form">
+          <div>
+            <span>{ru.table.recentForm}</span>
+            <small>{ru.table.remaining(remaining)}</small>
+          </div>
+          <TableForm results={userForm} />
+        </div>
       </div>
 
       <div className="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>#</th><th>{ru.table.club}</th><th>{ru.table.played}</th><th>{ru.table.wins}</th><th>{ru.table.draws}</th><th>{ru.table.losses}</th><th>ЗГ</th><th>ПГ</th><th>РЗ</th><th>{ru.table.points}</th>
+              <th>#</th>
+              <th>{ru.table.club}</th>
+              <th>{ru.table.form}</th>
+              <th>{ru.table.played}</th>
+              <th>{ru.table.wins}</th>
+              <th>{ru.table.draws}</th>
+              <th>{ru.table.losses}</th>
+              <th>ЗГ</th>
+              <th>ПГ</th>
+              <th>РЗ</th>
+              <th>{ru.table.points}</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, index) => {
               const rowClub = game.clubs[row.teamId];
+              const form = getClubForm(game, row.teamId);
+              const goalDifference = row.goalsFor - row.goalsAgainst;
               return (
                 <tr className={row.teamId === game.clubId ? 'your-club' : ''} key={row.teamId}>
-                  <td>{index + 1}</td>
-                  <td><strong>{rowClub.name}</strong></td>
+                  <td>
+                    <span className={index === 0 ? 'table-rank top' : index < 4 ? 'table-rank upper' : 'table-rank'}>
+                      {index + 1}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="table-club-cell">
+                      <span className="table-club-dot" style={{ background: rowClub.color }} />
+                      <strong>{rowClub.name}</strong>
+                    </div>
+                  </td>
+                  <td><TableForm results={form} /></td>
                   <td>{row.played}</td>
                   <td>{row.wins}</td>
                   <td>{row.draws}</td>
                   <td>{row.losses}</td>
                   <td>{row.goalsFor}</td>
                   <td>{row.goalsAgainst}</td>
-                  <td>{row.goalsFor - row.goalsAgainst}</td>
+                  <td className={goalDifference > 0 ? 'goal-positive' : goalDifference < 0 ? 'goal-negative' : ''}>
+                    {goalDifference > 0 ? '+' : ''}{goalDifference}
+                  </td>
                   <td><strong>{row.points}</strong></td>
                 </tr>
               );
