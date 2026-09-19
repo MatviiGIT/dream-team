@@ -4039,3 +4039,352 @@ table th { font-size: 11px; }
     flex: 1 1 auto;
   }
 }
+
+/* 2026-09-19 — Wide three-zone in-game workspace. */
+.app-shell > .content {
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  min-height: 0;
+  padding: 22px clamp(18px, 3vw, 42px) 24px;
+  overflow: hidden;
+}
+.workspace-grid {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 280px;
+  gap: 16px;
+}
+.workspace-sidebar {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.left-sidebar {
+  padding: 4px;
+}
+.workspace-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 7px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.workspace-brand .brand-mark {
+  width: 40px;
+  height: 40px;
+  flex-basis: 40px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+.workspace-brand strong {
+  display: block;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.1;
+}
+.workspace-brand span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.workspace-club-mini {
+  padding: 14px;
+  border: 1px solid rgba(85,214,180,.13);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(19,43,43,.78), rgba(12,24,32,.76));
+}
+.workspace-club-mini strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.2;
+}
+.workspace-club-mini span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.workspace-nav {
+  min-height: 0;
+  display: grid;
+  gap: 5px;
+  padding: 4px 0;
+}
+.workspace-nav-label {
+  padding: 7px 10px 5px;
+  color: #718797;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+.workspace-nav-item {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+  font-size: 13px;
+  font-weight: 850;
+}
+.workspace-nav-item:hover {
+  color: var(--text);
+  background: rgba(255,255,255,.035);
+}
+.workspace-nav-item.active {
+  color: var(--text);
+  border-color: rgba(85,214,180,.20);
+  background: linear-gradient(135deg, rgba(85,214,180,.15), rgba(85,214,180,.045));
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.workspace-nav-icon {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 10px;
+  border-radius: 3px;
+  background: currentColor;
+  opacity: .62;
+}
+.workspace-nav-item.active .workspace-nav-icon {
+  opacity: 1;
+}
+.workspace-nav-icon.overview { border-radius: 50%; }
+.workspace-nav-icon.squad { transform: rotate(45deg); }
+.workspace-nav-icon.tactics { border-radius: 50%; box-shadow: inset 0 0 0 2px currentColor; background: transparent; }
+.workspace-nav-icon.table { border-radius: 2px; }
+.sidebar-career-button {
+  width: 100%;
+  margin-top: auto;
+  text-align: center;
+}
+.workspace-main {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.workspace-main > .club-header {
+  flex: 0 0 auto;
+}
+.workspace-round-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 8px 11px;
+  border: 1px solid rgba(242,190,103,.18);
+  border-radius: 10px;
+  color: #e6c887;
+  background: rgba(242,190,103,.055);
+  font-size: 11px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+.workspace-main > .dashboard-grid,
+.workspace-main > .content-card {
+  min-height: 0;
+  flex: 1 1 auto;
+  margin-top: 14px;
+}
+.workspace-main .content-card {
+  height: auto;
+}
+.right-sidebar {
+  padding: 4px;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(117,167,255,.45) transparent;
+}
+.side-panel {
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(20,32,42,.94), rgba(12,23,31,.96));
+  box-shadow: 0 15px 38px rgba(0,0,0,.12);
+}
+.finance-preview {
+  border-color: rgba(242,190,103,.19);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(242,190,103,.12), transparent 42%),
+    linear-gradient(145deg, rgba(48,39,28,.95), rgba(20,25,30,.98));
+}
+.side-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.side-panel-header h2 {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: 18px;
+  letter-spacing: -.025em;
+}
+.side-panel-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #f2ce88;
+  background: rgba(242,190,103,.11);
+  border: 1px solid rgba(242,190,103,.15);
+  font-size: 15px;
+  font-weight: 950;
+}
+.finance-preview-main {
+  margin-top: 22px;
+}
+.finance-preview-main span,
+.finance-preview-grid span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+}
+.finance-preview-main strong {
+  display: block;
+  margin-top: 5px;
+  color: #f7d28f;
+  font-size: 27px;
+  letter-spacing: -.035em;
+}
+.finance-preview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 17px;
+}
+.finance-preview-grid > div {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 11px;
+  background: rgba(255,255,255,.025);
+}
+.finance-preview-grid strong {
+  display: block;
+  margin-top: 4px;
+  color: #d9e3ea;
+  font-size: 13px;
+}
+.side-panel-divider {
+  height: 1px;
+  margin: 17px 0 12px;
+  background: var(--line);
+}
+.side-panel-note {
+  color: #7f94a4;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.season-preview strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 19px;
+}
+.season-preview span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* The new workspace owns the main geometry; the old topbar layout no longer participates. */
+.app-shell > .content > .workspace-grid .content-table,
+.app-shell > .content > .workspace-grid .content-card {
+  width: 100%;
+}
+@media (max-width: 1199px) {
+  .app-shell > .content {
+    padding: 18px 20px 20px;
+  }
+  .workspace-grid {
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .right-sidebar {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .app-shell > .content {
+    padding: 12px;
+    overflow: auto;
+  }
+  .workspace-grid {
+    height: auto;
+    min-height: 100%;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .left-sidebar {
+    padding: 0;
+  }
+  .workspace-brand,
+  .workspace-club-mini {
+    display: none;
+  }
+  .workspace-nav {
+    display: flex;
+    align-items: stretch;
+    gap: 5px;
+    overflow-x: auto;
+    padding: 0;
+  }
+  .workspace-nav-label,
+  .sidebar-career-button {
+    display: none;
+  }
+  .workspace-nav-item {
+    width: auto;
+    min-width: 132px;
+    justify-content: center;
+    border: 1px solid var(--line);
+  }
+  .workspace-nav-item.active {
+    box-shadow: inset 0 -3px 0 var(--accent);
+  }
+  .workspace-main {
+    overflow: visible;
+  }
+  .workspace-main > .club-header {
+    padding: 18px;
+  }
+  .workspace-round-badge {
+    min-height: 34px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 620px) {
+  .app-shell > .content {
+    padding: 10px 9px 16px;
+  }
+  .workspace-nav-item {
+    min-width: 118px;
+    padding: 10px 9px;
+    font-size: 12px;
+  }
+  .workspace-nav-icon {
+    display: none;
+  }
+  .workspace-round-badge {
+    display: none;
+  }
+}
