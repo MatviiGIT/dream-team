@@ -390,3 +390,9 @@ Then:
 - Increased the width available to the timeline and match-stat panels so all core statistics can be shown together.
 - Rebalanced vertical rows so the timeline and match statistics receive substantially more space while the player ratings panel remains the largest detailed section.
 - Kept the mobile-specific layout and internal scrolling behavior intact.
+### 2026-09-19 — Layered Match Center detail menus
+- Reworked Match Center into a compact post-match summary with three dedicated detail entry cards: chronology, match statistics and player ratings.
+- Each detail section now opens in a second fixed overlay above the current Match Center rather than competing for space inside the main result screen.
+- The chronology detail uses a dedicated custom scrollbar consistent with the rest of the application.
+- Player ratings remain sorted best-to-worst and open in their own larger scrollable detail view.
+- This layered approach keeps the final score readable while allowing detailed panels to use larger typography and more vertical space.
