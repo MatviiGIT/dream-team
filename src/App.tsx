@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { GameState, MatchPlayerStats, MatchResult, Player, Position, Tactics } from './domain/types';
 import { clubOrder } from './data/initialWorld';
 import { createCareer, getNextFixture, playNextRound } from './game/career';
@@ -714,7 +715,8 @@ function UpcomingCalendar({ game }: { game: GameState }) {
         </div>
       </button>
 
-      {calendarOpen && (
+      {calendarOpen && typeof document !== 'undefined' && createPortal(
+{calendarOpen && (
         <div className="modal-backdrop calendar-modal-backdrop" role="presentation" onMouseDown={(event) => {
           if (event.target === event.currentTarget) setCalendarOpen(false);
         }}>
@@ -757,7 +759,9 @@ function UpcomingCalendar({ game }: { game: GameState }) {
             </button>
           </section>
         </div>
-      )}
+      )
+        , document.body
+      )}}
     </>
   );
 }
