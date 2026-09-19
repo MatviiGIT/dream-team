@@ -373,3 +373,8 @@ Then:
 - Added a two-column individual ratings panel to Match Center with both teams' starting XI and compact rating/goals/assists/shots readouts.
 - Kept the existing fitness drain unchanged; stamina/tactical workload remains a later system.
 - Ensured generated player shot totals always include their scored goals so per-player match stats cannot report a goal with zero shots.
+### 2026-09-19 — Match Center ratings panel sizing
+- Rebalanced Match Center body rows so the individual player ratings section receives the main vertical space instead of being compressed below the event/stat panels.
+- Kept the event timeline and match-number panels usable by giving them a smaller, fixed minimum area with their own internal overflow.
+- Added the same thin custom scrollbar treatment and stable scrollbar gutter to both player-rating lists.
+- Added a mobile-specific row balance so the player ratings remain the largest section on narrow screens as well.
