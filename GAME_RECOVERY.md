@@ -362,3 +362,13 @@ Then:
 - Clicking another starter is visually presented as a position swap; clicking a bench player performs the replacement.
 - Bench players are color-coded by positional fit: «На своей позиции», «Можно поставить» and «Не по позиции». The game does not block an out-of-position replacement; the simulator remains responsible for applying positional consequences.
 - Clarified terminology: reserve/bench describes the player pool, while замена describes the action of replacing a starter.
+
+### 2026-09-19 — Player match ratings + individual stats
+- Extended MatchResult with optional playerStats so older saved matches remain compatible.
+- Added optional assist tracking to match goal events.
+- The match simulator now generates deterministic per-starter statistics for each played round: minutes, rating, shots, goals and assists.
+- Player ratings combine baseline player quality/form, positional fit inside the chosen formation, team result, attacking contributions and clean-sheet bonuses for goalkeepers/defenders.
+- Goal events can now carry an assisting player, and the event timeline displays the assist in Russian.
+- Persisted simulated assists into each player's season assist total and allowed assists to contribute modestly to player form.
+- Added a two-column individual ratings panel to Match Center with both teams' starting XI and compact rating/goals/assists/shots readouts.
+- Kept the existing fitness drain unchanged; stamina/tactical workload remains a later system.
