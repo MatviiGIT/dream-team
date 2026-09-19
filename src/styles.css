@@ -1,3 +1,21 @@
+:root[data-theme="light"] body {
+  background: #edf2f5;
+}
+:root[data-theme="light"] .topbar {
+  background: rgba(249,252,253,.92);
+  color: #17232c;
+}
+:root[data-theme="light"] .tabs {
+  background: linear-gradient(90deg, #e6f0ed, #e7edf6, #eeeaf7, #f5eee0);
+}
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .content-card {
+  box-shadow: 0 18px 45px rgba(57,78,93,.10);
+}
+:root[data-theme="light"] .app-shell::before,
+:root[data-theme="light"] .app-shell::after {
+  opacity: .5;
+}
 :root[data-theme="midnight"] {
   --bg: #04070d;
   --panel: #0a111a;
@@ -81,42 +99,42 @@ button, input, select {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+  background: var(--bg);
 }
 .app-shell::before,
 .app-shell::after {
   content: "";
   position: absolute;
-  inset: -22%;
+  inset: -28%;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
   background:
-    radial-gradient(circle at 18% 20%, rgba(85,214,180,.12), transparent 25%),
-    radial-gradient(circle at 82% 18%, rgba(117,167,255,.12), transparent 24%),
-    radial-gradient(circle at 62% 88%, rgba(163,139,255,.10), transparent 27%);
-  filter: blur(26px);
-  transform: scale(1.06);
+    radial-gradient(circle at 18% 20%, rgba(85,214,180,.22), transparent 25%),
+    radial-gradient(circle at 82% 18%, rgba(117,167,255,.20), transparent 24%),
+    radial-gradient(circle at 62% 88%, rgba(163,139,255,.18), transparent 27%);
+  filter: blur(38px);
+  transform: scale(1.14);
+  opacity: .9;
 }
 .app-shell::before {
-  animation: ambientDriftOne 18s ease-in-out infinite alternate;
+  animation: ambientOrbitOne 34s linear infinite;
 }
 .app-shell::after {
-  animation: ambientDriftTwo 24s ease-in-out infinite alternate;
-  opacity: .72;
+  animation: ambientOrbitTwo 47s linear infinite reverse;
+  opacity: .76;
 }
-@keyframes ambientDriftOne {
-  0% { transform: translate3d(-3%, -2%, 0) scale(1.05); }
-  50% { transform: translate3d(3%, 2%, 0) scale(1.1); }
-  100% { transform: translate3d(-1%, 4%, 0) scale(1.07); }
+@keyframes ambientOrbitOne {
+  from { transform: rotate(0deg) scale(1.14); }
+  to { transform: rotate(360deg) scale(1.14); }
 }
-@keyframes ambientDriftTwo {
-  0% { transform: translate3d(4%, 1%, 0) scale(1.08); }
-  50% { transform: translate3d(-3%, -3%, 0) scale(1.04); }
-  100% { transform: translate3d(2%, 3%, 0) scale(1.1); }
+@keyframes ambientOrbitTwo {
+  from { transform: rotate(0deg) scale(1.18); }
+  to { transform: rotate(360deg) scale(1.18); }
 }
 
 .topbar {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   flex: 0 0 auto;
   min-height: 76px;
   border-bottom: 1px solid var(--line);
@@ -170,7 +188,7 @@ button, input, select {
 
 .content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   flex: 1 1 auto;
   min-height: 0;
   width: min(1180px, calc(100% - 48px));
