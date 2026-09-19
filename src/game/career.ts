@@ -2,6 +2,7 @@ import type { Club, Fixture, GameState, MatchResult, Player, TableRow } from '..
 import { clubOrder, createInitialWorld } from '../data/initialWorld';
 import { simulateMatch } from '../simulation/matchSimulator';
 import { createCareerId } from '../storage/gameStorage';
+import { applyRoundFinance, resetSeasonFinance } from './finance';
 
 const TOTAL_SEASON_ROUNDS = 14;
 
@@ -201,11 +202,14 @@ export function playNextRound(state: GameState): GameState {
   const nextRound = state.currentRound + 1;
   const isSeasonComplete = nextRound > TOTAL_SEASON_ROUNDS;
   const freshFixtures = isSeasonComplete ? generateFixtures(clubOrder) : fixtures;
+  const fundedClubs = applyRoundFinance(state.clubs, roundResults);
+  const nextClubs = isSeasonComplete ? resetSeasonFinance(fundedClubs) : fundedClubs;
 
   return {
     ...state,
     fixtures: freshFixtures,
     table: isSeasonComplete ? emptyTable(clubOrder) : table,
+    clubs: nextClubs,
     players: nextPlayers,
     currentRound: isSeasonComplete ? 1 : nextRound,
     season: isSeasonComplete ? state.season + 1 : state.season,
