@@ -234,7 +234,12 @@ function App() {
             onPlay={() => setGame(playNextRound(game))}
           />
         )}
-        {tab === 'squad' && <Squad game={game} />}
+        {tab === 'squad' && (
+          <Squad
+            game={game}
+            onChange={(nextGame) => setGame(nextGame)}
+          />
+        )}
         {tab === 'tactics' && (
           <Tactics
             game={game}
@@ -738,31 +743,197 @@ function EventTimeline({ game }: { game: GameState }) {
   );
 }
 
-function Squad({ game }: { game: GameState }) {
+type SquadPitchRole = 'keeper' | 'defender' | 'midfielder' | 'attacker';
+
+type SquadSlot = {
+  left: number;
+  top: number;
+  role: SquadPitchRole;
+  label: string;
+};
+
+const squadFormationSlots: Record<Tactics['formation'], SquadSlot[]> = {
+  '4-3-3': [
+    { left: 50, top: 89, role: 'keeper', label: 'GK' },
+    { left: 15, top: 71, role: 'defender', label: 'LB' },
+    { left: 38, top: 71, role: 'defender', label: 'CB' },
+    { left: 62, top: 71, role: 'defender', label: 'CB' },
+    { left: 85, top: 71, role: 'defender', label: 'RB' },
+    { left: 50, top: 53, role: 'midfielder', label: 'DM' },
+    { left: 31, top: 43, role: 'midfielder', label: 'CM' },
+    { left: 69, top: 43, role: 'midfielder', label: 'CM' },
+    { left: 15, top: 21, role: 'attacker', label: 'LW' },
+    { left: 50, top: 15, role: 'attacker', label: 'CF' },
+    { left: 85, top: 21, role: 'attacker', label: 'RW' },
+  ],
+  '4-4-2': [
+    { left: 50, top: 89, role: 'keeper', label: 'GK' },
+    { left: 15, top: 71, role: 'defender', label: 'LB' },
+    { left: 38, top: 71, role: 'defender', label: 'CB' },
+    { left: 62, top: 71, role: 'defender', label: 'CB' },
+    { left: 85, top: 71, role: 'defender', label: 'RB' },
+    { left: 15, top: 48, role: 'midfielder', label: 'LM' },
+    { left: 38, top: 48, role: 'midfielder', label: 'CM' },
+    { left: 62, top: 48, role: 'midfielder', label: 'CM' },
+    { left: 85, top: 48, role: 'midfielder', label: 'RM' },
+    { left: 38, top: 18, role: 'attacker', label: 'ST' },
+    { left: 62, top: 18, role: 'attacker', label: 'ST' },
+  ],
+  '4-2-3-1': [
+    { left: 50, top: 89, role: 'keeper', label: 'GK' },
+    { left: 15, top: 71, role: 'defender', label: 'LB' },
+    { left: 38, top: 71, role: 'defender', label: 'CB' },
+    { left: 62, top: 71, role: 'defender', label: 'CB' },
+    { left: 85, top: 71, role: 'defender', label: 'RB' },
+    { left: 37, top: 53, role: 'midfielder', label: 'DM' },
+    { left: 63, top: 53, role: 'midfielder', label: 'DM' },
+    { left: 17, top: 34, role: 'attacker', label: 'LW' },
+    { left: 50, top: 31, role: 'attacker', label: 'AM' },
+    { left: 83, top: 34, role: 'attacker', label: 'RW' },
+    { left: 50, top: 14, role: 'attacker', label: 'ST' },
+  ],
+};
+
+function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameState) => void }) {
   const club = game.clubs[game.clubId];
-  const players = club.playerIds.map((id) => game.players[id]).filter(Boolean);
+  const roster = club.playerIds.map((id) => game.players[id]).filter(Boolean);
+  const initialXI = club.startingXI?.length === 11 ? club.startingXI : club.playerIds.slice(0, 11);
+  const [lineupIds, setLineupIds] = useState<string[]>(initialXI);
+  const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
+
+  useEffect(() => {
+    const next = club.startingXI?.length === 11 ? club.startingXI : club.playerIds.slice(0, 11);
+    setLineupIds(next);
+    setSelectedSlot(null);
+  }, [game.clubId, club.startingXI, club.playerIds]);
+
+  const slots = squadFormationSlots[club.tactic.formation];
+
+  const commitLineup = (nextLineup: string[]) => {
+    setLineupIds(nextLineup);
+    onChange({
+      ...game,
+      clubs: {
+        ...game.clubs,
+        [club.id]: {
+          ...club,
+          startingXI: nextLineup,
+        },
+      },
+    });
+  };
+
+  const swapSlots = (first: number, second: number) => {
+    if (first === second) {
+      setSelectedSlot(null);
+      return;
+    }
+    const next = [...lineupIds];
+    [next[first], next[second]] = [next[second], next[first]];
+    commitLineup(next);
+    setSelectedSlot(null);
+  };
+
+  const handleRosterClick = (playerId: string) => {
+    const rosterIndex = lineupIds.indexOf(playerId);
+    if (selectedSlot === null || rosterIndex < 0) return;
+    swapSlots(selectedSlot, rosterIndex);
+  };
 
   return (
-    <section className="card content-card">
+    <section className="card content-card squad-panel">
       <div className="section-title-row">
-        <div><div className="eyebrow">{ru.squad.firstTeam}</div><h2>{ru.tabs.squad}</h2></div>
-        <span className="muted">{players.length} {ru.squad.players}</span>
+        <div>
+          <div className="eyebrow">{ru.squad.teamSheet}</div>
+          <h2>{ru.tabs.squad}</h2>
+        </div>
+        <div className="squad-formation-pill">
+          <span>{ru.squad.formation}</span>
+          <strong>{club.tactic.formation}</strong>
+        </div>
       </div>
 
-      <div className="player-list">
-        {players.map((player, index) => (
-          <div className="player-row" key={player.id}>
-            <div className="player-number">{index + 1}</div>
-            <div className="player-main">
-              <strong>{player.name}</strong>
-              <span>{positionLabel(player.position)} · {player.preferredFoot === 'L' ? ru.squad.leftFoot : ru.squad.rightFoot}</span>
-            </div>
-            <div className="player-metric"><span>OVR</span><strong>{player.overall}</strong></div>
-            <div className="player-metric"><span>FIT</span><strong>{Math.round(player.fitness)}</strong></div>
-            <div className="player-metric"><span>FORM</span><strong>{player.form >= 0 ? '+' : ''}{player.form}</strong></div>
-            <div className="player-value">{formatMoney(player.value)}</div>
+      <div className="team-sheet">
+        <div className="squad-pitch-wrap">
+          <div className="squad-pitch">
+            <span className="pitch-half-line" aria-hidden="true" />
+            <span className="pitch-center-circle" aria-hidden="true" />
+            <span className="pitch-box pitch-penalty-top" aria-hidden="true" />
+            <span className="pitch-box pitch-six-top" aria-hidden="true" />
+            <span className="pitch-goal pitch-goal-top" aria-hidden="true" />
+            <span className="pitch-box pitch-penalty-bottom" aria-hidden="true" />
+            <span className="pitch-box pitch-six-bottom" aria-hidden="true" />
+            <span className="pitch-goal pitch-goal-bottom" aria-hidden="true" />
+
+            {slots.map((slot, index) => {
+              const player = game.players[lineupIds[index]];
+              if (!player) return null;
+              const selected = selectedSlot === index;
+              return (
+                <button
+                  key={slot.label + '-' + index + '-' + player.id}
+                  type="button"
+                  className={selected ? 'squad-player-marker selected' : 'squad-player-marker'}
+                  style={{ left: slot.left + '%', top: slot.top + '%' }}
+                  onClick={() => {
+                    if (selectedSlot !== null && selectedSlot !== index) {
+                      swapSlots(selectedSlot, index);
+                    } else {
+                      setSelectedSlot(selected ? null : index);
+                    }
+                  }}
+                  title={player.name + ' · ' + slot.label}
+                >
+                  <span className="squad-player-rating">{player.overall}</span>
+                  <strong>{player.name.split(' ')[0]}</strong>
+                  <small>{slot.label}</small>
+                </button>
+              );
+            })}
           </div>
-        ))}
+          <div className="squad-pitch-note">
+            {selectedSlot === null ? ru.squad.selectPlayer : ru.squad.swapHint}
+          </div>
+        </div>
+
+        <aside className="squad-roster">
+          <div className="squad-roster-header">
+            <div>
+              <div className="eyebrow">{ru.squad.roster}</div>
+              <strong>{ru.squad.players} · {roster.length}</strong>
+            </div>
+            <span>{ru.squad.startingXI}</span>
+          </div>
+
+          <div className="squad-roster-list">
+            {roster.map((player) => {
+              const slotIndex = lineupIds.indexOf(player.id);
+              const onPitch = slotIndex >= 0;
+              const selected = selectedSlot !== null && slotIndex === selectedSlot;
+              return (
+                <button
+                  key={player.id}
+                  type="button"
+                  className={selected ? 'squad-roster-card selected' : 'squad-roster-card'}
+                  onClick={() => handleRosterClick(player.id)}
+                >
+                  <span className="squad-roster-avatar">{player.name.slice(0, 1).toUpperCase()}</span>
+                  <span className="squad-roster-main">
+                    <strong>{player.name}</strong>
+                    <small>{positionLabel(player.position)} · {player.preferredFoot === 'L' ? ru.squad.leftFoot : ru.squad.rightFoot}</small>
+                  </span>
+                  <span className="squad-roster-stat">
+                    <small>OVR</small>
+                    <strong>{player.overall}</strong>
+                  </span>
+                  <span className={onPitch ? 'squad-roster-status active' : 'squad-roster-status'}>
+                    {onPitch ? ru.squad.starting : ru.squad.reserve}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
       </div>
     </section>
   );
@@ -780,30 +951,6 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
   const [openField, setOpenField] = useState<TacticSettingKey | null>(null);
 
   const formations: Tactics['formation'][] = ['4-3-3', '4-4-2', '4-2-3-1'];
-  type FormationDotRole = 'keeper' | 'defender' | 'midfielder' | 'attacker';
-  type FormationDot = [number, number, FormationDotRole];
-
-  const formationPositions: Record<Tactics['formation'], FormationDot[]> = {
-    '4-3-3': [
-      [50, 92, 'keeper'],
-      [14, 75, 'defender'], [38, 75, 'defender'], [62, 75, 'defender'], [86, 75, 'defender'],
-      [50, 56, 'midfielder'], [31, 45, 'midfielder'], [69, 45, 'midfielder'],
-      [14, 20, 'attacker'], [50, 14, 'attacker'], [86, 20, 'attacker'],
-    ],
-    '4-4-2': [
-      [50, 92, 'keeper'],
-      [14, 75, 'defender'], [38, 75, 'defender'], [62, 75, 'defender'], [86, 75, 'defender'],
-      [14, 49, 'midfielder'], [38, 49, 'midfielder'], [62, 49, 'midfielder'], [86, 49, 'midfielder'],
-      [38, 17, 'attacker'], [62, 17, 'attacker'],
-    ],
-    '4-2-3-1': [
-      [50, 92, 'keeper'],
-      [14, 75, 'defender'], [38, 75, 'defender'], [62, 75, 'defender'], [86, 75, 'defender'],
-      [37, 55, 'midfielder'], [63, 55, 'midfielder'],
-      [17, 34, 'attacker'], [50, 31, 'attacker'], [83, 34, 'attacker'],
-      [50, 14, 'attacker'],
-    ],
-  };
   const fields: Array<{
     label: string;
     key: TacticSettingKey;
@@ -870,7 +1017,7 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
         <span className="muted">{ru.tactics.hint}</span>
       </div>
 
-      <div className="formation-block">
+      <div className="formation-block compact-formation-selector">
         <div className="formation-heading">
           <div>
             <span>{ru.tactics.formation}</span>
@@ -879,32 +1026,15 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
           <strong>{tactic.formation}</strong>
         </div>
 
-        <div className="formation-options">
+        <div className="formation-selector-buttons">
           {formations.map((formation) => (
             <button
               key={formation}
               type="button"
-              className={tactic.formation === formation ? 'formation-option active' : 'formation-option'}
+              className={tactic.formation === formation ? 'formation-select-button active' : 'formation-select-button'}
               onClick={() => onChange({ ...tactic, formation })}
             >
-              <div className="formation-mini" aria-label={formation}>
-                <span className="pitch-mark pitch-half-line" aria-hidden="true" />
-                <span className="pitch-mark pitch-center-circle" aria-hidden="true" />
-                <span className="pitch-box pitch-penalty-top" aria-hidden="true" />
-                <span className="pitch-box pitch-six-top" aria-hidden="true" />
-                <span className="pitch-goal pitch-goal-top" aria-hidden="true" />
-                <span className="pitch-box pitch-penalty-bottom" aria-hidden="true" />
-                <span className="pitch-box pitch-six-bottom" aria-hidden="true" />
-                <span className="pitch-goal pitch-goal-bottom" aria-hidden="true" />
-                {formationPositions[formation].map(([left, top, role], index) => (
-                  <span
-                    key={index}
-                    className={`formation-dot formation-dot-${role}`}
-                    style={{ left: `${left}%`, top: `${top}%` }}
-                  />
-                ))}
-              </div>
-              <strong>{formation}</strong>
+              {formation}
             </button>
           ))}
         </div>
