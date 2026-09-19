@@ -224,12 +224,12 @@ button, input, select {
   display: flex;
   flex-direction: column;
 }
-.next-match { grid-column: span 7; }
-.stat-card { grid-column: span 5; }
-.last-match-card { grid-column: span 5; }
-.events-card { grid-column: span 7; }
-.calendar-card { grid-column: span 7; }
-.manager-card { grid-column: span 5; }
+.next-match { grid-column: span 7; border-color: rgba(85, 214, 180, .26); background: linear-gradient(145deg, rgba(21, 52, 54, .98), rgba(13, 31, 40, .98)); }
+.stat-card { grid-column: span 5; border-color: rgba(117, 167, 255, .24); background: linear-gradient(145deg, rgba(24, 39, 60, .98), rgba(14, 27, 40, .98)); }
+.last-match-card { grid-column: span 5; border-color: rgba(242, 190, 103, .22); background: linear-gradient(145deg, rgba(52, 40, 27, .94), rgba(27, 28, 31, .98)); }
+.events-card { grid-column: span 7; border-color: rgba(163, 139, 255, .24); background: linear-gradient(145deg, rgba(35, 30, 54, .96), rgba(18, 25, 39, .98)); }
+.calendar-card { grid-column: span 7; border-color: rgba(117, 167, 255, .22); background: linear-gradient(145deg, rgba(22, 37, 56, .98), rgba(13, 28, 39, .98)); }
+.manager-card { grid-column: span 5; border-color: rgba(85, 214, 180, .2); background: linear-gradient(145deg, rgba(24, 47, 47, .96), rgba(16, 29, 38, .98)); }
 .content-card {
   height: 100%;
   min-height: 0;
