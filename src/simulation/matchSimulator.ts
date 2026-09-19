@@ -235,9 +235,19 @@ function buildTeamPlayerStats(
     .filter((player): player is Player => Boolean(player));
   const roles = formationRoles(club.tactic.formation);
   const resultBonus = teamGoals > opponentGoals ? 0.32 : teamGoals === opponentGoals ? 0.06 : -0.24;
-  const shotCounts = new Map(selectedPlayers.map((player) => [player.id, 0]));
+  const goalsByPlayer = new Map<string, number>();
+  const assistsByPlayer = new Map<string, number>();
 
-  for (let shot = 0; shot < totalShots; shot += 1) {
+  for (const event of events) {
+    if (event.type !== 'goal' || event.teamId !== club.id) continue;
+    if (event.playerId) goalsByPlayer.set(event.playerId, (goalsByPlayer.get(event.playerId) ?? 0) + 1);
+    if (event.assistPlayerId) assistsByPlayer.set(event.assistPlayerId, (assistsByPlayer.get(event.assistPlayerId) ?? 0) + 1);
+  }
+
+  const shotCounts = new Map(selectedPlayers.map((player) => [player.id, goalsByPlayer.get(player.id) ?? 0]));
+  const remainingShots = Math.max(0, totalShots - teamGoals);
+
+  for (let shot = 0; shot < remainingShots; shot += 1) {
     const selected = selectWeightedPlayer(
       selectedPlayers,
       (player) => {
@@ -250,14 +260,6 @@ function buildTeamPlayerStats(
       rng,
     );
     if (selected) shotCounts.set(selected.id, (shotCounts.get(selected.id) ?? 0) + 1);
-  }
-
-  const goalsByPlayer = new Map<string, number>();
-  const assistsByPlayer = new Map<string, number>();
-  for (const event of events) {
-    if (event.type !== 'goal' || event.teamId !== club.id) continue;
-    if (event.playerId) goalsByPlayer.set(event.playerId, (goalsByPlayer.get(event.playerId) ?? 0) + 1);
-    if (event.assistPlayerId) assistsByPlayer.set(event.assistPlayerId, (assistsByPlayer.get(event.assistPlayerId) ?? 0) + 1);
   }
 
   return Object.fromEntries(selectedPlayers.map((player) => {
