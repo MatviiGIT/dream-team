@@ -4675,9 +4675,6 @@ table th { font-size: 11px; }
 .sidebar-action-row .fullscreen-button-compact {
   flex: 0 0 44px;
 }
-.in-game-corner-actions {
-  display: none !important;
-}
 @media (max-width: 620px) {
   .latest-result {
     grid-template-columns: minmax(55px, 1fr) minmax(82px, auto) minmax(55px, 1fr);
