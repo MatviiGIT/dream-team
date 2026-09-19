@@ -3622,3 +3622,146 @@ table th { font-size: 11px; }
     max-height: calc(100dvh - 20px);
   }
 }
+
+/* 2026-09-19 — Calendar modal isolation + global readable typography scale. */
+.calendar-modal-backdrop {
+  z-index: 130;
+  pointer-events: auto;
+  isolation: isolate;
+}
+.calendar-modal-backdrop .calendar-modal {
+  position: relative;
+  z-index: 1;
+}
+
+.app-shell .eyebrow {
+  font-size: 12px;
+  letter-spacing: .13em;
+}
+.app-shell .muted {
+  font-size: 13px;
+}
+.app-shell .section-title-row h2 {
+  font-size: 24px;
+}
+.app-shell .club-header p {
+  font-size: 14px;
+}
+.app-shell .budget-block span {
+  font-size: 12px;
+}
+.app-shell .match-tag,
+.app-shell .next-match-progress {
+  font-size: 11px;
+}
+.app-shell .team-side strong {
+  font-size: 14px;
+}
+.app-shell .vs {
+  font-size: 12px;
+}
+.app-shell .matchday-readiness {
+  font-size: 13px;
+}
+.app-shell .calendar-row .calendar-round {
+  font-size: 12px;
+}
+.app-shell .calendar-row .calendar-venue {
+  font-size: 11px;
+}
+.app-shell .calendar-row .calendar-opponent {
+  font-size: 14px;
+}
+.app-shell .calendar-footer {
+  font-size: 12px;
+}
+.app-shell .future-tag {
+  font-size: 10px;
+}
+.app-shell .full-calendar-round span {
+  font-size: 11px;
+}
+.app-shell .full-calendar-main strong {
+  font-size: 16px;
+}
+.app-shell .full-calendar-main span {
+  font-size: 13px;
+}
+.app-shell .full-calendar-badge {
+  font-size: 10px;
+}
+.app-shell .manager-profile strong {
+  font-size: 15px;
+}
+.app-shell .manager-profile span {
+  font-size: 12px;
+}
+.app-shell .manager-stats span {
+  font-size: 11px;
+}
+.app-shell table th {
+  font-size: 11px;
+}
+.app-shell table td {
+  font-size: 13px;
+}
+.app-shell .player-main strong {
+  font-size: 14px;
+}
+.app-shell .player-main span {
+  font-size: 12px;
+}
+.app-shell .player-metric span {
+  font-size: 10px;
+}
+.app-shell .player-value {
+  font-size: 12px;
+}
+.app-shell .squad-roster-header > span {
+  font-size: 11px;
+}
+.app-shell .squad-roster-main strong {
+  font-size: 13px;
+}
+.app-shell .squad-roster-main small {
+  font-size: 10px;
+}
+.app-shell .squad-roster-stat small {
+  font-size: 9px;
+}
+.app-shell .squad-roster-fit {
+  font-size: 9px;
+}
+.app-shell .squad-pitch-note {
+  font-size: 12px;
+}
+.app-shell .match-center-header-meta > span {
+  font-size: 11px;
+}
+.app-shell .match-center-team > span {
+  font-size: 11px;
+}
+.app-shell .match-center-scorers span {
+  font-size: 11px;
+}
+.app-shell .match-center-menu-card > div > span {
+  font-size: 12px;
+}
+.app-shell .match-detail-teams span {
+  font-size: 11px;
+}
+.app-shell .match-detail-timeline .match-center-event {
+  font-size: 14px;
+}
+
+@media (max-width: 760px) {
+  .app-shell .section-title-row h2 {
+    font-size: 21px;
+  }
+  .app-shell .eyebrow {
+    font-size: 10px;
+  }
+  .app-shell .match-detail-timeline .match-center-event {
+    font-size: 13px;
+  }
+}
