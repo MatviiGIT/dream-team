@@ -3006,3 +3006,147 @@ tbody tr.your-club td { color: #e0f4ec; }
     width: 100%;
   }
 }
+
+/* 2026-09-19 — Individual player ratings in Match Center. */
+.match-center-player-ratings {
+  grid-column: 1 / -1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.match-center-player-ratings > .section-title-row {
+  flex: 0 0 auto;
+}
+.match-center-player-ratings > .section-title-row .muted {
+  align-self: center;
+  font-size: 9px;
+}
+.match-player-rating-columns {
+  min-height: 0;
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+.match-player-rating-team {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255,255,255,.018);
+}
+.match-player-rating-team.home {
+  border-color: rgba(85,214,180,.16);
+}
+.match-player-rating-team.away {
+  border-color: rgba(117,167,255,.16);
+}
+.match-player-rating-team-header {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 0 3px 7px;
+}
+.match-player-rating-team-header strong {
+  color: var(--text);
+  font-size: 11px;
+}
+.match-player-rating-team-header span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 8px;
+  text-align: right;
+}
+.match-player-rating-list {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: auto;
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  padding-right: 3px;
+}
+.match-player-rating-row {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 22px minmax(0,1fr) 40px 33px 33px 33px;
+  gap: 5px;
+  align-items: center;
+  min-height: 29px;
+  padding: 4px 5px;
+  border: 1px solid rgba(196,216,229,.055);
+  border-radius: 8px;
+  background: rgba(255,255,255,.018);
+}
+.match-player-rating-number {
+  color: #667d8c;
+  font-size: 8px;
+  font-weight: 850;
+  text-align: center;
+}
+.match-player-rating-main {
+  min-width: 0;
+}
+.match-player-rating-main strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #d9e3e9;
+  font-size: 9px;
+}
+.match-player-rating-main span {
+  display: block;
+  margin-top: 1px;
+  color: #708897;
+  font-size: 7px;
+}
+.match-player-rating-score {
+  min-width: 31px;
+  padding: 3px 4px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(85,214,180,.16), rgba(117,167,255,.14));
+  color: #b8f1df;
+  font-size: 10px;
+  text-align: center;
+}
+.match-player-rating-stat {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+}
+.match-player-rating-stat small {
+  color: #6e8492;
+  font-size: 6px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.match-player-rating-stat strong {
+  color: #d0dce4;
+  font-size: 9px;
+  line-height: 1;
+}
+@media (max-width: 760px) {
+  .match-player-rating-columns {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .match-player-rating-team {
+    min-height: 170px;
+  }
+  .match-center-player-ratings {
+    min-height: 330px;
+  }
+  .match-player-rating-row {
+    grid-template-columns: 20px minmax(0,1fr) 38px 30px 30px 30px;
+  }
+}
