@@ -61,7 +61,7 @@ function App() {
   const [careers, setCareers] = useState<StoredCareer[]>(() => loadCareers());
   const [tab, setTab] = useState<Tab>('overview');
   const [managerName, setManagerName] = useState('');
-  const [selectedClub, setSelectedClub] = useState(clubOrder[5]);
+  const [selectedClub, setSelectedClub] = useState<string>(clubOrder[5]);
   const [nameError, setNameError] = useState('');
 
   useEffect(() => {
