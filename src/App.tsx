@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { GameState, MatchResult, Player, Position, Tactics } from './domain/types';
+import type { GameState, MatchPlayerStats, MatchResult, Player, Position, Tactics } from './domain/types';
 import { clubOrder } from './data/initialWorld';
 import { createCareer, getNextFixture, playNextRound } from './game/career';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
@@ -76,10 +76,14 @@ function positionLabel(position: string): string {
 function eventText(game: GameState, event: NonNullable<GameState['lastMatch']>['events'][number]): string {
   const team = game.clubs[event.teamId]?.name ?? ru.common.unknownClub;
   const player = event.playerId ? game.players[event.playerId]?.name : undefined;
+  const assist = event.assistPlayerId ? game.players[event.assistPlayerId]?.name : undefined;
 
   switch (event.type) {
     case 'goal':
-      return player ? `${player} забивает за «${team}»!` : `Гол «${team}»!`;
+      if (!player) return `Гол «${team}»!`;
+      return assist
+        ? `${player} забивает за «${team}» (пас: ${assist}).`
+        : `${player} забивает за «${team}»!`;
     case 'chance':
       return `«${team}» создаёт опасный момент.`;
     case 'half-time':
@@ -748,6 +752,19 @@ function UpcomingCalendar({ game }: { game: GameState }) {
 }
 
 
+function getMatchPlayerStats(
+  game: GameState,
+  match: MatchResult,
+  teamId: string,
+): MatchPlayerStats[] {
+  const club = game.clubs[teamId];
+  const ids = club?.startingXI?.length === 11 ? club.startingXI : club?.playerIds.slice(0, 11) ?? [];
+
+  return ids
+    .map((playerId) => match.playerStats?.[playerId])
+    .filter((stats): stats is MatchPlayerStats => Boolean(stats));
+}
+
 function MatchCenter({
   game,
   match,
@@ -769,10 +786,31 @@ function MatchCenter({
   const goalEvents = match.events.filter((event) => event.type === 'goal');
   const homeGoals = goalEvents.filter((event) => event.teamId === match.homeTeamId);
   const awayGoals = goalEvents.filter((event) => event.teamId === match.awayTeamId);
+  const homePlayerStats = getMatchPlayerStats(game, match, match.homeTeamId);
+  const awayPlayerStats = getMatchPlayerStats(game, match, match.awayTeamId);
 
   const scorerText = (event: MatchResult['events'][number]) => {
     const player = event.playerId ? game.players[event.playerId]?.name : undefined;
     return player ? `${player} ${event.minute}'` : `${event.minute}'`;
+  };
+
+  const ratingRow = (stats: MatchPlayerStats, index: number) => {
+    const player = game.players[stats.playerId];
+    if (!player) return null;
+
+    return (
+      <div className="match-player-rating-row" key={stats.playerId}>
+        <span className="match-player-rating-number">{index + 1}</span>
+        <div className="match-player-rating-main">
+          <strong>{player.name}</strong>
+          <span>{positionLabel(player.position)} · {stats.minutes}'</span>
+        </div>
+        <strong className="match-player-rating-score">{stats.rating.toFixed(1)}</strong>
+        <span className="match-player-rating-stat"><small>{ru.matchCenter.goals}</small><strong>{stats.goals}</strong></span>
+        <span className="match-player-rating-stat"><small>{ru.matchCenter.assists}</small><strong>{stats.assists}</strong></span>
+        <span className="match-player-rating-stat"><small>{ru.matchCenter.shotsShort}</small><strong>{stats.shots}</strong></span>
+      </div>
+    );
   };
 
   return (
@@ -784,7 +822,7 @@ function MatchCenter({
             <h2 id="match-center-title">{ru.matchCenter.title}</h2>
           </div>
           <div className="match-center-header-meta">
-                <span>{ru.app.season} {season}</span>
+            <span>{ru.app.season} {season}</span>
             <span>{ru.matchCenter.round} {round}</span>
             <button className="modal-close" type="button" onClick={onClose} aria-label={ru.common.close}>×</button>
           </div>
@@ -836,7 +874,7 @@ function MatchCenter({
               {match.events.map((event) => (
                 <div className="match-center-event" key={event.id}>
                   <span className="minute">{event.minute}'</span>
-                  <span className={`event-dot ${event.type}`} />
+                  <span className={`event-dot ${event.type}`}></span>
                   <span>{eventText(game, event)}</span>
                 </div>
               ))}
@@ -870,6 +908,41 @@ function MatchCenter({
               <strong>{away?.shortName ?? '—'}</strong>
             </div>
           </section>
+
+          <section className="match-center-panel match-center-player-ratings">
+            <div className="section-title-row">
+              <div>
+                <div className="eyebrow">{ru.matchCenter.playerRatings}</div>
+                <h3>{ru.matchCenter.playerRatingsTitle}</h3>
+              </div>
+              <span className="muted">{ru.matchCenter.playerRatingsHint}</span>
+            </div>
+
+            {match.playerStats ? (
+              <div className="match-player-rating-columns">
+                <div className="match-player-rating-team home">
+                  <div className="match-player-rating-team-header">
+                    <strong>{home?.shortName ?? '—'}</strong>
+                    <span>{ru.matchCenter.rating} · {ru.matchCenter.goals} · {ru.matchCenter.assists} · {ru.matchCenter.shotsShort}</span>
+                  </div>
+                  <div className="match-player-rating-list">
+                    {homePlayerStats.map(ratingRow)}
+                  </div>
+                </div>
+                <div className="match-player-rating-team away">
+                  <div className="match-player-rating-team-header">
+                    <strong>{away?.shortName ?? '—'}</strong>
+                    <span>{ru.matchCenter.rating} · {ru.matchCenter.goals} · {ru.matchCenter.assists} · {ru.matchCenter.shotsShort}</span>
+                  </div>
+                  <div className="match-player-rating-list">
+                    {awayPlayerStats.map(ratingRow)}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="empty-state">{ru.matchCenter.playerRatingsEmpty}</div>
+            )}
+          </section>
         </div>
 
         <button className="primary-button full match-center-action" type="button" onClick={onClose}>
@@ -879,7 +952,6 @@ function MatchCenter({
     </div>
   );
 }
-
 function EventTimeline({ game }: { game: GameState }) {
   if (!game.lastMatch) return null;
 
