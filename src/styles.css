@@ -1632,3 +1632,12 @@ tbody tr.your-club td { color: #e0f4ec; }
   align-items: center;
   justify-content: center;
 }
+
+.app-shell-tactics::before,
+.app-shell-tactics::after {
+  animation-play-state: paused;
+}
+.settings-modal-body {
+  max-height: min(520px, calc(100dvh - 190px));
+  overflow: auto;
+}
