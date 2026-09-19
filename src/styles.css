@@ -2456,3 +2456,30 @@ tbody tr.your-club td { color: #e0f4ec; }
   font-size: 28px;
 }
 
+
+
+/* 2026-09-19 — Squad condition readout. */
+.squad-roster-card {
+  grid-template-columns: 34px minmax(0, 1fr) 42px 42px auto;
+}
+
+.squad-roster-card.reserve {
+  background: rgba(255,255,255,.018);
+}
+
+.squad-fitness strong {
+  font-size: 12px;
+}
+
+.squad-fitness-high strong { color: #7fe2bc; }
+.squad-fitness-medium strong { color: #f2c778; }
+.squad-fitness-low strong { color: #ef8798; }
+
+@media (max-width: 620px) {
+  .squad-roster-card {
+    grid-template-columns: 34px minmax(0, 1fr) 42px;
+  }
+  .squad-fitness {
+    display: none;
+  }
+}
