@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { GameState, Tactics } from './domain/types';
+import type { GameState, MatchResult, Tactics } from './domain/types';
 import { clubOrder } from './data/initialWorld';
 import { createCareer, getNextFixture, playNextRound } from './game/career';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
@@ -101,6 +101,7 @@ function App() {
   const [game, setGame] = useState<GameState | null>(null);
   const [careers, setCareers] = useState<StoredCareer[]>(() => loadCareers());
   const [tab, setTab] = useState<Tab>('overview');
+  const [matchCenter, setMatchCenter] = useState<MatchResult | null>(null);
   const [managerName, setManagerName] = useState('');
   const [selectedClub, setSelectedClub] = useState<string>(clubOrder[5]);
   const [nameError, setNameError] = useState('');
@@ -133,12 +134,14 @@ function App() {
     setCareers(loadCareers());
     setGame(next);
     setTab('overview');
+    setMatchCenter(null);
     setManagerName('');
   };
 
   const openCareer = (career: StoredCareer) => {
     setGame(career.state);
     setTab('overview');
+    setMatchCenter(null);
   };
 
   const removeCareer = (careerId: string) => {
@@ -155,6 +158,7 @@ function App() {
     if (game) saveGame(game);
     setCareers(loadCareers());
     setGame(null);
+    setMatchCenter(null);
     setTab('overview');
   };
 
@@ -231,7 +235,11 @@ function App() {
             position={position}
             row={tableRow}
             nextFixture={nextFixture}
-            onPlay={() => setGame(playNextRound(game))}
+            onPlay={() => {
+              const nextGame = playNextRound(game);
+              setGame(nextGame);
+              if (nextGame.lastMatch) setMatchCenter(nextGame.lastMatch);
+            }}
           />
         )}
         {tab === 'squad' && (
@@ -248,6 +256,9 @@ function App() {
         )}
         {tab === 'table' && <LeagueTable game={game} />}
       </main>
+      {matchCenter && (
+        <MatchCenter game={game} match={matchCenter} onClose={() => setMatchCenter(null)} />
+      )}
     </div>
   );
 }
@@ -723,6 +734,135 @@ function UpcomingCalendar({ game }: { game: GameState }) {
         </div>
       )}
     </>
+  );
+}
+
+
+function MatchCenter({
+  game,
+  match,
+  onClose,
+}: {
+  game: GameState;
+  match: MatchResult;
+  onClose: () => void;
+}) {
+  const home = game.clubs[match.homeTeamId];
+  const away = game.clubs[match.awayTeamId];
+  const userGoals = match.homeTeamId === game.clubId ? match.homeGoals : match.awayGoals;
+  const opponentGoals = match.homeTeamId === game.clubId ? match.awayGoals : match.homeGoals;
+  const outcome = userGoals > opponentGoals ? 'win' : userGoals === opponentGoals ? 'draw' : 'loss';
+  const goalEvents = match.events.filter((event) => event.type === 'goal');
+  const homeGoals = goalEvents.filter((event) => event.teamId === match.homeTeamId);
+  const awayGoals = goalEvents.filter((event) => event.teamId === match.awayTeamId);
+
+  const scorerText = (event: MatchResult['events'][number]) => {
+    const player = event.playerId ? game.players[event.playerId]?.name : undefined;
+    return player ? `${player} ${event.minute}'` : `${event.minute}'`;
+  };
+
+  return (
+    <div className="modal-backdrop match-center-backdrop" role="presentation">
+      <section className="match-center-modal" role="dialog" aria-modal="true" aria-labelledby="match-center-title">
+        <div className="match-center-header">
+          <div>
+            <div className="eyebrow">{ru.matchCenter.eyebrow}</div>
+            <h2 id="match-center-title">{ru.matchCenter.title}</h2>
+          </div>
+          <div className="match-center-header-meta">
+            <span>{ru.app.season} {game.season}</span>
+            <span>{ru.matchCenter.round} {Math.max(1, game.currentRound - 1)}</span>
+            <button className="modal-close" type="button" onClick={onClose} aria-label={ru.common.close}>×</button>
+          </div>
+        </div>
+
+        <div className="match-center-scoreboard">
+          <div className="match-center-team home">
+            <div className="match-center-badge" style={{ background: home?.color ?? '#50616d' }}>
+              {home?.shortName ?? '—'}
+            </div>
+            <strong>{home?.name ?? ru.common.unknownClub}</strong>
+            <span>{ru.matchCenter.home}</span>
+            <div className="match-center-scorers">
+              {homeGoals.length
+                ? homeGoals.map((event) => <span key={event.id}>{scorerText(event)}</span>)
+                : <span>{ru.matchCenter.noGoals}</span>}
+            </div>
+          </div>
+
+          <div className="match-center-score-block">
+            <span className={`match-center-result ${outcome}`}>{ru.matchCenter[outcome]}</span>
+            <strong>{match.homeGoals} — {match.awayGoals}</strong>
+            <span>{ru.matchCenter.finalScore}</span>
+          </div>
+
+          <div className="match-center-team away">
+            <div className="match-center-badge" style={{ background: away?.color ?? '#50616d' }}>
+              {away?.shortName ?? '—'}
+            </div>
+            <strong>{away?.name ?? ru.common.unknownClub}</strong>
+            <span>{ru.matchCenter.away}</span>
+            <div className="match-center-scorers">
+              {awayGoals.length
+                ? awayGoals.map((event) => <span key={event.id}>{scorerText(event)}</span>)
+                : <span>{ru.matchCenter.noGoals}</span>}
+            </div>
+          </div>
+        </div>
+
+        <div className="match-center-body">
+          <section className="match-center-panel">
+            <div className="section-title-row">
+              <div>
+                <div className="eyebrow">{ru.matchCenter.eventsLabel}</div>
+                <h3>{ru.matchCenter.timeline}</h3>
+              </div>
+            </div>
+            <div className="match-center-timeline">
+              {match.events.map((event) => (
+                <div className="match-center-event" key={event.id}>
+                  <span className="minute">{event.minute}'</span>
+                  <span className={`event-dot ${event.type}`} />
+                  <span>{eventText(game, event)}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="match-center-panel match-center-stats">
+            <div className="eyebrow">{ru.matchCenter.stats}</div>
+            <h3>{ru.matchCenter.statsTitle}</h3>
+            <div className="match-stat-list">
+              <div>
+                <span>{ru.matchCenter.xg}</span>
+                <strong>{match.homeXg.toFixed(2)} — {match.awayXg.toFixed(2)}</strong>
+              </div>
+              <div>
+                <span>{ru.matchCenter.possession}</span>
+                <strong>{match.homePossession}% — {match.awayPossession}%</strong>
+              </div>
+              <div>
+                <span>{ru.matchCenter.shots}</span>
+                <strong>{match.homeShots} — {match.awayShots}</strong>
+              </div>
+            </div>
+
+            <div className="match-center-key">
+              <span>{ru.matchCenter.home}</span>
+              <strong>{home?.shortName ?? '—'}</strong>
+            </div>
+            <div className="match-center-key away">
+              <span>{ru.matchCenter.away}</span>
+              <strong>{away?.shortName ?? '—'}</strong>
+            </div>
+          </section>
+        </div>
+
+        <button className="primary-button full match-center-action" type="button" onClick={onClose}>
+          {ru.matchCenter.continueButton}
+        </button>
+      </section>
+    </div>
   );
 }
 
