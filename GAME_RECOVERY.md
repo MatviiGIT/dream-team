@@ -401,3 +401,6 @@ Then:
 - Kept detailed chronology, statistics and player ratings behind separate layered menus so the main Match Center remains readable without feeling empty.
 - Made all three detail entry cards use the same minimum height and stretch behavior so the chronology card no longer looks shorter than its neighbors.
 - The main result view now acts as a clear post-match dashboard, while detailed information remains available one level deeper.
+### 2026-09-19 — Match Center timeline card alignment
+- Renamed the Match Center chronology entry-card class so it no longer collides with the global timeline list styles.
+- This removes the unintended top offset/overflow behavior that made the chronology entry card sit lower than the statistics and player-rating cards.
