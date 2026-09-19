@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { GameState, MatchResult, Tactics } from './domain/types';
+import type { GameState, MatchResult, Player, Position, Tactics } from './domain/types';
 import { clubOrder } from './data/initialWorld';
 import { createCareer, getNextFixture, playNextRound } from './game/career';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
@@ -907,45 +907,67 @@ type SquadSlot = {
 
 const squadFormationSlots: Record<Tactics['formation'], SquadSlot[]> = {
   '4-3-3': [
-    { left: 50, top: 89, role: 'keeper', label: 'GK' },
-    { left: 15, top: 71, role: 'defender', label: 'LB' },
-    { left: 38, top: 71, role: 'defender', label: 'CB' },
-    { left: 62, top: 71, role: 'defender', label: 'CB' },
-    { left: 85, top: 71, role: 'defender', label: 'RB' },
-    { left: 50, top: 53, role: 'midfielder', label: 'DM' },
-    { left: 31, top: 43, role: 'midfielder', label: 'CM' },
-    { left: 69, top: 43, role: 'midfielder', label: 'CM' },
-    { left: 15, top: 21, role: 'attacker', label: 'LW' },
-    { left: 50, top: 15, role: 'attacker', label: 'CF' },
-    { left: 85, top: 21, role: 'attacker', label: 'RW' },
+    { left: 50, top: 89, role: 'keeper', label: 'ВРТ' },
+    { left: 15, top: 71, role: 'defender', label: 'ЛЗ' },
+    { left: 38, top: 71, role: 'defender', label: 'ЦЗ' },
+    { left: 62, top: 71, role: 'defender', label: 'ЦЗ' },
+    { left: 85, top: 71, role: 'defender', label: 'ПЗ' },
+    { left: 50, top: 53, role: 'midfielder', label: 'ОП' },
+    { left: 31, top: 43, role: 'midfielder', label: 'ЦП' },
+    { left: 69, top: 43, role: 'midfielder', label: 'ЦП' },
+    { left: 15, top: 21, role: 'attacker', label: 'ЛФ' },
+    { left: 50, top: 15, role: 'attacker', label: 'ЦН' },
+    { left: 85, top: 21, role: 'attacker', label: 'ПФ' },
   ],
   '4-4-2': [
-    { left: 50, top: 89, role: 'keeper', label: 'GK' },
-    { left: 15, top: 71, role: 'defender', label: 'LB' },
-    { left: 38, top: 71, role: 'defender', label: 'CB' },
-    { left: 62, top: 71, role: 'defender', label: 'CB' },
-    { left: 85, top: 71, role: 'defender', label: 'RB' },
-    { left: 15, top: 48, role: 'midfielder', label: 'LM' },
-    { left: 38, top: 48, role: 'midfielder', label: 'CM' },
-    { left: 62, top: 48, role: 'midfielder', label: 'CM' },
-    { left: 85, top: 48, role: 'midfielder', label: 'RM' },
-    { left: 38, top: 18, role: 'attacker', label: 'ST' },
-    { left: 62, top: 18, role: 'attacker', label: 'ST' },
+    { left: 50, top: 89, role: 'keeper', label: 'ВРТ' },
+    { left: 15, top: 71, role: 'defender', label: 'ЛЗ' },
+    { left: 38, top: 71, role: 'defender', label: 'ЦЗ' },
+    { left: 62, top: 71, role: 'defender', label: 'ЦЗ' },
+    { left: 85, top: 71, role: 'defender', label: 'ПЗ' },
+    { left: 15, top: 48, role: 'midfielder', label: 'ЛП' },
+    { left: 38, top: 48, role: 'midfielder', label: 'ЦП' },
+    { left: 62, top: 48, role: 'midfielder', label: 'ЦП' },
+    { left: 85, top: 48, role: 'midfielder', label: 'ПП' },
+    { left: 38, top: 18, role: 'attacker', label: 'ЦН' },
+    { left: 62, top: 18, role: 'attacker', label: 'ЦН' },
   ],
   '4-2-3-1': [
-    { left: 50, top: 89, role: 'keeper', label: 'GK' },
-    { left: 15, top: 71, role: 'defender', label: 'LB' },
-    { left: 38, top: 71, role: 'defender', label: 'CB' },
-    { left: 62, top: 71, role: 'defender', label: 'CB' },
-    { left: 85, top: 71, role: 'defender', label: 'RB' },
-    { left: 37, top: 53, role: 'midfielder', label: 'DM' },
-    { left: 63, top: 53, role: 'midfielder', label: 'DM' },
-    { left: 17, top: 34, role: 'attacker', label: 'LW' },
-    { left: 50, top: 31, role: 'attacker', label: 'AM' },
-    { left: 83, top: 34, role: 'attacker', label: 'RW' },
-    { left: 50, top: 14, role: 'attacker', label: 'ST' },
+    { left: 50, top: 89, role: 'keeper', label: 'ВРТ' },
+    { left: 15, top: 71, role: 'defender', label: 'ЛЗ' },
+    { left: 38, top: 71, role: 'defender', label: 'ЦЗ' },
+    { left: 62, top: 71, role: 'defender', label: 'ЦЗ' },
+    { left: 85, top: 71, role: 'defender', label: 'ПЗ' },
+    { left: 37, top: 53, role: 'midfielder', label: 'ОП' },
+    { left: 63, top: 53, role: 'midfielder', label: 'ОП' },
+    { left: 17, top: 34, role: 'attacker', label: 'ЛФ' },
+    { left: 50, top: 31, role: 'attacker', label: 'АП' },
+    { left: 83, top: 34, role: 'attacker', label: 'ПФ' },
+    { left: 50, top: 14, role: 'attacker', label: 'ЦН' },
   ],
 };
+
+function expectedPositionForRole(role: SquadPitchRole): Position {
+  switch (role) {
+    case 'keeper': return 'GK';
+    case 'defender': return 'DEF';
+    case 'midfielder': return 'MID';
+    case 'attacker': return 'FWD';
+  }
+}
+
+function replacementFit(player: Player, slot: SquadSlot): 'good' | 'adaptable' | 'poor' {
+  const expected = expectedPositionForRole(slot.role);
+  if (player.position === expected) return 'good';
+
+  const adaptable =
+    (player.position === 'DEF' && expected === 'MID') ||
+    (player.position === 'MID' && expected === 'DEF') ||
+    (player.position === 'MID' && expected === 'FWD') ||
+    (player.position === 'FWD' && expected === 'MID');
+
+  return adaptable ? 'adaptable' : 'poor';
+}
 
 function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameState) => void }) {
   const club = game.clubs[game.clubId];
@@ -961,6 +983,9 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
   }, [game.clubId, club.startingXI, club.playerIds]);
 
   const slots = squadFormationSlots[club.tactic.formation];
+  const substitutes = roster.filter((player) => !lineupIds.includes(player.id));
+  const selectedPlayer = selectedSlot === null ? undefined : game.players[lineupIds[selectedSlot]];
+  const selectedSlotData = selectedSlot === null ? undefined : slots[selectedSlot];
 
   const commitLineup = (nextLineup: string[]) => {
     setLineupIds(nextLineup);
@@ -1002,6 +1027,12 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
     setSelectedSlot(null);
   };
 
+  const fitLabel = (fit: ReturnType<typeof replacementFit>) => {
+    if (fit === 'good') return ru.squad.fitGood;
+    if (fit === 'adaptable') return ru.squad.fitAdaptable;
+    return ru.squad.fitPoor;
+  };
+
   return (
     <section className="card content-card squad-panel">
       <div className="section-title-row">
@@ -1031,11 +1062,18 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
               const player = game.players[lineupIds[index]];
               if (!player) return null;
               const selected = selectedSlot === index;
+              const target = selectedSlot !== null && !selected;
+              const markerClass = [
+                'squad-player-marker',
+                selected ? 'selected' : '',
+                target ? 'swap-target' : '',
+              ].filter(Boolean).join(' ');
+
               return (
                 <button
                   key={slot.label + '-' + index + '-' + player.id}
                   type="button"
-                  className={selected ? 'squad-player-marker selected' : 'squad-player-marker'}
+                  className={markerClass}
                   style={{ left: slot.left + '%', top: slot.top + '%' }}
                   onClick={() => {
                     if (selectedSlot !== null && selectedSlot !== index) {
@@ -1053,31 +1091,54 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
               );
             })}
           </div>
+
           <div className="squad-pitch-note">
-            {selectedSlot === null ? ru.squad.selectPlayer : ru.squad.swapHint}
+            {selectedSlot === null ? (
+              ru.squad.selectPlayer
+            ) : (
+              <>
+                <strong>{ru.squad.selectedLabel}:</strong> {selectedPlayer?.name} → {selectedSlotData?.label}
+                <span>{ru.squad.substitutionHint}</span>
+              </>
+            )}
           </div>
         </div>
 
-        <aside className="squad-roster">
+        <aside className={selectedSlot === null ? 'squad-roster' : 'squad-roster has-selection'}>
           <div className="squad-roster-header">
             <div>
-              <div className="eyebrow">{ru.squad.roster}</div>
-              <strong>{ru.squad.players} · {roster.length}</strong>
+              <div className="eyebrow">{ru.squad.benchTitle}</div>
+              <strong>{ru.squad.substitutes} · {substitutes.length}</strong>
             </div>
-            <span>{ru.squad.startingXI}</span>
+            <span>{ru.squad.benchHint}</span>
           </div>
 
+          {selectedPlayer && selectedSlotData && (
+            <div className="squad-selection-card">
+              <div>
+                <span className="eyebrow">{ru.squad.replacing}</span>
+                <strong>{selectedPlayer.name}</strong>
+                <small>{positionLabel(selectedPlayer.position)} · {ru.squad.toPosition} {selectedSlotData.label}</small>
+              </div>
+              <button type="button" className="secondary-button" onClick={() => setSelectedSlot(null)}>
+                {ru.squad.cancelSelection}
+              </button>
+            </div>
+          )}
+
           <div className="squad-roster-list">
-            {roster.map((player) => {
-              const slotIndex = lineupIds.indexOf(player.id);
-              const onPitch = slotIndex >= 0;
-              const selected = selectedSlot !== null && slotIndex === selectedSlot;
+            {substitutes.map((player) => {
+              const fit = selectedSlotData ? replacementFit(player, selectedSlotData) : null;
+              const fitClass = fit ? fit : 'idle';
+              const fitText = fit ? fitLabel(fit) : ru.squad.selectFirst;
+
               return (
                 <button
                   key={player.id}
                   type="button"
-                  className={selected ? 'squad-roster-card selected' : onPitch ? 'squad-roster-card' : 'squad-roster-card reserve'}
+                  className={'squad-roster-card reserve ' + fitClass}
                   onClick={() => handleRosterClick(player.id)}
+                  disabled={selectedSlot === null}
                 >
                   <span className="squad-roster-avatar">{player.name.slice(0, 1).toUpperCase()}</span>
                   <span className="squad-roster-main">
@@ -1088,13 +1149,11 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
                     <small>OVR</small>
                     <strong>{player.overall}</strong>
                   </span>
-                  <span className={`squad-roster-stat squad-fitness squad-fitness-${player.fitness >= 75 ? 'high' : player.fitness >= 50 ? 'medium' : 'low'}`}>
+                  <span className={'squad-roster-stat squad-fitness squad-fitness-' + (player.fitness >= 75 ? 'high' : player.fitness >= 50 ? 'medium' : 'low')}>
                     <small>{ru.squad.fitness}</small>
                     <strong>{player.fitness}</strong>
                   </span>
-                  <span className={onPitch ? 'squad-roster-status active' : 'squad-roster-status'}>
-                    {onPitch ? ru.squad.starting : ru.squad.reserve}
-                  </span>
+                  <span className={'squad-roster-fit ' + fitClass}>{fitText}</span>
                 </button>
               );
             })}
