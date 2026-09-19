@@ -269,17 +269,18 @@ function StartScreen(props: {
               <div className="eyebrow">{ru.career.yourCareers}</div>
               <h2>{props.careers.length ? ru.career.chooseCareer : ru.career.noCareers}</h2>
             </div>
-            <span className="muted">{props.careers.length}</span>
+            <span className="saves-hint">{props.careers.length ? ru.career.saveHint : ''}</span>
           </div>
 
           {props.careers.length ? (
             <div className="career-grid">
-              {props.careers.map((career) => (
+              {props.careers.map((career, index) => (
                 <article className="career-card card" key={career.id}>
                   <div className="career-card-top">
                     <div className="career-avatar">{career.managerName.slice(0, 1).toUpperCase()}</div>
                     <button className="delete-button" aria-label={ru.career.delete} onClick={() => props.onDelete(career.id)}>×</button>
                   </div>
+                  <div className="career-index">{ru.career.saveNumber} №{index + 1}</div>
 
                   <div className="career-main">
                     <strong>{career.managerName}</strong>
@@ -388,7 +389,60 @@ function Overview({
         <div className="section-title-row"><div><div className="eyebrow">{ru.overview.events}</div><h2>{ru.overview.timeline}</h2></div></div>
         {lastMatch ? <EventTimeline game={game} /> : <div className="empty-state">{ru.overview.timelineEmpty}</div>}
       </section>
+
+      <UpcomingCalendar game={game} />
+
+      <section className="card manager-card">
+        <div className="section-title-row">
+          <div><div className="eyebrow">{ru.overview.managerPanel}</div><h2>{ru.overview.managerTitle}</h2></div>
+          <span className="future-tag">{ru.overview.futureTag}</span>
+        </div>
+        <div className="manager-profile">
+          <div className="manager-avatar">{game.managerName.slice(0, 1).toUpperCase()}</div>
+          <div>
+            <strong>{game.managerName}</strong>
+            <span>{ru.overview.managerRole}</span>
+          </div>
+        </div>
+        <div className="manager-stats">
+          <div><span>{ru.overview.managerReputation}</span><strong>—</strong></div>
+          <div><span>{ru.overview.seasons}</span><strong>{Math.max(0, game.season - 1)}</strong></div>
+        </div>
+        <div className="future-note">{ru.overview.futureNote}</div>
+      </section>
     </div>
+  );
+}
+
+function UpcomingCalendar({ game }: { game: GameState }) {
+  const fixtures = game.fixtures
+    .filter((fixture) => !fixture.played && (fixture.homeTeamId === game.clubId || fixture.awayTeamId === game.clubId))
+    .sort((a, b) => a.round - b.round)
+    .slice(0, 4);
+
+  return (
+    <section className="card calendar-card">
+      <div className="section-title-row">
+        <div><div className="eyebrow">{ru.overview.calendarPanel}</div><h2>{ru.overview.calendarTitle}</h2></div>
+        <span className="future-tag">{ru.overview.futureTag}</span>
+      </div>
+      <div className="calendar-list">
+        {fixtures.map((fixture) => {
+          const home = fixture.homeTeamId === game.clubId;
+          const opponentId = home ? fixture.awayTeamId : fixture.homeTeamId;
+          const opponent = game.clubs[opponentId];
+          return (
+            <div className="calendar-row" key={fixture.id}>
+              <span className="calendar-round">{fixture.round}</span>
+              <span className="calendar-venue">{home ? ru.overview.homeShort : ru.overview.awayShort}</span>
+              <span className="calendar-opponent">{opponent?.name ?? ru.common.unknownClub}</span>
+              <span className="calendar-badge" style={{ background: opponent?.color ?? '#50616d' }}>{opponent?.shortName ?? '—'}</span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="future-note">{ru.overview.calendarNote}</div>
+    </section>
   );
 }
 
