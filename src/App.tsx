@@ -923,7 +923,7 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
                 <button
                   key={player.id}
                   type="button"
-                  className={selected ? 'squad-roster-card selected' : 'squad-roster-card'}
+                  className={selected ? 'squad-roster-card selected' : onPitch ? 'squad-roster-card' : 'squad-roster-card reserve'}
                   onClick={() => handleRosterClick(player.id)}
                 >
                   <span className="squad-roster-avatar">{player.name.slice(0, 1).toUpperCase()}</span>
