@@ -94,6 +94,7 @@ export function createInitialWorld(): { clubs: Record<string, Club>; players: Re
       budget,
       wages: playerIds.reduce((sum, playerId) => sum + players[playerId].wage, 0),
       playerIds,
+      startingXI: [...playerIds],
       tactic: { ...defaultTactics },
       color,
     };
