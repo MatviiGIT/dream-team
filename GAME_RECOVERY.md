@@ -316,3 +316,7 @@ Then:
 ### 2026-09-19 — Manager card height lock
 - Locked the «Профиль тренера» card to fixed internal rows so its placeholder note can no longer change the dashboard card height.
 - Reserved a constant 38px area for the future-note text and clipped overflow inside that area, preventing the note from appearing/disappearing as a cause of layout shifts.
+
+### 2026-09-19 — Removed unstable manager placeholder
+- Removed the temporary «Здесь появятся расширенная репутация...» note from the manager-profile card because the second dashboard row is intentionally compact and the note could be clipped or alter perceived card height.
+- Kept the manager card as a compact fixed-layout dashboard panel; the future trainer progression content will return when it has real data and interaction.
