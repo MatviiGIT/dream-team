@@ -679,6 +679,55 @@ function UpcomingCalendar({ game }: { game: GameState }) {
 
   const preview = fixtures.slice(0, 2);
 
+  const calendarModal = calendarOpen ? (
+    <div
+      className="modal-backdrop calendar-modal-backdrop"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) setCalendarOpen(false);
+      }}
+    >
+      <section className="modal-window calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-title">
+        <div className="modal-header">
+          <div>
+            <div className="eyebrow">{ru.overview.calendarPanel}</div>
+            <h2 id="calendar-title">{ru.overview.calendarTitle}</h2>
+          </div>
+          <button className="modal-close" onClick={() => setCalendarOpen(false)} aria-label={ru.common.close}>×</button>
+        </div>
+
+        <div className="full-calendar-list">
+          {fixtures.map((fixture) => {
+            const isHome = fixture.homeTeamId === game.clubId;
+            const opponentId = isHome ? fixture.awayTeamId : fixture.homeTeamId;
+            const opponent = game.clubs[opponentId];
+
+            return (
+              <div className="full-calendar-row" key={fixture.id}>
+                <div className="full-calendar-round">
+                  <span>{ru.overview.matchday}</span>
+                  <strong>{fixture.round}</strong>
+                </div>
+                <div className="full-calendar-main">
+                  <strong>{opponent?.name ?? ru.common.unknownClub}</strong>
+                  <span>{isHome ? ru.overview.home : ru.overview.away}</span>
+                </div>
+                <div className="full-calendar-badge" style={{ background: opponent?.color ?? '#50616d' }}>
+                  {opponent?.shortName ?? '—'}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {!fixtures.length && <div className="modal-empty">{ru.overview.calendarEmpty}</div>}
+        <button className="secondary-button full modal-action" onClick={() => setCalendarOpen(false)}>
+          {ru.common.close}
+        </button>
+      </section>
+    </div>
+  ) : null;
+
   return (
     <>
       <button className="card calendar-card calendar-preview" onClick={() => setCalendarOpen(true)}>
@@ -715,57 +764,10 @@ function UpcomingCalendar({ game }: { game: GameState }) {
         </div>
       </button>
 
-      {calendarOpen && typeof document !== 'undefined' && createPortal(
-{calendarOpen && (
-        <div className="modal-backdrop calendar-modal-backdrop" role="presentation" onMouseDown={(event) => {
-          if (event.target === event.currentTarget) setCalendarOpen(false);
-        }}>
-          <section className="modal-window calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-title">
-            <div className="modal-header">
-              <div>
-                <div className="eyebrow">{ru.overview.calendarPanel}</div>
-                <h2 id="calendar-title">{ru.overview.calendarTitle}</h2>
-              </div>
-              <button className="modal-close" onClick={() => setCalendarOpen(false)} aria-label={ru.common.close}>×</button>
-            </div>
-
-            <div className="full-calendar-list">
-              {fixtures.map((fixture) => {
-                const isHome = fixture.homeTeamId === game.clubId;
-                const opponentId = isHome ? fixture.awayTeamId : fixture.homeTeamId;
-                const opponent = game.clubs[opponentId];
-
-                return (
-                  <div className="full-calendar-row" key={fixture.id}>
-                    <div className="full-calendar-round">
-                      <span>{ru.overview.matchday}</span>
-                      <strong>{fixture.round}</strong>
-                    </div>
-                    <div className="full-calendar-main">
-                      <strong>{opponent?.name ?? ru.common.unknownClub}</strong>
-                      <span>{isHome ? ru.overview.home : ru.overview.away}</span>
-                    </div>
-                    <div className="full-calendar-badge" style={{ background: opponent?.color ?? '#50616d' }}>
-                      {opponent?.shortName ?? '—'}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {!fixtures.length && <div className="modal-empty">{ru.overview.calendarEmpty}</div>}
-            <button className="secondary-button full modal-action" onClick={() => setCalendarOpen(false)}>
-              {ru.common.close}
-            </button>
-          </section>
-        </div>
-      )
-        , document.body
-      )}}
+      {calendarModal && createPortal(calendarModal, document.body)}
     </>
   );
 }
-
 
 function getMatchPlayerStats(
   game: GameState,
