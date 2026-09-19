@@ -113,11 +113,19 @@ function buildStartingXI(
 function needsStartingXIRepair(
   startingXI: string[] | undefined,
   players: Record<string, Player>,
-  formation: Tactics['formation'],
+  _formation: Tactics['formation'],
 ): boolean {
   if (!startingXI || startingXI.length !== 11) return true;
-  const required = defaultStartingXI[formation];
-  return required.some((position, index) => players[startingXI[index]]?.position !== position);
+
+  const uniqueIds = new Set(startingXI);
+  if (uniqueIds.size !== 11) return true;
+
+  const goalkeeperCount = startingXI.reduce(
+    (count, playerId) => count + (players[playerId]?.position === 'GK' ? 1 : 0),
+    0,
+  );
+
+  return goalkeeperCount !== 1;
 }
 
 export function createInitialWorld(): { clubs: Record<string, Club>; players: Record<string, Player>; table: TableRow[] } {
