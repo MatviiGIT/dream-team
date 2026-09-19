@@ -41,7 +41,7 @@ The manager does **not** directly control players during matches. Matches are si
 - Local persistence with save-version migration.
 - Russian localization layer.
 - Responsive dashboard.
-- Application viewport is fixed to the browser window; the main content scrolls independently.
+- Application viewport is fixed to the browser window; the main game screen does not globally scroll. Long lists/tables/events scroll inside their own panels.
 - CI workflow for typecheck/build.
 
 ## Architecture
@@ -111,15 +111,15 @@ These are intentional design requirements for future changes:
   - gold for financial/warning information
   - red/pink for destructive/error information
   - club colors for club identity
-- Cards should have clear hierarchy and moderate contrast.
+- Cards should have clear hierarchy and noticeably different semantic color treatments so sections are visually distinct.
 - Use larger readable text; avoid excessive 8–10px labels.
 - Important numbers and actions should be visually prominent.
 
 ### Layout
 - Browser viewport itself should remain fixed.
 - The app should occupy the full viewport height.
-- On the main game screen, the top bar stays in place while the content area scrolls independently.
-- On the start screen, the page itself may scroll only when the content is taller than the viewport.
+- On the main game screen, the top bar and application viewport stay fixed. Long content is contained inside its own panel; the page itself must not move vertically.
+- On the start screen, the whole page stays fixed. The saved-career area has its own internal scroll when many saves exist.
 - Menus, cards and grids must have balanced proportions rather than many tiny dense elements.
 - Responsive behavior must remain usable on desktop and narrow mobile widths.
 
@@ -178,8 +178,14 @@ Then:
 
 ## Change log
 
-### 2026-09-19 — UI overhaul + privacy cleanup
+### 2026-09-19 — Fixed-screen dashboard + stronger visual hierarchy
 - Removed the personal-name placeholder from the career creation form.
+- Removed the standalone total-save counter from the main menu and placed an explicit save number on each career card.
+- Added a compact upcoming-fixtures calendar panel and a trainer-profile placeholder panel for future progression/reputation systems.
+- Locked the main menu and game viewport so the page itself cannot be scrolled vertically.
+- Added internal scrolling to long panels such as events, squad lists, tables and saved-career lists.
+- Reworked the dashboard into a compact three-row layout that fills available space instead of leaving large empty areas.
+- Strengthened section color separation with distinct mint, blue, gold, purple and green panel treatments.
 - Redesigned the visual palette to use neutral dark surfaces plus mint, blue, gold and red semantic accents.
 - Increased small-text sizes and improved hierarchy.
 - Rebalanced dashboard cards, menus, forms, player rows and table spacing.
