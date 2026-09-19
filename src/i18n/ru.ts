@@ -26,7 +26,7 @@ export const ru = {
     newCareer: 'НОВАЯ КАРЬЕРА',
     beginTitle: 'Начни свой путь',
     managerName: 'Имя тренера',
-    namePlaceholder: 'Например, Матвей',
+    namePlaceholder: 'Введите имя тренера',
     requiredName: 'Введите имя тренера, чтобы начать карьеру.',
     club: 'Стартовый клуб',
     startButton: 'Начать карьеру',
