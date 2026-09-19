@@ -372,3 +372,4 @@ Then:
 - Persisted simulated assists into each player's season assist total and allowed assists to contribute modestly to player form.
 - Added a two-column individual ratings panel to Match Center with both teams' starting XI and compact rating/goals/assists/shots readouts.
 - Kept the existing fitness drain unchanged; stamina/tactical workload remains a later system.
+- Ensured generated player shot totals always include their scored goals so per-player match stats cannot report a goal with zero shots.
