@@ -253,6 +253,7 @@ function StartScreen(props: {
   theme: Theme;
   onThemeChange: (theme: Theme) => void;
 }) {
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const START_WIDTH = 1440;
   const START_HEIGHT = 900;
   const readViewport = () => ({
