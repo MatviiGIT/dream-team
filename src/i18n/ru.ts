@@ -6,6 +6,8 @@ export const ru = {
     round: 'Тур',
     careers: 'Карьеры',
     sections: 'Разделы игры',
+    fullscreen: 'Полный экран',
+    exitFullscreen: 'Выйти из полного экрана',
   },
   tabs: {
     overview: 'Обзор',
