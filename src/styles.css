@@ -2776,7 +2776,7 @@ tbody tr.your-club td { color: #e0f4ec; }
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  padding: 18px;
+  padding: 14px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: rgba(255,255,255,.022);
@@ -3034,7 +3034,7 @@ tbody tr.your-club td { color: #e0f4ec; }
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 9px;
+  padding: 10px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: rgba(255,255,255,.018);
@@ -3050,11 +3050,11 @@ tbody tr.your-club td { color: #e0f4ec; }
   grid-template-columns: auto minmax(0,1fr);
   gap: 8px;
   align-items: center;
-  padding: 0 3px 7px;
+  padding: 0 3px 8px;
 }
 .match-player-rating-team-header strong {
   color: var(--text);
-  font-size: 11px;
+  font-size: 12px;
 }
 .match-player-rating-team-header span {
   min-width: 0;
@@ -3062,7 +3062,7 @@ tbody tr.your-club td { color: #e0f4ec; }
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 9px;
   text-align: right;
 }
 .match-player-rating-list {
@@ -3071,24 +3071,24 @@ tbody tr.your-club td { color: #e0f4ec; }
   overflow: auto;
   display: grid;
   align-content: start;
-  gap: 3px;
-  padding-right: 3px;
+  gap: 4px;
+  padding-right: 4px;
 }
 .match-player-rating-row {
   min-width: 0;
   display: grid;
-  grid-template-columns: 22px minmax(0,1fr) 40px 33px 33px 33px;
-  gap: 5px;
+  grid-template-columns: 25px minmax(0,1fr) 48px 38px 38px 38px;
+  gap: 6px;
   align-items: center;
-  min-height: 29px;
-  padding: 4px 5px;
-  border: 1px solid rgba(196,216,229,.055);
-  border-radius: 8px;
+  min-height: 42px;
+  padding: 6px 7px;
+  border: 1px solid rgba(196,216,229,.07);
+  border-radius: 9px;
   background: rgba(255,255,255,.018);
 }
 .match-player-rating-number {
-  color: #667d8c;
-  font-size: 8px;
+  color: #718797;
+  font-size: 10px;
   font-weight: 850;
   text-align: center;
 }
@@ -3100,39 +3100,41 @@ tbody tr.your-club td { color: #e0f4ec; }
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #d9e3e9;
-  font-size: 9px;
+  color: #e0e8ed;
+  font-size: 12px;
+  line-height: 1.2;
 }
 .match-player-rating-main span {
   display: block;
-  margin-top: 1px;
-  color: #708897;
-  font-size: 7px;
+  margin-top: 2px;
+  color: #8096a4;
+  font-size: 9px;
+  line-height: 1.15;
 }
 .match-player-rating-score {
-  min-width: 31px;
-  padding: 3px 4px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, rgba(85,214,180,.16), rgba(117,167,255,.14));
+  min-width: 38px;
+  padding: 5px 5px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, rgba(85,214,180,.18), rgba(117,167,255,.15));
   color: #b8f1df;
-  font-size: 10px;
+  font-size: 13px;
   text-align: center;
 }
 .match-player-rating-stat {
   display: grid;
   justify-items: center;
-  gap: 1px;
+  gap: 2px;
 }
 .match-player-rating-stat small {
-  color: #6e8492;
-  font-size: 6px;
+  color: #78909f;
+  font-size: 8px;
   line-height: 1;
   text-transform: uppercase;
   letter-spacing: .04em;
 }
 .match-player-rating-stat strong {
-  color: #d0dce4;
-  font-size: 9px;
+  color: #d6e0e6;
+  font-size: 11px;
   line-height: 1;
 }
 @media (max-width: 760px) {
@@ -3141,24 +3143,25 @@ tbody tr.your-club td { color: #e0f4ec; }
     gap: 8px;
   }
   .match-player-rating-team {
-    min-height: 170px;
+    min-height: 0;
   }
   .match-center-player-ratings {
-    min-height: 330px;
+    min-height: 0;
   }
   .match-player-rating-row {
-    grid-template-columns: 20px minmax(0,1fr) 38px 30px 30px 30px;
+    grid-template-columns: 22px minmax(0,1fr) 44px 34px 34px 34px;
+    min-height: 42px;
   }
 }
 
-/* Keep the Match Center timeline compact and give player ratings the main space. */
+/* Keep every Match Center section inside the modal; ratings get the largest row. */
 .match-center-body {
-  grid-template-rows: minmax(160px, .55fr) minmax(320px, 1.45fr);
+  grid-template-rows: minmax(115px, .42fr) minmax(0, 1.58fr);
 }
 @media (max-width: 760px) {
   .match-center-body {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(165px, .7fr) minmax(170px, .65fr) minmax(330px, 1.25fr);
+    grid-template-rows: minmax(150px, .65fr) minmax(150px, .55fr) minmax(0, 1.4fr);
   }
 }
 /* Match Center player list scrollbar — same treatment as the other scrollable cells. */
