@@ -4667,3 +4667,57 @@ table th { font-size: 11px; }
     display: none;
   }
 }
+
+/* 2026-09-19 — Final score, sidebar fullscreen and compact layout cleanup. */
+.latest-result {
+  display: grid;
+  grid-template-columns: minmax(70px, 1fr) minmax(88px, auto) minmax(70px, 1fr);
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 16px;
+}
+.latest-result > div {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.latest-result > div:first-child {
+  text-align: right;
+}
+.latest-result > div:last-child {
+  text-align: left;
+}
+.latest-result strong {
+  min-width: 88px;
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .04em;
+}
+.sidebar-action-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: auto;
+}
+.sidebar-action-row .sidebar-career-button {
+  flex: 1 1 auto;
+  margin-top: 0;
+}
+.sidebar-action-row .fullscreen-button-compact {
+  flex: 0 0 44px;
+}
+.in-game-corner-actions {
+  display: none !important;
+}
+@media (max-width: 620px) {
+  .latest-result {
+    grid-template-columns: minmax(55px, 1fr) minmax(82px, auto) minmax(55px, 1fr);
+    gap: 8px;
+  }
+  .latest-result strong {
+    min-width: 82px;
+    font-size: 25px;
+  }
+}
