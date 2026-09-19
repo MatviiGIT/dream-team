@@ -436,3 +436,10 @@ Then:
 - Added a derived last-five form display using existing played fixture results, with W/D/L badges and no save-model changes.
 - Increased table readability with clearer rank badges, club-color markers, larger cells, explicit goal difference, and stronger highlighting for the user's club.
 - Kept the underlying table sorting and 14-round league logic unchanged.
+
+### 2026-09-19 — Remove permanent in-game topbar
+- Removed the large fixed in-game top navigation bar that displayed Dream Team branding, season, round, manager name, fullscreen and career navigation.
+- The in-game shell now uses the full viewport height instead of reserving an 80px desktop / 70px tablet / 64px mobile top row.
+- Fullscreen remains available as a compact floating control in the bottom-right corner with an accessible label/title.
+- Career navigation was moved into the existing club header alongside the transfer budget, preserving the ability to return to the career menu without restoring the wasted vertical space.
+- Start-screen fullscreen behavior remains unchanged.
