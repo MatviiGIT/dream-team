@@ -232,9 +232,12 @@ function App() {
               ))}
             </nav>
 
-            <button className="ghost-button sidebar-career-button" onClick={leaveToCareerMenu}>
-              {ru.app.careers}
-            </button>
+            <div className="sidebar-action-row">
+              <button className="ghost-button sidebar-career-button" onClick={leaveToCareerMenu}>
+                {ru.app.careers}
+              </button>
+              <FullscreenButton compact />
+            </div>
           </aside>
 
           <section className={`workspace-main content-${tab}`}>
@@ -310,19 +313,11 @@ function App() {
               <div className="side-panel-note">{ru.sidePanel.financeHint}</div>
             </section>
 
-            <section className="side-panel season-preview">
-              <div className="eyebrow">{ru.sidePanel.seasonEyebrow}</div>
-              <strong>{ru.app.season} {game.season}</strong>
-              <span>{ru.app.round} {game.currentRound} / 14</span>
-            </section>
           </aside>
           )}
         </div>
       </main>
 
-      <div className="in-game-corner-actions">
-        <FullscreenButton compact />
-      </div>
       {matchCenter && (
         <MatchCenter
           game={game}
@@ -687,7 +682,7 @@ function Overview({
         {lastMatch ? (
           <div className="latest-result">
             <div>{game.clubs[lastMatch.homeTeamId]?.shortName}</div>
-            <strong>{lastMatch.homeGoals} — {lastMatch.awayGoals}</strong>
+            <strong>{lastMatch.homeGoals} : {lastMatch.awayGoals}</strong>
             <div>{game.clubs[lastMatch.awayTeamId]?.shortName}</div>
           </div>
         ) : <div className="empty-state">{ru.overview.firstMatch}</div>}
@@ -1038,7 +1033,7 @@ function MatchCenter({
 
           <div className="match-center-score-block">
             <span className={`match-center-result ${outcome}`}>{ru.matchCenter[outcome]}</span>
-            <strong>{match.homeGoals} — {match.awayGoals}</strong>
+            <strong>{match.homeGoals} : {match.awayGoals}</strong>
             <span>{ru.matchCenter.finalScore}</span>
           </div>
 
