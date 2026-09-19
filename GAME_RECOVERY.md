@@ -302,3 +302,9 @@ Then:
 - Made reserve players functional in the team sheet: selecting a starter and then clicking a reserve player replaces that position.
 - Updated the lineup instruction so the UI explicitly explains the reserve replacement action.
 - Kept the selected starting XI as the only group used by the match simulator, so reserve players do not affect matches until they are promoted into the XI.
+
+### 2026-09-19 — Player condition and form loop
+- Added post-match player progression: starters receive an appearance, goal totals from the match events, reduced fitness and a form change based on result/scoring.
+- Reserve players recover fitness after each round and their form gradually returns toward neutral.
+- Added a compact «Тонус» value to the squad roster so rotation decisions are visible before a match.
+- The match simulator still uses only the selected starting XI, so fatigue and form now make lineup rotation materially useful.
