@@ -1,4 +1,4 @@
-import type { Club, MatchEvent, MatchResult, Player } from '../domain/types';
+import type { Club, Formation, MatchEvent, MatchResult, Player, Position } from '../domain/types';
 import { SeededRng } from './rng';
 
 interface TeamProfile {
@@ -10,8 +10,45 @@ interface TeamProfile {
   mentality: number;
 }
 
+interface TacticalProfile {
+  attack: number;
+  defense: number;
+  possession: number;
+}
+
 function average(values: number[]): number {
   return values.length === 0 ? 0 : values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function formationRoles(formation: Formation): Position[] {
+  switch (formation) {
+    case '4-4-2':
+      return ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'MID', 'FWD', 'FWD'];
+    case '4-2-3-1':
+      return ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'MID', 'MID', 'FWD'];
+    case '4-3-3':
+    default:
+      return ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'FWD'];
+  }
+}
+
+function positionFit(actual: Position, expected: Position): number {
+  if (actual === expected) return 1;
+  if (actual === 'GK' || expected === 'GK') return 0.2;
+  if ((actual === 'DEF' && expected === 'MID') || (actual === 'MID' && expected === 'DEF')) return 0.62;
+  if ((actual === 'MID' && expected === 'FWD') || (actual === 'FWD' && expected === 'MID')) return 0.68;
+  if ((actual === 'DEF' && expected === 'FWD') || (actual === 'FWD' && expected === 'DEF')) return 0.45;
+  return 0.55;
+}
+
+function lineupFit(club: Club, players: Record<string, Player>): number {
+  const selectedIds = club.startingXI?.length === 11 ? club.startingXI : club.playerIds.slice(0, 11);
+  const roles = formationRoles(club.tactic.formation);
+  const fits = selectedIds.map((id, index) => {
+    const player = players[id];
+    return player ? positionFit(player.position, roles[index] ?? 'MID') : 0.35;
+  });
+  return average(fits);
 }
 
 function modifierForMentality(mentality: Club['tactic']['mentality']): number {
@@ -24,32 +61,75 @@ function modifierForMentality(mentality: Club['tactic']['mentality']): number {
   }
 }
 
-function tacticProfile(club: Club): { attack: number; defense: number; stamina: number; possession: number } {
-  const { mentality, pressing, tempo, defensiveLine, width } = club.tactic;
+function tacticProfile(
+  club: Club,
+  squad: Player[],
+  fit: number,
+): TacticalProfile {
+  const { mentality, pressing, tempo, defensiveLine, width, formation } = club.tactic;
+  const outfield = squad.filter((player) => player.position !== 'GK');
+  const pace = average(outfield.map((player) => player.attributes.pace));
+  const passing = average(outfield.map((player) => player.attributes.passing));
+  const defending = average(outfield.map((player) => player.attributes.defending));
+
+  const formationEffect = {
+    '4-3-3': { attack: 0.025, defense: -0.005, possession: 0.012 },
+    '4-4-2': { attack: 0.01, defense: 0.015, possession: 0.006 },
+    '4-2-3-1': { attack: 0.015, defense: 0.02, possession: 0.018 },
+  }[formation];
+
+  const mentalityAttack = modifierForMentality(mentality);
+  const pressingAttack = pressing === 'High'
+    ? 0.04 + Math.max(0, pace - 72) / 2500
+    : pressing === 'Low' ? -0.012 : 0;
+  const tempoAttack = tempo === 'Fast'
+    ? 0.045 + Math.max(0, pace - 70) / 2600
+    : tempo === 'Slow' ? -0.018 : 0;
+  const widthAttack = width === 'Wide' ? 0.022 : width === 'Narrow' ? -0.008 : 0;
+
+  const defensiveLineEffect = defensiveLine === 'High'
+    ? 0.01 + Math.max(0, pace - 72) / 3000 - Math.max(0, 70 - pace) / 3200
+    : defensiveLine === 'Low' ? 0.035 : 0;
+
+  const pressingDefense = pressing === 'High'
+    ? 0.012 + Math.max(0, defending - 72) / 3200
+    : pressing === 'Low' ? 0.012 : 0;
+
+  const slowPossession = tempo === 'Slow' ? 0.032 + Math.max(0, passing - 72) / 3000 : 0;
+  const fastPossession = tempo === 'Fast' ? -0.012 : 0;
+  const widthPossession = width === 'Wide' ? 0.016 : width === 'Narrow' ? -0.006 : 0;
+  const mentalityPossession = mentality === 'Very Defensive' ? -0.008 : mentality === 'Very Attacking' ? -0.006 : 0;
+
+  const exactShapeBonus = 0.9 + fit * 0.1;
+
   return {
-    attack:
-      modifierForMentality(mentality) +
-      (pressing === 'High' ? 0.05 : pressing === 'Low' ? -0.02 : 0) +
-      (tempo === 'Fast' ? 0.06 : tempo === 'Slow' ? -0.03 : 0) +
-      (width === 'Wide' ? 0.025 : width === 'Narrow' ? -0.01 : 0),
-    defense:
-      -modifierForMentality(mentality) * 0.65 +
-      (defensiveLine === 'High' ? -0.025 : defensiveLine === 'Low' ? 0.03 : 0),
-    stamina: pressing === 'High' ? -0.08 : pressing === 'Low' ? 0.04 : 0,
-    possession: (tempo === 'Slow' ? 0.035 : tempo === 'Fast' ? -0.015 : 0) +
-      (width === 'Wide' ? 0.015 : width === 'Narrow' ? -0.01 : 0),
+    attack: (mentalityAttack + pressingAttack + tempoAttack + widthAttack + formationEffect.attack) * exactShapeBonus,
+    defense: (
+      -mentalityAttack * 0.6 +
+      defensiveLineEffect +
+      pressingDefense +
+      formationEffect.defense
+    ) * (0.92 + fit * 0.08),
+    possession: (
+      slowPossession +
+      fastPossession +
+      widthPossession +
+      mentalityPossession +
+      formationEffect.possession
+    ) * (0.9 + fit * 0.1),
   };
 }
 
 function buildProfile(club: Club, players: Record<string, Player>): TeamProfile {
   const selectedIds = club.startingXI?.length ? club.startingXI : club.playerIds.slice(0, 11);
-  const squad = selectedIds.map((id) => players[id]).filter(Boolean);
+  const squad = selectedIds.map((id) => players[id]).filter((player): player is Player => Boolean(player));
   const outfield = squad.filter((player) => player.position !== 'GK');
   const forwards = squad.filter((player) => player.position === 'FWD');
   const defenders = squad.filter((player) => player.position === 'DEF');
   const midfielders = squad.filter((player) => player.position === 'MID');
   const goalkeeper = squad.find((player) => player.position === 'GK');
-  const tactic = tacticProfile(club);
+  const fit = lineupFit(club, players);
+  const tactic = tacticProfile(club, squad, fit);
 
   const fitnessFactor = average(squad.map((player) => player.fitness)) / 100;
   const formFactor = average(squad.map((player) => 1 + player.form / 1000));
@@ -65,14 +145,16 @@ function buildProfile(club: Club, players: Record<string, Player>): TeamProfile 
     (goalkeeper?.attributes.goalkeeper ?? 50) * 0.3
   ) * fitnessFactor * formFactor;
 
-  const midfield = average(midfielders.map((player) => (player.attributes.passing + player.attributes.technique + player.attributes.stamina) / 3));
+  const midfield = average(
+    midfielders.map((player) => (player.attributes.passing + player.attributes.technique + player.attributes.stamina) / 3),
+  ) * (0.94 + fit * 0.06);
 
   return {
     attack: attack * (1 + tactic.attack),
     defense: defense * (1 + tactic.defense),
     midfield,
     goalkeeper: goalkeeper?.attributes.goalkeeper ?? 50,
-    stamina: average(squad.map((player) => player.attributes.stamina)) + tactic.stamina * 100,
+    stamina: average(squad.map((player) => player.attributes.stamina)),
     mentality: club.reputation,
   };
 }
@@ -113,7 +195,9 @@ export function simulateMatch(
 
   const totalMidfield = home.midfield + away.midfield || 1;
   const homePossession = clamp(
-    50 + ((home.midfield - away.midfield) / totalMidfield) * 24 + tacticProfile(homeTeam).possession * 100 + 4,
+    50 + ((home.midfield - away.midfield) / totalMidfield) * 24 +
+      tacticProfile(homeTeam, homeTeam.startingXI?.map((id) => players[id]).filter((player): player is Player => Boolean(player)) ?? [], lineupFit(homeTeam, players)).possession * 100 +
+      4,
     34,
     66,
   );
