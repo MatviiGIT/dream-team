@@ -396,3 +396,8 @@ Then:
 - The chronology detail uses a dedicated custom scrollbar consistent with the rest of the application.
 - Player ratings remain sorted best-to-worst and open in their own larger scrollable detail view.
 - This layered approach keeps the final score readable while allowing detailed panels to use larger typography and more vertical space.
+### 2026-09-19 — Match Center summary balance
+- Added a compact match-summary strip to the main Match Center with xG, possession, shots and the player of the match.
+- Kept detailed chronology, statistics and player ratings behind separate layered menus so the main Match Center remains readable without feeling empty.
+- Made all three detail entry cards use the same minimum height and stretch behavior so the chronology card no longer looks shorter than its neighbors.
+- The main result view now acts as a clear post-match dashboard, while detailed information remains available one level deeper.
