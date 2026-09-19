@@ -578,12 +578,19 @@ function Overview({
 
   return (
     <div className="dashboard-grid">
-      <section className="card next-match">
-        <div className="section-title-row">
-          <div><div className="eyebrow">{ru.overview.nextMatch}</div><h2>{nextFixture ? `${ru.overview.matchday} ${game.currentRound}` : ru.overview.seasonComplete}</h2></div>
-          {nextFixture && <span className="match-tag">{home ? ru.overview.home : ru.overview.away}</span>}
+            <section className="card next-match">
+        <div className="section-title-row next-match-header">
+          <div>
+            <div className="eyebrow">{ru.overview.nextMatch}</div>
+            <h2>{nextFixture ? `${ru.overview.matchday} ${game.currentRound}` : ru.overview.seasonComplete}</h2>
+          </div>
+          {nextFixture && (
+            <div className="next-match-meta">
+              <span className="next-match-progress">{ru.overview.matchdayProgress(game.currentRound)}</span>
+              <span className="match-tag">{home ? ru.overview.home : ru.overview.away}</span>
+            </div>
+          )}
         </div>
-
         {opponent ? (
           <>
             <div className="fixture-line">
@@ -597,7 +604,11 @@ function Overview({
                 <strong>{opponent.name}</strong>
               </div>
             </div>
-            <button className="primary-button full" onClick={onPlay}>{ru.overview.simulate}</button>
+            <div className="matchday-readiness">
+              <span className="matchday-readiness-dot" aria-hidden="true" />
+              <span>{ru.overview.readyForMatch}</span>
+            </div>
+            <button className="primary-button full" onClick={onPlay}>{ru.overview.playMatch}</button>
           </>
         ) : <div className="empty-state">{ru.overview.noMatch}</div>}
       </section>
