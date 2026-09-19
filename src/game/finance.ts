@@ -70,9 +70,8 @@ export function applyRoundFinance(clubs: Record<string, Club>, results: MatchRes
       const club = nextClubs[teamId];
       if (!club) continue;
 
-      ensureClubFinance(club);
       const delta = calculateRoundFinance(club, result);
-      const finance = club.finance!;
+      const finance = club.finance ?? createClubFinance();
 
       nextClubs[teamId] = {
         ...club,
@@ -97,11 +96,11 @@ export function applyRoundFinance(clubs: Record<string, Club>, results: MatchRes
 export function resetSeasonFinance(clubs: Record<string, Club>): Record<string, Club> {
   return Object.fromEntries(
     Object.entries(clubs).map(([teamId, club]) => {
-      ensureClubFinance(club);
+      const finance = club.finance ?? createClubFinance();
       return [teamId, {
         ...club,
         finance: {
-          ...club.finance!,
+          ...finance,
           seasonIncome: 0,
           seasonExpenses: 0,
         },
