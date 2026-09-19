@@ -57,6 +57,7 @@ export interface Club {
   budget: number;
   wages: number;
   playerIds: string[];
+  startingXI?: string[];
   tactic: Tactics;
   color: string;
 }
