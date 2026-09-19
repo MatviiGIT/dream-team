@@ -2880,3 +2880,15 @@ tbody tr.your-club td { color: #e0f4ec; }
     max-height: 230px;
   }
 }
+
+
+/* 2026-09-19 — Match Center mobile overflow guard. */
+@media (max-width: 760px) {
+  .match-center-body {
+    overflow: auto;
+    padding-right: 3px;
+  }
+  .match-center-panel {
+    min-height: 0;
+  }
+}
