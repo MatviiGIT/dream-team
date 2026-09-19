@@ -2577,7 +2577,7 @@ tbody tr.your-club td { color: #e0f4ec; }
 /* 2026-09-19 — Absolute viewport geometry for the in-game shell. */
 .app-shell {
   display: grid;
-  grid-template-rows: 80px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   height: 100dvh;
   min-height: 0;
 }
@@ -2624,13 +2624,7 @@ tbody tr.your-club td { color: #e0f4ec; }
 
 @media (max-width: 760px) {
   .app-shell {
-    grid-template-rows: 70px minmax(0, 1fr);
-  }
-
-  .app-shell > .topbar {
-    height: 70px;
-    min-height: 70px;
-    max-height: 70px;
+    grid-template-rows: minmax(0, 1fr);
   }
 
   .app-shell > .content {
@@ -2640,13 +2634,7 @@ tbody tr.your-club td { color: #e0f4ec; }
 
 @media (max-width: 620px) {
   .app-shell {
-    grid-template-rows: 64px minmax(0, 1fr);
-  }
-
-  .app-shell > .topbar {
-    height: 64px;
-    min-height: 64px;
-    max-height: 64px;
+    grid-template-rows: minmax(0, 1fr);
   }
 
   .app-shell > .content {
@@ -3987,5 +3975,77 @@ table th { font-size: 11px; }
   }
   .table-overview-card.form {
     align-items: flex-start;
+  }
+}
+
+/* 2026-09-19 — In-game shell uses the full viewport; secondary controls are compact. */
+.app-shell > .content {
+  min-height: 0;
+}
+.club-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+.career-menu-button {
+  min-height: 52px;
+  white-space: nowrap;
+}
+.in-game-corner-actions {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 60;
+  display: flex;
+  pointer-events: none;
+}
+.in-game-corner-actions .fullscreen-button {
+  pointer-events: auto;
+}
+.fullscreen-button-compact {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: rgba(10, 21, 30, .82);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 28px rgba(0,0,0,.26);
+}
+.fullscreen-button-compact span {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1;
+}
+.fullscreen-button-compact:hover {
+  transform: translateY(-2px);
+  background: rgba(15, 31, 42, .94);
+}
+
+@media (max-width: 760px) {
+  .club-header-actions {
+    gap: 8px;
+  }
+  .career-menu-button {
+    min-height: 48px;
+    padding: 9px 11px;
+    font-size: 12px;
+  }
+  .in-game-corner-actions {
+    right: 12px;
+    bottom: 12px;
+  }
+}
+@media (max-width: 620px) {
+  .club-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .budget-block {
+    min-width: 0;
+    flex: 1 1 auto;
   }
 }
