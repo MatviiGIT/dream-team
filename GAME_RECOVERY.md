@@ -430,3 +430,9 @@ Then:
 - Moved the full «Ближайшие туры» modal out of the dashboard DOM subtree and render it through a React portal directly under `document.body`.
 - This makes the calendar overlay independent of dashboard containment/overflow and guarantees that it covers the complete game viewport like Match Center.
 - The fixed-height internal fixture list and bottom «Закрыть» action remain in place, so scrolling the calendar cannot expose or activate underlying tabs.
+
+### 2026-09-19 — League table visual refinement
+- Reworked the league table into a two-level management screen: a compact season snapshot for the manager's club plus the full league standings.
+- Added a derived last-five form display using existing played fixture results, with W/D/L badges and no save-model changes.
+- Increased table readability with clearer rank badges, club-color markers, larger cells, explicit goal difference, and stronger highlighting for the user's club.
+- Kept the underlying table sorting and 14-round league logic unchanged.
