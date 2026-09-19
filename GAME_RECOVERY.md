@@ -272,3 +272,12 @@ Then:
 - Added clearer pitch markings and increased the formation cards so the 11-player structure can be read at a glance.
 
 - Added full directional pitch markings to the formation cards: own goal/penalty area at the bottom with the goalkeeper, opponent goal/penalty area at the top, plus the halfway line and center circle.
+
+
+### 2026-09-19 — Team sheet / lineup management
+- Moved formation visualization out of the Tactics screen and into the Squad screen as a full team-sheet pitch.
+- Added persistent optional starting-XI data to clubs so lineup changes survive save/load while older saves remain compatible.
+- Added interactive player swapping: select a player on the pitch, then another player on the pitch or roster to swap their slots.
+- The automatic match simulator now builds team profiles and scorer candidates from the selected starting XI.
+- Tactics now uses compact formation selector buttons without miniature formation diagrams.
+- Added a roster panel beside the pitch so the Squad screen is the main place for lineup management.
