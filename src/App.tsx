@@ -5,8 +5,9 @@ import { clubOrder } from './data/initialWorld';
 import { createCareer, getNextFixture, playNextRound } from './game/career';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
 import { ru } from './i18n/ru';
+import { TransferMarket } from './components/TransferMarket';
 
-const tabs = ['overview', 'squad', 'tactics', 'table', 'finances'] as const;
+const tabs = ['overview', 'squad', 'transfers', 'tactics', 'table', 'finances'] as const;
 type Tab = (typeof tabs)[number];
 type Theme = 'aurora' | 'midnight' | 'light';
 
@@ -271,6 +272,12 @@ function App() {
             )}
             {tab === 'squad' && (
               <Squad
+                game={game}
+                onChange={(nextGame) => setGame(nextGame)}
+              />
+            )}
+            {tab === 'transfers' && (
+              <TransferMarket
                 game={game}
                 onChange={(nextGame) => setGame(nextGame)}
               />
@@ -1722,12 +1729,16 @@ function FinanceScreen({ game }: { game: GameState }) {
   const finance: ClubFinance = club.finance ?? {
     seasonIncome: 0,
     seasonExpenses: 0,
+    seasonTransferIncome: 0,
+    seasonTransferExpenses: 0,
     lastIncome: 0,
     lastExpenses: 0,
     lastNet: 0,
     lastMatchdayIncome: 0,
     lastBroadcastIncome: 0,
     lastResultBonus: 0,
+    lastTransferIncome: 0,
+    lastTransferExpense: 0,
   };
   const net = finance.lastNet;
   const hasActivity = finance.lastIncome > 0 || finance.lastExpenses > 0;
@@ -1766,6 +1777,23 @@ function FinanceScreen({ game }: { game: GameState }) {
           <span>{ru.financesPage.net}</span>
           <strong className={net > 0 ? 'positive' : net < 0 ? 'negative' : ''}>
             {net > 0 ? '+' : ''}{formatMoney(net)}
+          </strong>
+        </div>
+      </div>
+
+      <div className="finance-transfer-strip">
+        <div>
+          <span>{ru.financesPage.transferExpenses}</span>
+          <strong>-{formatMoney(finance.seasonTransferExpenses)}</strong>
+        </div>
+        <div>
+          <span>{ru.financesPage.transferIncome}</span>
+          <strong>+{formatMoney(finance.seasonTransferIncome)}</strong>
+        </div>
+        <div>
+          <span>{ru.financesPage.transferNet}</span>
+          <strong className={finance.seasonTransferIncome - finance.seasonTransferExpenses >= 0 ? 'positive' : 'negative'}>
+            {(finance.seasonTransferIncome - finance.seasonTransferExpenses) > 0 ? '+' : ''}{formatMoney(finance.seasonTransferIncome - finance.seasonTransferExpenses)}
           </strong>
         </div>
       </div>
