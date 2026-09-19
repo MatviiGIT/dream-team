@@ -1,4 +1,4 @@
-import type { Club, Fixture, GameState, MatchResult, TableRow } from '../domain/types';
+import type { Club, Fixture, GameState, MatchResult, Player, TableRow } from '../domain/types';
 import { clubOrder, createInitialWorld } from '../data/initialWorld';
 import { simulateMatch } from '../simulation/matchSimulator';
 import { createCareerId } from '../storage/gameStorage';
@@ -66,6 +66,62 @@ function sortTable(table: TableRow[]): TableRow[] {
   });
 }
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function updatePlayerAfterMatch(
+  player: Player,
+  club: Club,
+  result: MatchResult,
+): Player {
+  const startingXI = club.startingXI?.length ? club.startingXI : club.playerIds.slice(0, 11);
+  const played = startingXI.includes(player.id);
+
+  if (!played) {
+    return {
+      ...player,
+      fitness: clamp(player.fitness + 5, 0, 100),
+      form: clamp(player.form * 0.8, -20, 20),
+    };
+  }
+
+  const clubGoals = result.homeTeamId === club.id ? result.homeGoals : result.awayGoals;
+  const opponentGoals = result.homeTeamId === club.id ? result.awayGoals : result.homeGoals;
+  const goals = result.events.filter((event) => event.type === 'goal' && event.playerId === player.id).length;
+  const resultForm = clubGoals > opponentGoals ? 4 : clubGoals === opponentGoals ? 1 : -3;
+  const scorerForm = goals > 0 ? Math.min(5, goals * 2) : 0;
+
+  return {
+    ...player,
+    appearances: player.appearances + 1,
+    goals: player.goals + goals,
+    fitness: clamp(player.fitness - 8, 0, 100),
+    form: clamp(player.form * 0.72 + resultForm + scorerForm, -20, 20),
+  };
+}
+
+function applyPlayerMatchEffects(
+  players: Record<string, Player>,
+  clubs: Record<string, Club>,
+  results: MatchResult[],
+): Record<string, Player> {
+  const nextPlayers = { ...players };
+
+  for (const result of results) {
+    const participatingClubs = [clubs[result.homeTeamId], clubs[result.awayTeamId]];
+    for (const club of participatingClubs) {
+      if (!club) continue;
+      for (const playerId of club.playerIds) {
+        const player = nextPlayers[playerId];
+        if (player) nextPlayers[playerId] = updatePlayerAfterMatch(player, club, result);
+      }
+    }
+  }
+
+  return nextPlayers;
+}
+
 function applyResult(table: TableRow[], result: MatchResult): TableRow[] {
   return sortTable(table.map((row) => {
     if (row.teamId !== result.homeTeamId && row.teamId !== result.awayTeamId) return row;
@@ -118,6 +174,7 @@ export function playNextRound(state: GameState): GameState {
 
   let table = state.table;
   let playerMatch: MatchResult | undefined;
+  const roundResults: MatchResult[] = [];
 
   const fixtures = state.fixtures.map((fixture) => {
     if (fixture.round !== state.currentRound || fixture.played) return fixture;
@@ -127,6 +184,7 @@ export function playNextRound(state: GameState): GameState {
     const seed = state.season * 100_000 + state.currentRound * 1_000 + roundFixtures.indexOf(fixture) + 17;
     const result = simulateMatch(home, away, state.players, seed);
     table = applyResult(table, result);
+    roundResults.push(result);
 
     if (fixture.homeTeamId === state.clubId || fixture.awayTeamId === state.clubId) {
       playerMatch = result;
@@ -135,6 +193,7 @@ export function playNextRound(state: GameState): GameState {
     return { ...fixture, played: true, result };
   });
 
+  const nextPlayers = applyPlayerMatchEffects(state.players, state.clubs, roundResults);
   const nextRound = state.currentRound + 1;
   const isSeasonComplete = nextRound > TOTAL_SEASON_ROUNDS;
   const freshFixtures = isSeasonComplete ? generateFixtures(clubOrder) : fixtures;
@@ -143,6 +202,7 @@ export function playNextRound(state: GameState): GameState {
     ...state,
     fixtures: freshFixtures,
     table: isSeasonComplete ? emptyTable(clubOrder) : table,
+    players: nextPlayers,
     currentRound: isSeasonComplete ? 1 : nextRound,
     season: isSeasonComplete ? state.season + 1 : state.season,
     lastMatch: playerMatch ?? state.lastMatch,
