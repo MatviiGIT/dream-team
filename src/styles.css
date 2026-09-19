@@ -2628,13 +2628,13 @@ tbody tr.your-club td { color: #e0f4ec; }
 }
 
 .match-center-modal {
-  width: min(1040px, 100%);
-  height: min(760px, calc(100dvh - 40px));
+  width: min(1220px, calc(100vw - 40px));
+  height: min(850px, calc(100dvh - 28px));
   min-height: 0;
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
-  gap: 18px;
-  padding: 22px;
+  grid-template-rows: auto minmax(125px, auto) minmax(0, 1fr) auto;
+  gap: 14px;
+  padding: 20px;
   overflow: hidden;
   border: 1px solid rgba(85,214,180,.24);
   border-radius: 22px;
@@ -2675,10 +2675,10 @@ tbody tr.your-club td { color: #e0f4ec; }
 
 .match-center-scoreboard {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(180px, 220px) minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 250px) minmax(0, 1fr);
+  gap: 16px;
   align-items: center;
-  padding: 20px 16px;
+  padding: 11px 16px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: linear-gradient(135deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
@@ -2702,8 +2702,8 @@ tbody tr.your-club td { color: #e0f4ec; }
   letter-spacing: .1em;
 }
 .match-center-badge {
-  width: 68px;
-  height: 68px;
+  width: 58px;
+  height: 58px;
   display: grid;
   place-items: center;
   border-radius: 18px;
@@ -2735,7 +2735,7 @@ tbody tr.your-club td { color: #e0f4ec; }
   text-align: center;
 }
 .match-center-score-block > strong {
-  font-size: clamp(42px, 6vw, 64px);
+  font-size: clamp(38px, 5.2vw, 58px);
   line-height: .95;
   letter-spacing: -.06em;
 }
@@ -2769,14 +2769,14 @@ tbody tr.your-club td { color: #e0f4ec; }
 .match-center-body {
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr);
+  grid-template-columns: minmax(0, 1.45fr) minmax(330px, .75fr);
   gap: 14px;
 }
 .match-center-panel {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  padding: 14px;
+  padding: 15px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: rgba(255,255,255,.022);
@@ -3154,14 +3154,14 @@ tbody tr.your-club td { color: #e0f4ec; }
   }
 }
 
-/* Keep every Match Center section inside the modal; ratings get the largest row. */
+/* Keep the upper match details readable while the ratings section remains scrollable. */
 .match-center-body {
-  grid-template-rows: minmax(115px, .42fr) minmax(0, 1.58fr);
+  grid-template-rows: minmax(260px, .88fr) minmax(0, 1.12fr);
 }
 @media (max-width: 760px) {
   .match-center-body {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(150px, .65fr) minmax(150px, .55fr) minmax(0, 1.4fr);
+    grid-template-rows: minmax(210px, .78fr) minmax(180px, .62fr) minmax(0, 1.25fr);
   }
 }
 /* Match Center player list scrollbar — same treatment as the other scrollable cells. */
