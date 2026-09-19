@@ -452,3 +452,12 @@ Then:
 - Added a small season/round context panel to the right rail.
 - Preserved fullscreen as a floating control and kept career-menu access in the left sidebar.
 - Responsive behavior: at medium widths the right rail is hidden to protect the main screen; on small screens navigation becomes horizontal and the main area remains usable.
+
+### 2026-09-19 — Initial working finance system
+- Added optional per-club finance state with season income/expenses and last-round breakdown fields.
+- Added a dedicated src/game/finance.ts engine for deterministic round finance.
+- Each league round now applies stadium/matchday income, media income, result bonus and one-round wage expense to every participating club; the net changes the club's existing transfer budget.
+- Existing saves are migrated by creating zeroed finance state when missing; save version remains compatible.
+- Added a dedicated Финансы screen to the left navigation with current budget, wage cost, season income/expenses and the latest round ledger.
+- The right utility rail shows a compact finance preview using the same live budget and wage data.
+- Finance is intentionally limited to cashflow for now; transfers, contracts and richer accounting are future systems.
