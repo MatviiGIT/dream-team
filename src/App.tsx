@@ -835,9 +835,18 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
   };
 
   const handleRosterClick = (playerId: string) => {
+    if (selectedSlot === null) return;
+
     const rosterIndex = lineupIds.indexOf(playerId);
-    if (selectedSlot === null || rosterIndex < 0) return;
-    swapSlots(selectedSlot, rosterIndex);
+    if (rosterIndex >= 0) {
+      swapSlots(selectedSlot, rosterIndex);
+      return;
+    }
+
+    const next = [...lineupIds];
+    next[selectedSlot] = playerId;
+    commitLineup(next);
+    setSelectedSlot(null);
   };
 
   return (
