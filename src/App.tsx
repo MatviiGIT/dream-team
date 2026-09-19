@@ -780,25 +780,28 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
   const [openField, setOpenField] = useState<TacticSettingKey | null>(null);
 
   const formations: Tactics['formation'][] = ['4-3-3', '4-4-2', '4-2-3-1'];
-  const formationPositions: Record<Tactics['formation'], Array<[number, number]>> = {
+  type FormationDotRole = 'keeper' | 'defender' | 'midfielder' | 'attacker';
+  type FormationDot = [number, number, FormationDotRole];
+
+  const formationPositions: Record<Tactics['formation'], FormationDot[]> = {
     '4-3-3': [
-      [50, 90],
-      [16, 72], [38, 72], [62, 72], [84, 72],
-      [28, 49], [50, 46], [72, 49],
-      [18, 20], [50, 14], [82, 20],
+      [50, 92, 'keeper'],
+      [14, 75, 'defender'], [38, 75, 'defender'], [62, 75, 'defender'], [86, 75, 'defender'],
+      [50, 56, 'midfielder'], [31, 45, 'midfielder'], [69, 45, 'midfielder'],
+      [14, 20, 'attacker'], [50, 14, 'attacker'], [86, 20, 'attacker'],
     ],
     '4-4-2': [
-      [50, 90],
-      [16, 72], [38, 72], [62, 72], [84, 72],
-      [16, 48], [38, 48], [62, 48], [84, 48],
-      [34, 17], [66, 17],
+      [50, 92, 'keeper'],
+      [14, 75, 'defender'], [38, 75, 'defender'], [62, 75, 'defender'], [86, 75, 'defender'],
+      [14, 49, 'midfielder'], [38, 49, 'midfielder'], [62, 49, 'midfielder'], [86, 49, 'midfielder'],
+      [38, 17, 'attacker'], [62, 17, 'attacker'],
     ],
     '4-2-3-1': [
-      [50, 90],
-      [16, 72], [38, 72], [62, 72], [84, 72],
-      [34, 53], [66, 53],
-      [18, 34], [50, 31], [82, 34],
-      [50, 13],
+      [50, 92, 'keeper'],
+      [14, 75, 'defender'], [38, 75, 'defender'], [62, 75, 'defender'], [86, 75, 'defender'],
+      [37, 55, 'midfielder'], [63, 55, 'midfielder'],
+      [17, 34, 'attacker'], [50, 31, 'attacker'], [83, 34, 'attacker'],
+      [50, 14, 'attacker'],
     ],
   };
   const fields: Array<{
@@ -885,8 +888,12 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
               onClick={() => onChange({ ...tactic, formation })}
             >
               <div className="formation-mini" aria-label={formation}>
-                {formationPositions[formation].map(([left, top], index) => (
-                  <span key={index} style={{ left: `${left}%`, top: `${top}%` }} />
+                {formationPositions[formation].map(([left, top, role], index) => (
+                  <span
+                    key={index}
+                    className={`formation-dot formation-dot-${role}`}
+                    style={{ left: `${left}%`, top: `${top}%` }}
+                  />
                 ))}
               </div>
               <strong>{formation}</strong>
