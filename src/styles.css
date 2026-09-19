@@ -176,27 +176,46 @@ button, input, select {
 }
 
 .tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
-  margin: 16px 0;
+  margin: 14px 0;
   padding: 6px;
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
+  flex: 0 0 auto;
   border: 1px solid var(--line);
-  border-radius: 13px;
-  background: #0b171f;
-  overflow-x: auto;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #0a171e, #101a28, #171522, #1c1810);
+  overflow: hidden;
 }
 .tab {
-  flex: 0 0 auto;
+  min-width: 0;
+  width: 100%;
   background: transparent;
   border: 0;
   color: var(--muted);
-  padding: 10px 16px;
-  border-radius: 9px;
-  font-size: 13px;
-  font-weight: 800;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 850;
   white-space: nowrap;
+}
+.tab:nth-child(1).active {
+  background: linear-gradient(135deg, rgba(85,214,180,.24), rgba(85,214,180,.08));
+  box-shadow: inset 0 0 0 1px rgba(85,214,180,.26);
+}
+.tab:nth-child(2).active {
+  background: linear-gradient(135deg, rgba(117,167,255,.24), rgba(117,167,255,.08));
+  box-shadow: inset 0 0 0 1px rgba(117,167,255,.26);
+}
+.tab:nth-child(3).active {
+  background: linear-gradient(135deg, rgba(163,139,255,.24), rgba(163,139,255,.08));
+  box-shadow: inset 0 0 0 1px rgba(163,139,255,.26);
+}
+.tab:nth-child(4).active {
+  background: linear-gradient(135deg, rgba(242,190,103,.24), rgba(242,190,103,.08));
+  box-shadow: inset 0 0 0 1px rgba(242,190,103,.26);
 }
 .tab:hover {
   background: rgba(255, 255, 255, .045);
@@ -213,7 +232,7 @@ button, input, select {
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-template-rows: minmax(240px, 1.1fr) minmax(190px, .85fr);
+  grid-template-rows: minmax(290px, 1fr) minmax(220px, .78fr);
   gap: 14px;
 }
 .dashboard-grid > .card {
@@ -230,14 +249,51 @@ button, input, select {
 .last-match-card { grid-column: span 1; border-color: rgba(242, 190, 103, .26); background: linear-gradient(145deg, rgba(52, 40, 27, .94), rgba(27, 28, 31, .98)); }
 .events-card { grid-column: span 1; border-color: rgba(163, 139, 255, .28); background: linear-gradient(145deg, rgba(35, 30, 54, .96), rgba(18, 25, 39, .98)); }
 .calendar-card { grid-column: span 2; border-color: rgba(117, 167, 255, .26); background: linear-gradient(145deg, rgba(22, 37, 56, .98), rgba(13, 28, 39, .98)); }
+.content > .content-card {
+  flex: 1 1 auto;
+  min-height: 0;
+}
 .content-card {
   height: 100%;
   min-height: 0;
-  padding: 24px;
+  padding: 28px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
+.content-squad .content-card {
+  border-color: rgba(117,167,255,.34);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(117,167,255,.12), transparent 34%),
+    linear-gradient(145deg, rgba(20,38,59,.98), rgba(11,24,35,.99));
+}
+.content-squad .player-row:hover { background: rgba(117,167,255,.055); }
+.content-tactics .content-card {
+  border-color: rgba(163,139,255,.34);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(163,139,255,.12), transparent 34%),
+    linear-gradient(145deg, rgba(36,30,57,.98), rgba(18,23,36,.99));
+}
+.content-tactics .tactic-field select {
+  background: linear-gradient(135deg, rgba(58,43,87,.6), rgba(12,20,31,.95));
+  border-color: rgba(163,139,255,.22);
+}
+.content-tactics .tactic-explainer {
+  background: linear-gradient(90deg, rgba(163,139,255,.12), rgba(117,167,255,.07));
+  border-color: rgba(163,139,255,.19);
+}
+.content-table .content-card {
+  border-color: rgba(242,190,103,.34);
+  background:
+    radial-gradient(circle at 95% 0%, rgba(242,190,103,.12), transparent 34%),
+    linear-gradient(145deg, rgba(52,40,27,.97), rgba(24,24,29,.99));
+}
+.content-table tbody tr.your-club {
+  background: linear-gradient(90deg, rgba(242,190,103,.15), rgba(85,214,180,.04));
+}
+.content-table th { color: #d2ab68; }
+.content-table td { color: #d1d7dc; }
+
 .content-card > .player-list,
 .content-card > .table-wrap {
   flex: 1 1 auto;
@@ -437,13 +493,19 @@ button, input, select {
 .empty-state { color: var(--muted); font-size: 12px; padding: 30px 0 7px; text-align: center; }
 .muted { color: var(--muted); font-size: 12px; }
 
-.player-list { margin-top: 17px; display: grid; }
+.player-list {
+  margin-top: 22px;
+  display: grid;
+  align-content: start;
+  min-height: 0;
+}
 .player-row {
   display: grid;
-  grid-template-columns: 40px minmax(190px, 1fr) repeat(3, 64px) 96px;
-  gap: 12px;
+  grid-template-columns: 44px minmax(190px, 1fr) repeat(3, 70px) 104px;
+  gap: 14px;
   align-items: center;
-  padding: 14px 0;
+  padding: 17px 8px;
+  border-radius: 10px;
   border-bottom: 1px solid var(--line);
 }
 .player-row:last-child { border-bottom: 0; }
@@ -467,13 +529,14 @@ button, input, select {
 .tactic-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 23px;
+  gap: 18px;
+  margin-top: 26px;
+  flex: 0 0 auto;
 }
 .tactic-field {
   display: grid;
-  gap: 8px;
-  font-size: 12px;
+  gap: 9px;
+  font-size: 13px;
   color: var(--text-soft);
   font-weight: 700;
 }
@@ -492,7 +555,7 @@ button, input, select {
   box-shadow: 0 0 0 3px rgba(85, 214, 180, .08);
 }
 .tactic-explainer {
-  margin-top: 21px;
+  margin-top: 25px;
   padding: 15px;
   border-radius: 12px;
   background: linear-gradient(90deg, rgba(117, 167, 255, .08), rgba(163, 139, 255, .06));
@@ -503,10 +566,18 @@ button, input, select {
 .tactic-explainer strong { font-size: 12px; }
 .tactic-explainer span { color: var(--muted); font-size: 12px; line-height: 1.55; }
 
-.table-wrap { margin-top: 19px; overflow-x: auto; }
+.table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 22px;
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(242,190,103,.1);
+  background: rgba(7,16,24,.2);
+}
 table { width: 100%; border-collapse: collapse; min-width: 650px; }
 th, td {
-  padding: 13px 10px;
+  padding: 15px 12px;
   border-bottom: 1px solid var(--line);
   text-align: right;
   font-size: 12px;
