@@ -3217,7 +3217,7 @@ tbody tr.your-club td { color: #e0f4ec; }
   transform: translateY(-2px);
   box-shadow: 0 14px 32px rgba(0,0,0,.18);
 }
-.match-center-menu-card.timeline { border-color: rgba(163,139,255,.25); }
+.match-center-menu-card.events-menu { border-color: rgba(163,139,255,.25); }
 .match-center-menu-card.stats { border-color: rgba(117,167,255,.25); }
 .match-center-menu-card.ratings { border-color: rgba(85,214,180,.25); }
 .match-center-menu-icon {
@@ -3231,7 +3231,7 @@ tbody tr.your-club td { color: #e0f4ec; }
   background: rgba(255,255,255,.055);
   color: #d5e0e6;
 }
-.match-center-menu-card.timeline .match-center-menu-icon {
+.match-center-menu-card.events-menu .match-center-menu-icon {
   color: #c2b5ff;
   background: rgba(163,139,255,.11);
 }
