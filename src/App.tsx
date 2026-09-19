@@ -935,6 +935,10 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
                     <small>OVR</small>
                     <strong>{player.overall}</strong>
                   </span>
+                  <span className={`squad-roster-stat squad-fitness squad-fitness-${player.fitness >= 75 ? 'high' : player.fitness >= 50 ? 'medium' : 'low'}`}>
+                    <small>{ru.squad.fitness}</small>
+                    <strong>{player.fitness}</strong>
+                  </span>
                   <span className={onPitch ? 'squad-roster-status active' : 'squad-roster-status'}>
                     {onPitch ? ru.squad.starting : ru.squad.reserve}
                   </span>
