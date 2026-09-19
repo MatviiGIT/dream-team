@@ -201,63 +201,118 @@ function App() {
 
   return (
     <div className={`app-shell app-shell-${tab}`}>
+      <main className="content">
+        <div className="workspace-grid">
+          <aside className="workspace-sidebar left-sidebar">
+            <section className="workspace-brand">
+              <div className="brand-mark">DT</div>
+              <div>
+                <strong>Dream Team</strong>
+                <span>{ru.app.subtitle}</span>
+              </div>
+            </section>
 
-      <main className={`content content-${tab}`}>
-        <section className="club-header card">
-          <div>
-            <div className="eyebrow">{ru.overview.yourClub}</div>
-            <h1>{club.name}</h1>
-            <p>{club.city} · {ru.overview.reputation} {club.reputation}</p>
-          </div>
-          <div className="club-header-actions">
-            <div className="budget-block">
-              <span>{ru.overview.transferBudget}</span>
-              <strong>{formatMoney(club.budget)}</strong>
-            </div>
-            <button className="ghost-button career-menu-button" onClick={leaveToCareerMenu}>
+            <section className="workspace-club-mini">
+              <div className="eyebrow">{ru.overview.yourClub}</div>
+              <strong>{club.name}</strong>
+              <span>{club.city}</span>
+            </section>
+
+            <nav className="workspace-nav" aria-label={ru.app.sections}>
+              <div className="workspace-nav-label">РАЗДЕЛЫ</div>
+              {tabs.map((item) => (
+                <button
+                  key={item}
+                  className={tab === item ? 'workspace-nav-item active' : 'workspace-nav-item'}
+                  onClick={() => setTab(item)}
+                >
+                  <span className={'workspace-nav-icon ' + item} aria-hidden="true" />
+                  <span>{ru.tabs[item]}</span>
+                </button>
+              ))}
+            </nav>
+
+            <button className="ghost-button sidebar-career-button" onClick={leaveToCareerMenu}>
               {ru.app.careers}
             </button>
-          </div>
-        </section>
+          </aside>
 
-        <nav className="tabs" aria-label={ru.app.sections}>
-          {tabs.map((item) => (
-            <button key={item} className={tab === item ? 'tab active' : 'tab'} onClick={() => setTab(item)}>
-              {ru.tabs[item]}
-            </button>
-          ))}
-        </nav>
+          <section className={`workspace-main content-${tab}`}>
+            <section className="club-header card">
+              <div>
+                <div className="eyebrow">{ru.overview.yourClub}</div>
+                <h1>{club.name}</h1>
+                <p>{club.city} · {ru.overview.reputation} {club.reputation}</p>
+              </div>
+              <span className="workspace-round-badge">{ru.app.season} {game.season} · {ru.app.round} {game.currentRound}</span>
+            </section>
 
-        {tab === 'overview' && (
-          <Overview
-            game={game}
-            position={position}
-            row={tableRow}
-            nextFixture={nextFixture}
-            onPlay={() => {
-              const matchSeason = game.season;
-              const matchRound = game.currentRound;
-              const nextGame = playNextRound(game);
-              setGame(nextGame);
-              if (nextGame.lastMatch) {
-                setMatchCenter({ match: nextGame.lastMatch, season: matchSeason, round: matchRound });
-              }
-            }}
-          />
-        )}
-        {tab === 'squad' && (
-          <Squad
-            game={game}
-            onChange={(nextGame) => setGame(nextGame)}
-          />
-        )}
-        {tab === 'tactics' && (
-          <Tactics
-            game={game}
-            onChange={(tactic) => setGame({ ...game, clubs: { ...game.clubs, [club.id]: { ...club, tactic } } })}
-          />
-        )}
-        {tab === 'table' && <LeagueTable game={game} />}
+            {tab === 'overview' && (
+              <Overview
+                game={game}
+                position={position}
+                row={tableRow}
+                nextFixture={nextFixture}
+                onPlay={() => {
+                  const matchSeason = game.season;
+                  const matchRound = game.currentRound;
+                  const nextGame = playNextRound(game);
+                  setGame(nextGame);
+                  if (nextGame.lastMatch) {
+                    setMatchCenter({ match: nextGame.lastMatch, season: matchSeason, round: matchRound });
+                  }
+                }}
+              />
+            )}
+            {tab === 'squad' && (
+              <Squad
+                game={game}
+                onChange={(nextGame) => setGame(nextGame)}
+              />
+            )}
+            {tab === 'tactics' && (
+              <Tactics
+                game={game}
+                onChange={(tactic) => setGame({ ...game, clubs: { ...game.clubs, [club.id]: { ...club, tactic } } })}
+              />
+            )}
+            {tab === 'table' && <LeagueTable game={game} />}
+          </section>
+
+          <aside className="workspace-sidebar right-sidebar">
+            <section className="side-panel finance-preview">
+              <div className="side-panel-header">
+                <div>
+                  <div className="eyebrow">{ru.sidePanel.financeEyebrow}</div>
+                  <h2>{ru.sidePanel.financeTitle}</h2>
+                </div>
+                <span className="side-panel-icon">€</span>
+              </div>
+              <div className="finance-preview-main">
+                <span>{ru.overview.transferBudget}</span>
+                <strong>{formatMoney(club.budget)}</strong>
+              </div>
+              <div className="finance-preview-grid">
+                <div>
+                  <span>{ru.sidePanel.wages}</span>
+                  <strong>{formatMoney(club.wages)}</strong>
+                </div>
+                <div>
+                  <span>{ru.sidePanel.status}</span>
+                  <strong>{ru.sidePanel.stable}</strong>
+                </div>
+              </div>
+              <div className="side-panel-divider" />
+              <div className="side-panel-note">{ru.sidePanel.financeHint}</div>
+            </section>
+
+            <section className="side-panel season-preview">
+              <div className="eyebrow">{ru.sidePanel.seasonEyebrow}</div>
+              <strong>{ru.app.season} {game.season}</strong>
+              <span>{ru.app.round} {game.currentRound} / 14</span>
+            </section>
+          </aside>
+        </div>
       </main>
 
       <div className="in-game-corner-actions">
