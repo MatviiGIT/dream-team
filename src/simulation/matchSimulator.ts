@@ -42,7 +42,8 @@ function tacticProfile(club: Club): { attack: number; defense: number; stamina: 
 }
 
 function buildProfile(club: Club, players: Record<string, Player>): TeamProfile {
-  const squad = club.playerIds.map((id) => players[id]).filter(Boolean);
+  const selectedIds = club.startingXI?.length ? club.startingXI : club.playerIds.slice(0, 11);
+  const squad = selectedIds.map((id) => players[id]).filter(Boolean);
   const outfield = squad.filter((player) => player.position !== 'GK');
   const forwards = squad.filter((player) => player.position === 'FWD');
   const defenders = squad.filter((player) => player.position === 'DEF');
@@ -77,7 +78,8 @@ function buildProfile(club: Club, players: Record<string, Player>): TeamProfile 
 }
 
 function selectScorer(club: Club, players: Record<string, Player>, rng: SeededRng): Player | undefined {
-  const candidates = club.playerIds
+  const selectedIds = club.startingXI?.length ? club.startingXI : club.playerIds.slice(0, 11);
+  const candidates = selectedIds
     .map((id) => players[id])
     .filter((player): player is Player => Boolean(player))
     .filter((player) => player.position !== 'GK');
