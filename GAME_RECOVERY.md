@@ -3,6 +3,14 @@
 > Persistent context file for restoring the project direction if the surrounding chat context is lost.
 > This file intentionally contains project information only and must not contain the user's personal name or other personal data.
 
+### 2026-09-19 — Transfer market MVP
+- Added a dedicated «Трансферы» management screen with player search and position filters.
+- Added deterministic transfer pricing based on player value, age, potential and club reputation.
+- Added buying from rival clubs; purchases reduce the manager's transfer budget and increase the wage bill, while the seller receives the fee and frees the player's wages.
+- Added selling of non-starting players; the user's starting XI cannot be sold directly and squad depth is kept at a minimum of 15 players.
+- Added transfer-specific finance tracking for seasonal transfer income/expenses and the latest transfer transaction.
+- Kept the existing save version compatible by migrating missing finance fields through the existing finance migration path.
+
 ## Project identity
 
 - Name: **Dream Team**
@@ -33,6 +41,7 @@ The manager does **not** directly control players during matches. Matches are si
 - 14-match league season per club (7 home + 7 away) for the current 8-club world.
 - Fictional clubs and players.
 - League fixtures and table.
+- Transfer market with player search, buying and reserve-player sales.
 - Squad screen.
 - Tactics screen.
 - Match events and latest-match statistics.
@@ -52,7 +61,7 @@ Key files:
 - `src/App.tsx`
   - Main application flow and screens.
   - Career start/open/delete.
-  - Tabs: overview, squad, tactics, table.
+  - Tab navigation including the transfer market.
   - Match simulation trigger.
 - `src/domain/types.ts`
   - GameState, Player, Club, MatchResult, Fixture, TableRow, Tactics and related types.
@@ -61,6 +70,18 @@ Key files:
   - Fixture generation.
   - League table updates.
   - Next-round simulation.
+- `src/game/transfers.ts`
+  - Deterministic transfer pricing and safe roster-depth rules.
+  - Buying from other clubs and selling non-starting players.
+  - Budget, wages and transfer-finance updates.
+
+- `src/components/TransferMarket.tsx`
+  - Searchable/filterable transfer market screen.
+  - Buy/sell interactions and action feedback.
+
+- `src/styles/transfers.css`
+  - Transfer screen layout and responsive presentation.
+
 - `src/simulation/matchSimulator.ts`
   - Automatic match simulation engine.
 - `src/simulation/rng.ts`
@@ -77,6 +98,8 @@ Key files:
   - Localization registry and default locale.
 - `src/styles.css`
   - Global visual system, dashboard layout, responsive behavior and viewport handling.
+- `src/styles/transfers.css`
+  - Transfer-market-specific layout and responsive rules.
 - `index.html`
   - Russian document language and page metadata.
 
