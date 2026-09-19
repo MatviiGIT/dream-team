@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { GameState, MatchPlayerStats, MatchResult, Player, Position, Tactics } from './domain/types';
+import type { ClubFinance, GameState, MatchPlayerStats, MatchResult, Player, Position, Tactics } from './domain/types';
 import { clubOrder } from './data/initialWorld';
 import { createCareer, getNextFixture, playNextRound } from './game/career';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
 import { ru } from './i18n/ru';
 
-const tabs = ['overview', 'squad', 'tactics', 'table'] as const;
+const tabs = ['overview', 'squad', 'tactics', 'table', 'finances'] as const;
 type Tab = (typeof tabs)[number];
 type Theme = 'aurora' | 'midnight' | 'light';
 
@@ -277,6 +277,7 @@ function App() {
               />
             )}
             {tab === 'table' && <LeagueTable game={game} />}
+            {tab === 'finances' && <FinanceScreen game={game} />}
           </section>
 
           <aside className="workspace-sidebar right-sidebar">
@@ -1713,6 +1714,93 @@ function LeagueTable({ game }: { game: GameState }) {
             })}
           </tbody>
         </table>
+      </div>
+    </section>
+  );
+}
+
+function FinanceScreen({ game }: { game: GameState }) {
+  const club = game.clubs[game.clubId];
+  const finance: ClubFinance = club.finance ?? {
+    seasonIncome: 0,
+    seasonExpenses: 0,
+    lastIncome: 0,
+    lastExpenses: 0,
+    lastNet: 0,
+    lastMatchdayIncome: 0,
+    lastBroadcastIncome: 0,
+    lastResultBonus: 0,
+  };
+  const net = finance.lastNet;
+  const hasActivity = finance.lastIncome > 0 || finance.lastExpenses > 0;
+
+  return (
+    <section className="card content-card finance-page">
+      <div className="section-title-row">
+        <div>
+          <div className="eyebrow">{ru.financesPage.eyebrow}</div>
+          <h2>{ru.financesPage.title}</h2>
+        </div>
+        <span className="workspace-round-badge">{ru.app.season} {game.season} · {ru.app.round} {game.currentRound}</span>
+      </div>
+
+      <div className="finance-hero">
+        <div>
+          <span>{ru.financesPage.budget}</span>
+          <strong>{formatMoney(club.budget)}</strong>
+        </div>
+        <div className="finance-hero-wages">
+          <span>{ru.financesPage.wages}</span>
+          <strong>{formatMoney(club.wages)}</strong>
+        </div>
+      </div>
+
+      <div className="finance-summary-grid">
+        <div className="finance-summary-card income">
+          <span>{ru.financesPage.income}</span>
+          <strong>{formatMoney(finance.seasonIncome)}</strong>
+        </div>
+        <div className="finance-summary-card expenses">
+          <span>{ru.financesPage.expenses}</span>
+          <strong>{formatMoney(finance.seasonExpenses)}</strong>
+        </div>
+        <div className="finance-summary-card net">
+          <span>{ru.financesPage.net}</span>
+          <strong className={net > 0 ? 'positive' : net < 0 ? 'negative' : ''}>
+            {net > 0 ? '+' : ''}{formatMoney(net)}
+          </strong>
+        </div>
+      </div>
+
+      <div className="finance-round-card">
+        <div className="section-title-row">
+          <div>
+            <div className="eyebrow">{ru.financesPage.lastRound}</div>
+            <h2>{ru.financesPage.lastRound}</h2>
+          </div>
+          {hasActivity && (
+            <span className={net >= 0 ? 'finance-flow-badge positive' : 'finance-flow-badge negative'}>
+              {net >= 0 ? '+' : ''}{formatMoney(net)}
+            </span>
+          )}
+        </div>
+
+        {hasActivity ? (
+          <div className="finance-ledger">
+            <div className="finance-ledger-section">
+              <span className="finance-ledger-label">{ru.financesPage.incomeLabel}</span>
+              <div><span>{ru.financesPage.matchdayIncome}</span><strong>+{formatMoney(finance.lastMatchdayIncome)}</strong></div>
+              <div><span>{ru.financesPage.broadcastIncome}</span><strong>+{formatMoney(finance.lastBroadcastIncome)}</strong></div>
+              <div><span>{ru.financesPage.resultBonus}</span><strong>+{formatMoney(finance.lastResultBonus)}</strong></div>
+            </div>
+            <div className="finance-ledger-section expense">
+              <span className="finance-ledger-label">{ru.financesPage.expenseLabel}</span>
+              <div><span>{ru.financesPage.wageExpense}</span><strong>-{formatMoney(finance.lastExpenses)}</strong></div>
+            </div>
+          </div>
+        ) : (
+          <div className="finance-empty">{ru.financesPage.noActivity}</div>
+        )}
       </div>
     </section>
   );
