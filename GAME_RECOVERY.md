@@ -332,3 +332,11 @@ Then:
 - Locked the in-game header to 80px on desktop, 70px on tablet and 64px on narrow mobile.
 - Locked the main content to the remaining viewport height so match results cannot change the global available height.
 - Removed dashboard card hover translation so no card can visually shift after a click while the pointer remains over it.
+
+
+### 2026-09-19 — Match Center
+- Added a post-simulation Match Center overlay without changing the save model or fixture schema.
+- The simulation result now opens immediately after the user's match and shows the final score, win/draw/loss state, scorers, full event timeline and core match statistics (xG, possession, shots).
+- Match Center is fixed to the game viewport and scrolls only its internal event list, so it cannot participate in dashboard sizing or reintroduce the previous post-match layout shift.
+- Closing Match Center returns the player to the updated Overview, where the season table, latest result, timeline and next fixture remain available.
+- Added all new user-facing strings to the Russian localization layer.
