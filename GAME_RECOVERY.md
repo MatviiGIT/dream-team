@@ -270,3 +270,5 @@ Then:
 - Kept 4-4-2 as a flat four-player midfield line with two forwards.
 - Kept 4-2-3-1 as a back four, double pivot, attacking three and lone striker.
 - Added clearer pitch markings and increased the formation cards so the 11-player structure can be read at a glance.
+
+- Added full directional pitch markings to the formation cards: own goal/penalty area at the bottom with the goalkeeper, opponent goal/penalty area at the top, plus the halfway line and center circle.
