@@ -2748,9 +2748,12 @@ tbody tr.your-club td { color: #e0f4ec; }
   text-align: center;
 }
 .match-center-score-block > strong {
+  min-width: 138px;
   font-size: clamp(38px, 5.2vw, 58px);
   line-height: .95;
-  letter-spacing: -.06em;
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .match-center-score-block > span:last-child {
   color: var(--muted);
