@@ -244,3 +244,13 @@ Then:
 - Tightened text layout rules with stable flex/grid sizing, no-wrap/ellipsis for save metadata and consistent button alignment.
 - Improved the Dream Team DT marks so their glyphs are not visually clipped.
 - Kept the fixed 1440×900 start-screen canvas and proportional viewport scaling.
+
+### 2026-09-19 — Save management + tactics polish
+- Replaced the browser-native save deletion confirmation with an in-game confirmation modal so deleting a career does not trigger a browser dialog or force the fullscreen context to close.
+- Saved careers are ordered by creation time, oldest first; playing/updating a career no longer moves it to the first position.
+- Stored careers now expose their original creation timestamp and show the added date/time in the save card.
+- Added a stable empty-careers heading so the start-menu section does not jump when the save list becomes empty.
+- Added proper card-based language/theme cells inside the settings modal.
+- Tactic dropdown menus now use absolute positioning and overlay neighboring fields instead of changing grid height.
+- Replaced the text arrow on tactic selectors with a CSS chevron that rotates cleanly when opened.
+- Reworked formation mini-pitches to use explicit 11-player positions for 4-3-3, 4-4-2 and 4-2-3-1 instead of generic/random-looking dots.
