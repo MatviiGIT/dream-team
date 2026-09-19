@@ -3551,3 +3551,74 @@ tbody tr.your-club td { color: #e0f4ec; }
     grid-column: auto;
   }
 }
+
+/* 2026-09-19 — Calendar modal scroll safety + typography pass. */
+.calendar-modal {
+  height: min(720px, calc(100dvh - 48px));
+  max-height: min(720px, calc(100dvh - 48px));
+  min-height: 0;
+}
+.calendar-modal .full-calendar-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.calendar-modal .modal-action {
+  flex: 0 0 auto;
+  min-height: 44px;
+}
+
+.eyebrow { font-size: 11px; }
+.muted { font-size: 13px; }
+.empty-state { font-size: 13px; }
+.budget-block span { font-size: 12px; }
+.manager-stats span { font-size: 11px; }
+
+.calendar-row .calendar-venue { font-size: 11px; }
+.calendar-row .calendar-opponent { font-size: 13px; }
+.calendar-footer { font-size: 11px; }
+.future-tag { font-size: 10px; }
+.full-calendar-round span { font-size: 10px; }
+.full-calendar-main strong { font-size: 15px; }
+.full-calendar-main span { font-size: 12px; }
+.full-calendar-badge { font-size: 9px; }
+
+.player-metric span { font-size: 10px; }
+.player-main strong { font-size: 14px; }
+.player-main span { font-size: 12px; }
+
+.squad-formation-pill span { font-size: 11px; }
+.squad-roster-header > span { font-size: 11px; }
+.squad-roster-main strong { font-size: 13px; }
+.squad-roster-main small { font-size: 10px; }
+.squad-roster-stat small { font-size: 9px; }
+.squad-roster-fit { font-size: 9px; }
+.squad-pitch-note { font-size: 11px; }
+
+table th { font-size: 11px; }
+
+.match-center-header-meta > span,
+.match-center-team > span,
+.match-center-score-block > span:last-child,
+.match-center-result { font-size: 11px; }
+.match-center-scorers span { font-size: 11px; }
+
+.match-player-rating-team-header span { font-size: 10px; }
+.match-player-rating-number { font-size: 11px; }
+.match-player-rating-main strong { font-size: 13px; }
+.match-player-rating-main span { font-size: 10px; }
+.match-player-rating-stat small { font-size: 9px; }
+
+@media (max-width: 760px) {
+  .eyebrow { font-size: 10px; }
+  .muted { font-size: 12px; }
+  .player-main strong { font-size: 13px; }
+  .player-main span { font-size: 11px; }
+  .player-metric span { font-size: 9px; }
+  .calendar-modal {
+    height: calc(100dvh - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+}
