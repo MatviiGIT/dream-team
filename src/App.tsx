@@ -793,6 +793,10 @@ function MatchCenter({
     .sort((a, b) => b.rating - a.rating);
   const awayPlayerStats = getMatchPlayerStats(game, match, match.awayTeamId)
     .sort((a, b) => b.rating - a.rating);
+  const allPlayerStats = [...homePlayerStats, ...awayPlayerStats]
+    .sort((a, b) => b.rating - a.rating);
+  const playerOfMatch = allPlayerStats[0] ? game.players[allPlayerStats[0].playerId] : undefined;
+  const playerOfMatchRating = allPlayerStats[0]?.rating;
 
   const scorerText = (event: MatchResult['events'][number]) => {
     const player = event.playerId ? game.players[event.playerId]?.name : undefined;
@@ -974,6 +978,31 @@ function MatchCenter({
                 ? awayGoals.map((event) => <span key={event.id}>{scorerText(event)}</span>)
                 : <span>{ru.matchCenter.noGoals}</span>}
             </div>
+          </div>
+        </div>
+
+        <div className="match-center-summary">
+          <div className="match-center-summary-stat">
+            <span>{ru.matchCenter.xg}</span>
+            <strong>{match.homeXg.toFixed(2)} — {match.awayXg.toFixed(2)}</strong>
+          </div>
+          <div className="match-center-summary-stat">
+            <span>{ru.matchCenter.possession}</span>
+            <strong>{match.homePossession}% — {match.awayPossession}%</strong>
+          </div>
+          <div className="match-center-summary-stat">
+            <span>{ru.matchCenter.shots}</span>
+            <strong>{match.homeShots} — {match.awayShots}</strong>
+          </div>
+          <div className="match-center-summary-player">
+            <div className="match-center-summary-player-icon">★</div>
+            <div>
+              <span>{ru.matchCenter.playerOfMatch}</span>
+              <strong>{playerOfMatch?.name ?? '—'}</strong>
+            </div>
+            {typeof playerOfMatchRating === 'number' && (
+              <b>{playerOfMatchRating.toFixed(1)}</b>
+            )}
           </div>
         </div>
 
