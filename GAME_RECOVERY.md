@@ -354,3 +354,11 @@ Then:
 - Kept the current fitness drain rule unchanged; stamina will be tied to tactical workload later as planned.
 - No save-model changes were required.
 - Stored the calculated tactical possession modifier in each team profile so the simulator uses one consistent calculation per team.
+
+### 2026-09-19 — Squad substitution clarity
+- Replaced English pitch-position abbreviations (GK/LB/CB/etc.) with Russian football abbreviations (ВРТ, ЛЗ, ЦЗ, ПЗ, ОП, ЦП, ЛП, ПП, ЛФ, АП, ПФ, ЦН).
+- Reworked the Squad sidebar to show only non-starting players as the dedicated «Скамейка / Запасные» pool, closer to the requested quick team-management pattern.
+- Selecting a starter now clearly shows the player being replaced and the exact pitch position targeted.
+- Clicking another starter is visually presented as a position swap; clicking a bench player performs the replacement.
+- Bench players are color-coded by positional fit: «На своей позиции», «Можно поставить» and «Не по позиции». The game does not block an out-of-position replacement; the simulator remains responsible for applying positional consequences.
+- Clarified terminology: reserve/bench describes the player pool, while замена describes the action of replacing a starter.
