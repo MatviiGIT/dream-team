@@ -202,7 +202,7 @@ function App() {
   return (
     <div className={`app-shell app-shell-${tab}`}>
       <main className="content">
-        <div className="workspace-grid">
+        <div className={tab === "overview" ? "workspace-grid workspace-grid-overview" : "workspace-grid workspace-grid-compact"}>
           <aside className="workspace-sidebar left-sidebar">
             <section className="workspace-brand">
               <div className="brand-mark">DT</div>
@@ -238,6 +238,7 @@ function App() {
           </aside>
 
           <section className={`workspace-main content-${tab}`}>
+            {tab === "overview" && (
             <section className="club-header card">
               <div>
                 <div className="eyebrow">{ru.overview.yourClub}</div>
@@ -246,6 +247,7 @@ function App() {
               </div>
               <span className="workspace-round-badge">{ru.app.season} {game.season} · {ru.app.round} {game.currentRound}</span>
             </section>
+            )}
 
             {tab === 'overview' && (
               <Overview
@@ -280,6 +282,7 @@ function App() {
             {tab === 'finances' && <FinanceScreen game={game} />}
           </section>
 
+          {tab === "overview" && (
           <aside className="workspace-sidebar right-sidebar">
             <section className="side-panel finance-preview">
               <div className="side-panel-header">
@@ -313,6 +316,7 @@ function App() {
               <span>{ru.app.round} {game.currentRound} / 14</span>
             </section>
           </aside>
+          )}
         </div>
       </main>
 
