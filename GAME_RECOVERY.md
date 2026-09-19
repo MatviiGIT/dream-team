@@ -30,6 +30,7 @@ The manager does **not** directly control players during matches. Matches are si
 ## Current implemented features
 
 - Automatic deterministic/seeded match simulation.
+- 14-match league season per club (7 home + 7 away) for the current 8-club world.
 - Fictional clubs and players.
 - League fixtures and table.
 - Squad screen.
@@ -112,6 +113,7 @@ These are intentional design requirements for future changes:
   - red/pink for destructive/error information
   - club colors for club identity
 - Cards should have clear hierarchy and noticeably different semantic color treatments so sections are visually distinct.
+- The in-game background uses a slow, soft animated gradient; the career-selection start menu intentionally remains static.
 - Use larger readable text; avoid excessive 8–10px labels.
 - Important numbers and actions should be visually prominent.
 
@@ -120,6 +122,7 @@ These are intentional design requirements for future changes:
 - The app should occupy the full viewport height.
 - On the main game screen, the top bar and application viewport stay fixed. Long content is contained inside its own panel; the page itself must not move vertically.
 - On the start screen, the whole page stays fixed. The saved-career area has its own internal scroll when many saves exist.
+- The start menu should fill the screen cleanly, keep rounded card boundaries visible, and expose fullscreen mode.
 - Menus, cards and grids must have balanced proportions rather than many tiny dense elements.
 - Responsive behavior must remain usable on desktop and narrow mobile widths.
 
@@ -188,6 +191,10 @@ Then:
 - Strengthened section color separation with distinct mint, blue, gold, purple and green panel treatments.
 - Made the main navigation stretch across the full available width with four equal tabs and individual active colors.
 - Made the squad, tactics and table screens fill the remaining viewport height and use distinct blue, purple and gold visual treatments.
+- Corrected the league fixture generator from 16 to 14 matches per club and limited the calendar preview/count to the 14-round season.
+- Added a fullscreen toggle to both the career-selection screen and in-game header.
+- Added a permanent soft animated background gradient to the in-game screen only.
+- Added inner dashboard overflow and bottom spacing so card borders remain fully visible instead of being clipped at the viewport edge.
 - Redesigned the visual palette to use neutral dark surfaces plus mint, blue, gold and red semantic accents.
 - Increased small-text sizes and improved hierarchy.
 - Rebalanced dashboard cards, menus, forms, player rows and table spacing.
