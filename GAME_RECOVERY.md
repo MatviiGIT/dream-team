@@ -220,3 +220,11 @@ Then:
 - Added language controls with Russian active and English/German marked as coming soon.
 - Fixed the in-game ambient background so it continuously rotates through soft colors behind the interface rather than appearing static.
 - Kept the career-selection start menu itself free of animated ambient movement.
+
+### 2026-09-19 — Full tactics controls + start menu redesign
+- Replaced the remaining native tactic dropdowns with custom dark in-app menus for mentality, tempo, pressing, defensive line and width, removing the browser's white native popup.
+- Kept formation selection as dedicated cards and upgraded the mini pitch diagrams to show different 4-3-3, 4-4-2 and 4-2-3-1 layouts.
+- Rebuilt the start menu layout so the saved-career area spans the full lower section and scrolls internally when many careers exist.
+- Removed the long introductory feature copy that could overlap the careers section and replaced it with a compact latest-update panel.
+- Moved language/theme settings into a dedicated modal opened from the start-menu toolbar instead of placing a large settings card beside saved careers.
+- Kept the viewport fixed while allowing the appropriate start-menu inner areas to scroll on smaller screens.
