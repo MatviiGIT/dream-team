@@ -145,9 +145,6 @@ function App() {
     const career = careers.find((item) => item.id === careerId);
     if (!career) return;
 
-    const confirmed = window.confirm(`${ru.career.deleteConfirmPrefix} «${career.managerName}»?`);
-    if (!confirmed) return;
-
     deleteCareer(careerId);
     setCareers(loadCareers());
 
