@@ -21,7 +21,7 @@ const clubLabels: Record<string, string> = {
   lakeside: 'Lakeside Albion',
 };
 
-function FullscreenButton() {
+function FullscreenButton({ compact = false }: { compact?: boolean }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -44,9 +44,15 @@ function FullscreenButton() {
   };
 
   return (
-    <button className="ghost-button fullscreen-button" onClick={toggle} aria-pressed={isFullscreen}>
+    <button
+      className={compact ? 'ghost-button fullscreen-button fullscreen-button-compact' : 'ghost-button fullscreen-button'}
+      onClick={toggle}
+      aria-pressed={isFullscreen}
+      aria-label={isFullscreen ? ru.app.exitFullscreen : ru.app.fullscreen}
+      title={isFullscreen ? ru.app.exitFullscreen : ru.app.fullscreen}
+    >
       <span aria-hidden="true">⛶</span>
-      {isFullscreen ? ru.app.exitFullscreen : ru.app.fullscreen}
+      {!compact && (isFullscreen ? ru.app.exitFullscreen : ru.app.fullscreen)}
     </button>
   );
 }
@@ -195,23 +201,6 @@ function App() {
 
   return (
     <div className={`app-shell app-shell-${tab}`}>
-      <header className="topbar">
-        <div className="brand">
-          <div className="brand-mark">DT</div>
-          <div>
-            <strong>Dream Team</strong>
-            <span>{ru.app.subtitle}</span>
-          </div>
-        </div>
-
-        <div className="topbar-meta">
-          <span>{ru.app.season} {game.season}</span>
-          <span>{ru.app.round} {game.currentRound}</span>
-          <span>{game.managerName}</span>
-          <FullscreenButton />
-          <button className="ghost-button" onClick={leaveToCareerMenu}>{ru.app.careers}</button>
-        </div>
-      </header>
 
       <main className={`content content-${tab}`}>
         <section className="club-header card">
@@ -220,9 +209,14 @@ function App() {
             <h1>{club.name}</h1>
             <p>{club.city} · {ru.overview.reputation} {club.reputation}</p>
           </div>
-          <div className="budget-block">
-            <span>{ru.overview.transferBudget}</span>
-            <strong>{formatMoney(club.budget)}</strong>
+          <div className="club-header-actions">
+            <div className="budget-block">
+              <span>{ru.overview.transferBudget}</span>
+              <strong>{formatMoney(club.budget)}</strong>
+            </div>
+            <button className="ghost-button career-menu-button" onClick={leaveToCareerMenu}>
+              {ru.app.careers}
+            </button>
           </div>
         </section>
 
@@ -265,6 +259,10 @@ function App() {
         )}
         {tab === 'table' && <LeagueTable game={game} />}
       </main>
+
+      <div className="in-game-corner-actions">
+        <FullscreenButton compact />
+      </div>
       {matchCenter && (
         <MatchCenter
           game={game}
