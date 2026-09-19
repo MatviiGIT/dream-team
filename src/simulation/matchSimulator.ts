@@ -8,6 +8,7 @@ interface TeamProfile {
   goalkeeper: number;
   stamina: number;
   mentality: number;
+  possession: number;
 }
 
 interface TacticalProfile {
@@ -156,6 +157,7 @@ function buildProfile(club: Club, players: Record<string, Player>): TeamProfile 
     goalkeeper: goalkeeper?.attributes.goalkeeper ?? 50,
     stamina: average(squad.map((player) => player.attributes.stamina)),
     mentality: club.reputation,
+    possession: tactic.possession,
   };
 }
 
@@ -196,7 +198,7 @@ export function simulateMatch(
   const totalMidfield = home.midfield + away.midfield || 1;
   const homePossession = clamp(
     50 + ((home.midfield - away.midfield) / totalMidfield) * 24 +
-      tacticProfile(homeTeam, homeTeam.startingXI?.map((id) => players[id]).filter((player): player is Player => Boolean(player)) ?? [], lineupFit(homeTeam, players)).possession * 100 +
+      home.possession * 100 +
       4,
     34,
     66,
