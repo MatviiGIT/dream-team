@@ -415,3 +415,8 @@ Then:
 - Made the full upcoming-fixtures modal a fixed-height flex container so the fixture list owns the available scroll area and the «Закрыть» button stays visible.
 - Added stable internal scrolling to the 14-round calendar list so all remaining fixtures can be reached without pushing the modal action below the viewport.
 - Increased several recurring small UI text sizes across the overview, calendar, squad, table and Match Center while preserving compact labels where they are purely decorative.
+
+### 2026-09-19 — Calendar modal isolation + typography scale correction
+- Gave the «Ближайшие туры» window a dedicated overlay layer above the in-game topbar/content so background tabs and controls cannot be activated while the modal is open.
+- Kept the calendar fixture list in its own internal scroll region with the close action outside that region.
+- Added a stronger in-game typography scale for recurring labels, metadata, fixture text, squad data, table cells and Match Center details so important information is not rendered at near-technical-label size.
