@@ -261,3 +261,4 @@ Then:
 - Moved the Dream Team title area upward and constrained the hero row so the “ВАШИ КАРЬЕРЫ” section cannot be overlapped by the latest-update panel.
 - Reworked the three formation mini-pitches to use clearer, explicit 11-player rows for 4-3-3, 4-4-2 and 4-2-3-1 with pitch markings.
 - Replaced the in-game ambient background’s large circular field with a multi-layer rectangular gradient field containing mint, blue, violet and subtle gold lighting that drifts independently.
+- Removed the remaining start-menu orb JSX so the clipped texture cannot reappear above the hero area.
