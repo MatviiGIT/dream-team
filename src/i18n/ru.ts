@@ -166,7 +166,7 @@ export const ru = {
     financeTitle: 'Клубный бюджет',
     wages: 'Зарплаты',
     status: 'Статус',
-    stable: 'Стабильно',
+    stable: 'Предпросмотр',
     financeHint: 'Здесь позже появятся доходы, расходы, трансферы и контракты.',
     seasonEyebrow: 'СЕЗОН',
   },
