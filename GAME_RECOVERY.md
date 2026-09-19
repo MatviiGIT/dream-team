@@ -353,3 +353,4 @@ Then:
 - Added small player-attribute checks for tactic execution: pace matters more for fast tempo/high pressing, passing supports slow-possession styles, and defending supports aggressive pressing.
 - Kept the current fitness drain rule unchanged; stamina will be tied to tactical workload later as planned.
 - No save-model changes were required.
+- Stored the calculated tactical possession modifier in each team profile so the simulator uses one consistent calculation per team.
