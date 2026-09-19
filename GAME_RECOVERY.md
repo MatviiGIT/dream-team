@@ -312,3 +312,7 @@ Then:
 ### 2026-09-19 — Dashboard layout stability fix
 - Prevented the overview dashboard itself from gaining/removing a scrollbar when match data changes, which could shift the grid and make surrounding menu/card geometry jump after a simulation.
 - Reserved scrollbar space on the dashboard and isolated the manager profile card's layout so changes inside it cannot trigger broader reflow.
+
+### 2026-09-19 — Manager card height lock
+- Locked the «Профиль тренера» card to fixed internal rows so its placeholder note can no longer change the dashboard card height.
+- Reserved a constant 38px area for the future-note text and clipped overflow inside that area, preventing the note from appearing/disappearing as a cause of layout shifts.
