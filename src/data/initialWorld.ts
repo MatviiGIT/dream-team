@@ -1,4 +1,5 @@
 import type { Club, Player, TableRow, Tactics } from '../domain/types';
+import { createClubFinance } from '../game/finance';
 
 const squadPositions = ['GK', 'GK', 'DEF', 'DEF', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'FWD', 'FWD'] as const;
 
@@ -94,6 +95,7 @@ export function createInitialWorld(): { clubs: Record<string, Club>; players: Re
       reputation,
       budget,
       wages: playerIds.reduce((sum, playerId) => sum + players[playerId].wage, 0),
+      finance: createClubFinance(),
       playerIds,
       startingXI: playerIds.slice(0, 11),
       tactic: { ...defaultTactics },
