@@ -95,7 +95,7 @@ export function createInitialWorld(): { clubs: Record<string, Club>; players: Re
       budget,
       wages: playerIds.reduce((sum, playerId) => sum + players[playerId].wage, 0),
       playerIds,
-      startingXI: [...playerIds],
+      startingXI: playerIds.slice(0, 11),
       tactic: { ...defaultTactics },
       color,
     };
@@ -118,7 +118,7 @@ export function createInitialWorld(): { clubs: Record<string, Club>; players: Re
 export function ensureSquadDepth(clubs: Record<string, Club>, players: Record<string, Player>): void {
   Object.values(clubs).forEach((club) => {
     if (club.playerIds.length >= squadPositions.length) {
-      if (!club.startingXI?.length) club.startingXI = club.playerIds.slice(0, 11);
+      if (club.startingXI?.length !== 11) club.startingXI = club.playerIds.slice(0, 11);
       return;
     }
 
