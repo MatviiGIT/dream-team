@@ -326,3 +326,9 @@ Then:
 - Forced every dashboard card to fill its assigned track with `height: 100%` and `max-height: 100%`.
 - Added layout containment to the dashboard so changing match/event content cannot propagate size calculations back into the dashboard shell.
 - Applied equivalent fixed track logic to tablet and mobile layouts.
+
+### 2026-09-19 — Absolute in-game viewport geometry
+- Replaced the flexible vertical shell sizing with an explicit viewport grid: fixed topbar height plus a fixed remaining content viewport.
+- Locked the in-game header to 80px on desktop, 70px on tablet and 64px on narrow mobile.
+- Locked the main content to the remaining viewport height so match results cannot change the global available height.
+- Removed dashboard card hover translation so no card can visually shift after a click while the pointer remains over it.
