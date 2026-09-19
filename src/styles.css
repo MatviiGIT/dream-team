@@ -2537,3 +2537,84 @@ tbody tr.your-club td { color: #e0f4ec; }
     grid-template-rows: repeat(6, minmax(0, 1fr));
   }
 }
+
+
+/* 2026-09-19 — Absolute viewport geometry for the in-game shell. */
+.app-shell {
+  display: grid;
+  grid-template-rows: 80px minmax(0, 1fr);
+  height: 100dvh;
+  min-height: 0;
+}
+
+.app-shell > .topbar {
+  height: 80px;
+  min-height: 80px;
+  max-height: 80px;
+  flex: none;
+  overflow: hidden;
+}
+
+.app-shell > .content {
+  width: min(1180px, calc(100% - 48px));
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  flex: none;
+  overflow: hidden;
+}
+
+.app-shell > .content > .club-header {
+  flex: 0 0 auto;
+}
+
+.app-shell > .content > .tabs {
+  flex: 0 0 auto;
+}
+
+.app-shell > .content > .dashboard-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.dashboard-grid > .card {
+  transform: none !important;
+}
+
+.dashboard-grid > .card:hover {
+  transform: none !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.14);
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    grid-template-rows: 70px minmax(0, 1fr);
+  }
+
+  .app-shell > .topbar {
+    height: 70px;
+    min-height: 70px;
+    max-height: 70px;
+  }
+
+  .app-shell > .content {
+    width: min(100% - 24px, 1180px);
+  }
+}
+
+@media (max-width: 620px) {
+  .app-shell {
+    grid-template-rows: 64px minmax(0, 1fr);
+  }
+
+  .app-shell > .topbar {
+    height: 64px;
+    min-height: 64px;
+    max-height: 64px;
+  }
+
+  .app-shell > .content {
+    width: min(100% - 18px, 1180px);
+  }
+}
