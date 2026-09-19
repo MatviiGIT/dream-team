@@ -269,7 +269,6 @@ function StartScreen(props: {
               <div className="eyebrow">{ru.career.yourCareers}</div>
               <h2>{props.careers.length ? ru.career.chooseCareer : ru.career.noCareers}</h2>
             </div>
-            <span className="saves-hint">{props.careers.length ? ru.career.saveHint : ''}</span>
           </div>
 
           {props.careers.length ? (
@@ -415,34 +414,94 @@ function Overview({
 }
 
 function UpcomingCalendar({ game }: { game: GameState }) {
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const fixtures = game.fixtures
     .filter((fixture) => !fixture.played && (fixture.homeTeamId === game.clubId || fixture.awayTeamId === game.clubId))
-    .sort((a, b) => a.round - b.round)
-    .slice(0, 4);
+    .sort((a, b) => a.round - b.round);
+
+  const preview = fixtures.slice(0, 2);
 
   return (
-    <section className="card calendar-card">
-      <div className="section-title-row">
-        <div><div className="eyebrow">{ru.overview.calendarPanel}</div><h2>{ru.overview.calendarTitle}</h2></div>
-        <span className="future-tag">{ru.overview.futureTag}</span>
-      </div>
-      <div className="calendar-list">
-        {fixtures.map((fixture) => {
-          const home = fixture.homeTeamId === game.clubId;
-          const opponentId = home ? fixture.awayTeamId : fixture.homeTeamId;
-          const opponent = game.clubs[opponentId];
-          return (
-            <div className="calendar-row" key={fixture.id}>
-              <span className="calendar-round">{fixture.round}</span>
-              <span className="calendar-venue">{home ? ru.overview.homeShort : ru.overview.awayShort}</span>
-              <span className="calendar-opponent">{opponent?.name ?? ru.common.unknownClub}</span>
-              <span className="calendar-badge" style={{ background: opponent?.color ?? '#50616d' }}>{opponent?.shortName ?? '—'}</span>
+    <>
+      <button className="card calendar-card calendar-preview" onClick={() => setCalendarOpen(true)}>
+        <div className="section-title-row">
+          <div>
+            <div className="eyebrow">{ru.overview.calendarPanel}</div>
+            <h2>{ru.overview.calendarTitle}</h2>
+          </div>
+          <span className="future-tag">{ru.overview.openButton}</span>
+        </div>
+
+        <div className="calendar-preview-list">
+          {preview.map((fixture) => {
+            const home = fixture.homeTeamId === game.clubId;
+            const opponentId = home ? fixture.awayTeamId : fixture.homeTeamId;
+            const opponent = game.clubs[opponentId];
+
+            return (
+              <div className="calendar-row compact" key={fixture.id}>
+                <span className="calendar-round">{fixture.round}</span>
+                <span className="calendar-venue">{home ? ru.overview.homeShort : ru.overview.awayShort}</span>
+                <span className="calendar-opponent">{opponent?.name ?? ru.common.unknownClub}</span>
+                <span className="calendar-badge" style={{ background: opponent?.color ?? '#50616d' }}>
+                  {opponent?.shortName ?? '—'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="calendar-footer">
+          <span>{fixtures.length ? ru.overview.calendarCount(fixtures.length) : ru.overview.calendarEmpty}</span>
+          <span>→</span>
+        </div>
+      </button>
+
+      {calendarOpen && (
+        <div className="modal-backdrop" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setCalendarOpen(false);
+        }}>
+          <section className="modal-window" role="dialog" aria-modal="true" aria-labelledby="calendar-title">
+            <div className="modal-header">
+              <div>
+                <div className="eyebrow">{ru.overview.calendarPanel}</div>
+                <h2 id="calendar-title">{ru.overview.calendarTitle}</h2>
+              </div>
+              <button className="modal-close" onClick={() => setCalendarOpen(false)} aria-label={ru.common.close}>×</button>
             </div>
-          );
-        })}
-      </div>
-      <div className="future-note">{ru.overview.calendarNote}</div>
-    </section>
+
+            <div className="full-calendar-list">
+              {fixtures.map((fixture) => {
+                const isHome = fixture.homeTeamId === game.clubId;
+                const opponentId = isHome ? fixture.awayTeamId : fixture.homeTeamId;
+                const opponent = game.clubs[opponentId];
+
+                return (
+                  <div className="full-calendar-row" key={fixture.id}>
+                    <div className="full-calendar-round">
+                      <span>{ru.overview.matchday}</span>
+                      <strong>{fixture.round}</strong>
+                    </div>
+                    <div className="full-calendar-main">
+                      <strong>{opponent?.name ?? ru.common.unknownClub}</strong>
+                      <span>{isHome ? ru.overview.home : ru.overview.away}</span>
+                    </div>
+                    <div className="full-calendar-badge" style={{ background: opponent?.color ?? '#50616d' }}>
+                      {opponent?.shortName ?? '—'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {!fixtures.length && <div className="modal-empty">{ru.overview.calendarEmpty}</div>}
+            <button className="secondary-button full modal-action" onClick={() => setCalendarOpen(false)}>
+              {ru.common.close}
+            </button>
+          </section>
+        </div>
+      )}
+    </>
   );
 }
 
