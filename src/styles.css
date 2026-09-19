@@ -3981,21 +3981,6 @@ table th { font-size: 11px; }
   gap: 10px;
   flex: 0 0 auto;
 }
-.career-menu-button {
-  min-height: 52px;
-  white-space: nowrap;
-}
-.in-game-corner-actions {
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 60;
-  display: flex;
-  pointer-events: none;
-}
-.in-game-corner-actions .fullscreen-button {
-  pointer-events: auto;
-}
 .fullscreen-button-compact {
   width: 44px;
   height: 44px;
@@ -4021,15 +4006,6 @@ table th { font-size: 11px; }
 @media (max-width: 760px) {
   .club-header-actions {
     gap: 8px;
-  }
-  .career-menu-button {
-    min-height: 48px;
-    padding: 9px 11px;
-    font-size: 12px;
-  }
-  .in-game-corner-actions {
-    right: 12px;
-    bottom: 12px;
   }
 }
 @media (max-width: 620px) {
@@ -4295,18 +4271,6 @@ table th { font-size: 11px; }
   color: #7f94a4;
   font-size: 11px;
   line-height: 1.55;
-}
-.season-preview strong {
-  display: block;
-  margin-top: 6px;
-  color: var(--text);
-  font-size: 19px;
-}
-.season-preview span {
-  display: block;
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 11px;
 }
 
 /* The new workspace owns the main geometry; the old topbar layout no longer participates. */
