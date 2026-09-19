@@ -243,13 +243,13 @@ function App() {
           <section className={`workspace-main content-${tab}`}>
             {tab === "overview" && (
               <section className="club-header card">
-              <div>
-                <div className="eyebrow">{ru.overview.yourClub}</div>
-                <h1>{club.name}</h1>
-                <p>{club.city} · {ru.overview.reputation} {club.reputation}</p>
-              </div>
-              <span className="workspace-round-badge">{ru.app.season} {game.season} · {ru.app.round} {game.currentRound}</span>
-            </section>
+                <div>
+                  <div className="eyebrow">{ru.overview.yourClub}</div>
+                  <h1>{club.name}</h1>
+                  <p>{club.city} · {ru.overview.reputation} {club.reputation}</p>
+                </div>
+                <span className="workspace-round-badge">{ru.app.season} {game.season} · {ru.app.round} {game.currentRound}</span>
+              </section>
             )}
 
             {tab === 'overview' && (
@@ -287,7 +287,7 @@ function App() {
 
           {tab === "overview" && (
             <aside className="workspace-sidebar right-sidebar">
-            <section className="side-panel finance-preview">
+              <section className="side-panel finance-preview">
               <div className="side-panel-header">
                 <div>
                   <div className="eyebrow">{ru.sidePanel.financeEyebrow}</div>
@@ -311,9 +311,8 @@ function App() {
               </div>
               <div className="side-panel-divider" />
               <div className="side-panel-note">{ru.sidePanel.financeHint}</div>
-            </section>
-
-          </aside>
+              </section>
+            </aside>
           )}
         </div>
       </main>
