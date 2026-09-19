@@ -184,7 +184,7 @@ Then:
 - Added a compact upcoming-fixtures calendar panel and a trainer-profile placeholder panel for future progression/reputation systems.
 - Locked the main menu and game viewport so the page itself cannot be scrolled vertically.
 - Added internal scrolling to long panels such as events, squad lists, tables and saved-career lists.
-- Reworked the dashboard into a compact three-row layout that fills available space instead of leaving large empty areas.
+- Reworked the dashboard into a two-row priority layout that keeps the next-match action prominent and uses compact secondary panels without shrinking core controls.
 - Strengthened section color separation with distinct mint, blue, gold, purple and green panel treatments.
 - Redesigned the visual palette to use neutral dark surfaces plus mint, blue, gold and red semantic accents.
 - Increased small-text sizes and improved hierarchy.
