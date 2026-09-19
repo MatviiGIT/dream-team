@@ -3,6 +3,8 @@ import { clubOrder, createInitialWorld } from '../data/initialWorld';
 import { simulateMatch } from '../simulation/matchSimulator';
 import { createCareerId } from '../storage/gameStorage';
 
+const TOTAL_SEASON_ROUNDS = 14;
+
 function generateFixtures(teamIds: string[]): Fixture[] {
   const teams = [...teamIds];
   const fixed = teams.shift();
@@ -10,7 +12,7 @@ function generateFixtures(teamIds: string[]): Fixture[] {
 
   const rotation = [...teams];
   const fixtures: Fixture[] = [];
-  const rounds = teamIds.length;
+  const rounds = teamIds.length - 1;
 
   for (let round = 0; round < rounds; round += 1) {
     const current = [fixed, ...rotation];
@@ -134,7 +136,7 @@ export function playNextRound(state: GameState): GameState {
   });
 
   const nextRound = state.currentRound + 1;
-  const isSeasonComplete = nextRound > 14;
+  const isSeasonComplete = nextRound > TOTAL_SEASON_ROUNDS;
   const freshFixtures = isSeasonComplete ? generateFixtures(clubOrder) : fixtures;
 
   return {
