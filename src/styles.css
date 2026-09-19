@@ -691,6 +691,228 @@ button, input, select {
 .player-metric strong { display: block; margin-top: 3px; font-size: 13px; }
 .player-value { text-align: right; color: #becbd4; font-size: 11px; }
 
+.squad-panel {
+  overflow: hidden;
+}
+.squad-formation-pill {
+  display: grid;
+  gap: 3px;
+  justify-items: end;
+}
+.squad-formation-pill span {
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.squad-formation-pill strong {
+  padding: 7px 10px;
+  border-radius: 9px;
+  background: rgba(117,167,255,.12);
+  color: #a8c2ff;
+  font-size: 14px;
+}
+.team-sheet {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, .8fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+.squad-pitch-wrap {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.squad-pitch {
+  position: relative;
+  width: min(100%, 720px);
+  height: 100%;
+  min-height: 470px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(85,214,180,.28);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(95,167,116,.20), transparent 55%),
+    linear-gradient(180deg, #164d3b 0%, #0f392d 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.035), 0 20px 50px rgba(0,0,0,.24);
+}
+.squad-pitch .pitch-half-line,
+.squad-pitch .pitch-center-circle,
+.squad-pitch .pitch-box,
+.squad-pitch .pitch-goal {
+  opacity: .95;
+}
+.squad-player-marker {
+  position: absolute;
+  z-index: 5;
+  width: 78px;
+  min-height: 64px;
+  transform: translate(-50%, -50%);
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 2px;
+  padding: 5px 6px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 11px;
+  background: rgba(7,16,24,.82);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,.26);
+}
+.squad-player-marker:hover {
+  transform: translate(-50%, -52%);
+  border-color: rgba(255,255,255,.36);
+}
+.squad-player-marker.selected {
+  border-color: #8ce8d0;
+  box-shadow: 0 0 0 2px rgba(140,232,208,.22), 0 9px 24px rgba(0,0,0,.3);
+}
+.squad-player-rating {
+  min-width: 24px;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: #75a7ff;
+  color: #071018;
+  font-size: 10px;
+  font-weight: 950;
+}
+.squad-player-marker strong {
+  max-width: 68px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+}
+.squad-player-marker small {
+  color: #9fb2c0;
+  font-size: 8px;
+  font-weight: 850;
+}
+.squad-roster {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(117,167,255,.20);
+  background: rgba(7,16,24,.26);
+}
+.squad-roster-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 2px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.squad-roster-header strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 14px;
+}
+.squad-roster-header > span {
+  color: #8ce8d0;
+  font-size: 10px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.squad-roster-list {
+  min-height: 0;
+  margin-top: 10px;
+  overflow: auto;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding-right: 4px;
+}
+.squad-roster-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 42px auto;
+  align-items: center;
+  gap: 9px;
+  padding: 9px;
+  border-radius: 11px;
+  border: 1px solid transparent;
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  text-align: left;
+}
+.squad-roster-card:hover {
+  border-color: rgba(117,167,255,.32);
+  background: rgba(117,167,255,.06);
+}
+.squad-roster-card.selected {
+  border-color: rgba(85,214,180,.48);
+  background: rgba(85,214,180,.08);
+}
+.squad-roster-avatar {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: linear-gradient(145deg, rgba(117,167,255,.22), rgba(163,139,255,.16));
+  color: #e9efff;
+  font-size: 12px;
+  font-weight: 900;
+}
+.squad-roster-main {
+  min-width: 0;
+}
+.squad-roster-main strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.squad-roster-main small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.squad-roster-stat {
+  text-align: center;
+}
+.squad-roster-stat small {
+  display: block;
+  color: var(--muted);
+  font-size: 8px;
+}
+.squad-roster-stat strong {
+  display: block;
+  margin-top: 1px;
+  font-size: 13px;
+}
+.squad-roster-status {
+  padding: 4px 6px;
+  border-radius: 7px;
+  background: rgba(255,255,255,.045);
+  color: #778d9d;
+  font-size: 8px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+.squad-roster-status.active {
+  background: rgba(85,214,180,.10);
+  color: #80e5cb;
+}
+.squad-pitch-note {
+  flex: 0 0 auto;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+  text-align: center;
+}
+
 .formation-block {
   margin-top: 20px;
   padding: 16px;
@@ -698,109 +920,55 @@ button, input, select {
   border: 1px solid rgba(163,139,255,.22);
   background: linear-gradient(135deg, rgba(163,139,255,.10), rgba(117,167,255,.05));
 }
-.formation-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.formation-heading span { display: block; color: var(--text-soft); font-size: 13px; font-weight: 800; }
-.formation-heading small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
-.formation-heading > strong { padding: 7px 11px; border-radius: 9px; background: rgba(163,139,255,.15); color: #c1b5ff; font-size: 14px; }
-.formation-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-top: 13px; }
-.formation-option {
-  min-height: 170px;
-  display: grid;
-  grid-template-rows: 126px auto;
-  gap: 8px;
-  padding: 11px;
-  border: 1px solid rgba(196,216,229,.12);
-  border-radius: 11px;
-  background: rgba(7,16,24,.34);
-  color: var(--text);
-  text-align: left;
+.formation-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
-.formation-option:hover { border-color: rgba(163,139,255,.36); }
-.formation-option.active { border-color: rgba(163,139,255,.55); background: linear-gradient(145deg, rgba(163,139,255,.18), rgba(117,167,255,.07)); }
-.formation-option strong { font-size: 13px; }
-.formation-mini {
-  position: relative;
-  width: 100%;
-  height: 126px;
-  min-height: 0;
-  overflow: hidden;
+.formation-heading span {
+  display: block;
+  color: var(--text-soft);
+  font-size: 13px;
+  font-weight: 800;
+}
+.formation-heading small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.formation-heading > strong {
+  padding: 7px 11px;
   border-radius: 9px;
-  border: 1px solid rgba(85,214,180,.18);
-  background: linear-gradient(180deg, rgba(57,120,105,.28), rgba(24,64,82,.18));
+  background: rgba(163,139,255,.15);
+  color: #c1b5ff;
+  font-size: 14px;
 }
-.pitch-half-line {
-  position: absolute;
-  left: 9%;
-  right: 9%;
-  top: 50%;
-  height: 1px;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,.15);
+.formation-selector-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 13px;
 }
-.pitch-center-circle {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 34px;
-  height: 34px;
-  transform: translate(-50%, -50%);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 50%;
+.formation-select-button {
+  min-height: 44px;
+  border: 1px solid rgba(196,216,229,.12);
+  border-radius: 10px;
+  background: rgba(7,16,24,.38);
+  color: var(--text-soft);
+  font-weight: 850;
+  font-size: 13px;
 }
-.pitch-box {
-  position: absolute;
-  left: 27%;
-  width: 46%;
-  border: 1px solid rgba(255,255,255,.13);
+.formation-select-button:hover {
+  border-color: rgba(163,139,255,.42);
+  background: rgba(163,139,255,.08);
 }
-.pitch-penalty-top {
-  top: 7%;
-  height: 24%;
-  border-top: 0;
+.formation-select-button.active {
+  border-color: rgba(163,139,255,.55);
+  background: linear-gradient(145deg, rgba(163,139,255,.18), rgba(117,167,255,.07));
+  color: #eeeaff;
 }
-.pitch-penalty-bottom {
-  bottom: 7%;
-  height: 24%;
-  border-bottom: 0;
-}
-.pitch-six-top {
-  top: 7%;
-  left: 39%;
-  width: 22%;
-  height: 11%;
-  border-top: 0;
-}
-.pitch-six-bottom {
-  bottom: 7%;
-  left: 39%;
-  width: 22%;
-  height: 11%;
-  border-bottom: 0;
-}
-.pitch-goal {
-  position: absolute;
-  z-index: 1;
-  left: 44%;
-  width: 12%;
-  height: 5px;
-  border: 1px solid rgba(255,255,255,.17);
-  background: rgba(255,255,255,.035);
-}
-.pitch-goal-top { top: 0; border-top: 0; }
-.pitch-goal-bottom { bottom: 0; border-bottom: 0; }
-.formation-dot {
-  position: absolute;
-  z-index: 3;
-  width: 10px;
-  height: 10px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px rgba(255,255,255,.08), 0 4px 9px rgba(0,0,0,.22);
-}
-.formation-dot-keeper { background: #f2be67; }
-.formation-dot-defender { background: #75a7ff; }
-.formation-dot-midfielder { background: #a38bff; }
-.formation-dot-attacker { background: #55d6b4; }
 
 .tactic-grid {
   display: grid;
@@ -1795,4 +1963,38 @@ tbody tr.your-club td { color: #e0f4ec; }
 .danger-button:hover {
   border-color: rgba(239,113,136,.58);
   background: linear-gradient(135deg, rgba(239,113,136,.32), rgba(184,57,88,.24));
+}
+
+@media (max-width: 980px) {
+  .team-sheet {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(410px, 1fr) minmax(250px, .72fr);
+    overflow: auto;
+  }
+  .squad-pitch {
+    min-height: 420px;
+  }
+}
+
+@media (max-width: 620px) {
+  .team-sheet {
+    grid-template-rows: minmax(360px, 1fr) minmax(260px, .72fr);
+  }
+  .squad-pitch {
+    min-height: 360px;
+  }
+  .squad-player-marker {
+    width: 64px;
+    min-height: 56px;
+  }
+  .squad-player-marker strong {
+    max-width: 54px;
+    font-size: 9px;
+  }
+  .squad-roster-card {
+    grid-template-columns: 32px minmax(0, 1fr) 40px;
+  }
+  .squad-roster-status {
+    display: none;
+  }
 }
