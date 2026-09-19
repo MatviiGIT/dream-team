@@ -228,3 +228,10 @@ Then:
 - Removed the long introductory feature copy that could overlap the careers section and replaced it with a compact latest-update panel.
 - Moved language/theme settings into a dedicated modal opened from the start-menu toolbar instead of placing a large settings card beside saved careers.
 - Kept the viewport fixed while allowing the appropriate start-menu inner areas to scroll on smaller screens.
+
+### 2026-09-19 — Start screen viewport scaling
+- Rebuilt the career-selection screen around a fixed 1440×900 design canvas.
+- The full start-screen canvas now scales proportionally to the available viewport using both width and height, so normal-window and fullscreen layouts keep the same relative geometry.
+- Separated the toolbar from the content grid so Settings and Fullscreen controls cannot overlap the hero or career cards.
+- Kept the saved-career section anchored to the entire lower row; many saves scroll inside that section instead of pushing the layout upward.
+- Kept the fixed-viewport rule and avoided relying on stacked responsive breakpoints for the desktop start screen.
