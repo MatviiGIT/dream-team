@@ -161,6 +161,15 @@ export const ru = {
     recentForm: 'Последние 5',
     remaining: (count: number) => 'Осталось ' + count + ' туров',
   },
+  sidePanel: {
+    financeEyebrow: 'ФИНАНСЫ',
+    financeTitle: 'Клубный бюджет',
+    wages: 'Зарплаты',
+    status: 'Статус',
+    stable: 'Стабильно',
+    financeHint: 'Здесь позже появятся доходы, расходы, трансферы и контракты.',
+    seasonEyebrow: 'СЕЗОН',
+  },
   matchCenter: {
     eyebrow: 'ЦЕНТР МАТЧА',
     title: 'Матч завершён',
