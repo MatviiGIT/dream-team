@@ -19,6 +19,36 @@ const clubLabels: Record<string, string> = {
   lakeside: 'Lakeside Albion',
 };
 
+function FullscreenButton() {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const sync = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener('fullscreenchange', sync);
+    sync();
+    return () => document.removeEventListener('fullscreenchange', sync);
+  }, []);
+
+  const toggle = async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch {
+      // The browser can deny fullscreen; keep the button harmless.
+    }
+  };
+
+  return (
+    <button className="ghost-button fullscreen-button" onClick={toggle} aria-pressed={isFullscreen}>
+      <span aria-hidden="true">⛶</span>
+      {isFullscreen ? ru.app.exitFullscreen : ru.app.fullscreen}
+    </button>
+  );
+}
+
 function formatDate(value: string): string {
   return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value));
 }
@@ -150,6 +180,7 @@ function App() {
           <span>{ru.app.season} {game.season}</span>
           <span>{ru.app.round} {game.currentRound}</span>
           <span>{game.managerName}</span>
+          <FullscreenButton />
           <button className="ghost-button" onClick={leaveToCareerMenu}>{ru.app.careers}</button>
         </div>
       </header>
@@ -212,6 +243,9 @@ function StartScreen(props: {
     <div className="start-screen">
       <div className="start-orb orb-one" />
       <div className="start-orb orb-two" />
+      <div className="start-toolbar">
+        <FullscreenButton />
+      </div>
 
       <main className="start-layout">
         <section className="start-hero">
@@ -416,7 +450,7 @@ function Overview({
 function UpcomingCalendar({ game }: { game: GameState }) {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const fixtures = game.fixtures
-    .filter((fixture) => !fixture.played && (fixture.homeTeamId === game.clubId || fixture.awayTeamId === game.clubId))
+    .filter((fixture) => fixture.round <= 14 && !fixture.played && (fixture.homeTeamId === game.clubId || fixture.awayTeamId === game.clubId))
     .sort((a, b) => a.round - b.round);
 
   const preview = fixtures.slice(0, 2);
