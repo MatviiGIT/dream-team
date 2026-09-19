@@ -1,4 +1,4 @@
-import type { Club, Player, TableRow, Tactics } from '../domain/types';
+import type { Club, Player, Position, TableRow, Tactics } from '../domain/types';
 import { createClubFinance } from '../game/finance';
 
 const squadPositions = ['GK', 'GK', 'DEF', 'DEF', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'FWD', 'FWD'] as const;
