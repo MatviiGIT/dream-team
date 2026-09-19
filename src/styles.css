@@ -746,6 +746,71 @@ button, input, select {
 .squad-pitch .pitch-goal {
   opacity: .95;
 }
+.squad-pitch .pitch-half-line {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 50%;
+  height: 1px;
+  background: rgba(255,255,255,.18);
+}
+.squad-pitch .pitch-center-circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 76px;
+  height: 76px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 50%;
+}
+.squad-pitch .pitch-box {
+  position: absolute;
+  left: 25%;
+  width: 50%;
+  border: 1px solid rgba(255,255,255,.16);
+}
+.squad-pitch .pitch-penalty-top {
+  top: 5%;
+  height: 24%;
+  border-top: 0;
+}
+.squad-pitch .pitch-penalty-bottom {
+  bottom: 5%;
+  height: 24%;
+  border-bottom: 0;
+}
+.squad-pitch .pitch-six-top {
+  top: 5%;
+  left: 38%;
+  width: 24%;
+  height: 11%;
+  border-top: 0;
+}
+.squad-pitch .pitch-six-bottom {
+  bottom: 5%;
+  left: 38%;
+  width: 24%;
+  height: 11%;
+  border-bottom: 0;
+}
+.squad-pitch .pitch-goal {
+  position: absolute;
+  z-index: 2;
+  left: 43%;
+  width: 14%;
+  height: 12px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.045);
+}
+.squad-pitch .pitch-goal-top {
+  top: 0;
+  border-top: 0;
+}
+.squad-pitch .pitch-goal-bottom {
+  bottom: 0;
+  border-bottom: 0;
+}
 .squad-player-marker {
   position: absolute;
   z-index: 5;
