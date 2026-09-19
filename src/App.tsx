@@ -239,7 +239,7 @@ function App() {
 
           <section className={`workspace-main content-${tab}`}>
             {tab === "overview" && (
-            <section className="club-header card">
+              <section className="club-header card">
               <div>
                 <div className="eyebrow">{ru.overview.yourClub}</div>
                 <h1>{club.name}</h1>
@@ -283,7 +283,7 @@ function App() {
           </section>
 
           {tab === "overview" && (
-          <aside className="workspace-sidebar right-sidebar">
+            <aside className="workspace-sidebar right-sidebar">
             <section className="side-panel finance-preview">
               <div className="side-panel-header">
                 <div>
