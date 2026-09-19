@@ -105,33 +105,39 @@ button, input, select {
 .app-shell::after {
   content: "";
   position: absolute;
-  inset: -28%;
   pointer-events: none;
   z-index: 0;
-  background:
-    radial-gradient(circle at 18% 20%, rgba(85,214,180,.22), transparent 25%),
-    radial-gradient(circle at 82% 18%, rgba(117,167,255,.20), transparent 24%),
-    radial-gradient(circle at 62% 88%, rgba(163,139,255,.18), transparent 27%);
-  filter: blur(38px);
-  transform: scale(1.14);
-  opacity: .9;
+  border-radius: 50%;
+  will-change: transform;
+  contain: paint;
 }
 .app-shell::before {
-  animation: ambientOrbitOne 34s linear infinite;
+  inset: -10%;
+  background:
+    radial-gradient(circle at 20% 28%, rgba(85,214,180,.14), transparent 24%),
+    radial-gradient(circle at 78% 22%, rgba(117,167,255,.12), transparent 22%),
+    radial-gradient(circle at 65% 80%, rgba(163,139,255,.11), transparent 24%);
+  opacity: .82;
+  animation: ambientDrift 42s linear infinite alternate;
 }
 .app-shell::after {
-  animation: ambientOrbitTwo 47s linear infinite reverse;
-  opacity: .76;
+  width: 58%;
+  height: 58%;
+  right: -12%;
+  bottom: -18%;
+  background: radial-gradient(circle, rgba(117,167,255,.08), transparent 68%);
+  opacity: .9;
+  animation: ambientDriftSecondary 56s linear infinite alternate-reverse;
 }
-@keyframes ambientOrbitOne {
-  from { transform: rotate(0deg) scale(1.14); }
-  to { transform: rotate(360deg) scale(1.14); }
+@keyframes ambientDrift {
+  0% { transform: translate3d(-2%, -1%, 0) scale(1); }
+  50% { transform: translate3d(2%, 1.5%, 0) scale(1.025); }
+  100% { transform: translate3d(-1%, 2%, 0) scale(1.01); }
 }
-@keyframes ambientOrbitTwo {
-  from { transform: rotate(0deg) scale(1.18); }
-  to { transform: rotate(360deg) scale(1.18); }
+@keyframes ambientDriftSecondary {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-3%, -2%, 0); }
 }
-
 .topbar {
   position: relative;
   z-index: 3;
@@ -143,8 +149,7 @@ button, input, select {
   justify-content: space-between;
   gap: 20px;
   padding: 0 32px;
-  background: rgba(7, 16, 24, .94);
-  backdrop-filter: blur(18px);
+  background: rgba(7, 16, 24, .97);
   position: relative;
   z-index: 20;
 }
@@ -163,12 +168,18 @@ button, input, select {
   background: linear-gradient(145deg, #6be2c4, #75a7ff);
 }
 .brand-mark {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
   border-radius: 13px;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: -.07em;
+  padding-right: 1px;
+  overflow: visible;
   box-shadow: 0 9px 28px rgba(85, 214, 180, .16);
 }
-.brand strong { display: block; font-size: 15px; letter-spacing: -.02em; }
+.brand strong { display: block; font-size: 15px; line-height: 1.05; letter-spacing: -.02em; white-space: nowrap; }
 .brand span { display: block; font-size: 11px; color: var(--muted); margin-top: 3px; }
 .topbar-meta {
   display: flex;
@@ -198,21 +209,72 @@ button, input, select {
   display: flex;
   flex-direction: column;
 }
+.content,
+.dashboard-grid,
+.timeline,
+.table-wrap,
+.tabs,
+.player-list,
+.career-grid,
+.full-calendar-list,
+.tactics-panel,
+.settings-modal-body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(117, 167, 255, .55) transparent;
+}
 .content::-webkit-scrollbar,
+.dashboard-grid::-webkit-scrollbar,
 .timeline::-webkit-scrollbar,
 .table-wrap::-webkit-scrollbar,
-.tabs::-webkit-scrollbar { width: 8px; height: 8px; }
-.content::-webkit-scrollbar-thumb,
-.timeline::-webkit-scrollbar-thumb,
-.table-wrap::-webkit-scrollbar-thumb,
-.tabs::-webkit-scrollbar-thumb {
-  background: #2a3b47;
-  border-radius: 99px;
+.tabs::-webkit-scrollbar,
+.player-list::-webkit-scrollbar,
+.career-grid::-webkit-scrollbar,
+.full-calendar-list::-webkit-scrollbar,
+.tactics-panel::-webkit-scrollbar,
+.settings-modal-body::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
 }
 .content::-webkit-scrollbar-track,
+.dashboard-grid::-webkit-scrollbar-track,
 .timeline::-webkit-scrollbar-track,
 .table-wrap::-webkit-scrollbar-track,
-.tabs::-webkit-scrollbar-track { background: transparent; }
+.tabs::-webkit-scrollbar-track,
+.player-list::-webkit-scrollbar-track,
+.career-grid::-webkit-scrollbar-track,
+.full-calendar-list::-webkit-scrollbar-track,
+.tactics-panel::-webkit-scrollbar-track,
+.settings-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.content::-webkit-scrollbar-thumb,
+.dashboard-grid::-webkit-scrollbar-thumb,
+.timeline::-webkit-scrollbar-thumb,
+.table-wrap::-webkit-scrollbar-thumb,
+.tabs::-webkit-scrollbar-thumb,
+.player-list::-webkit-scrollbar-thumb,
+.career-grid::-webkit-scrollbar-thumb,
+.full-calendar-list::-webkit-scrollbar-thumb,
+.tactics-panel::-webkit-scrollbar-thumb,
+.settings-modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(117,167,255,.58), rgba(163,139,255,.46));
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+}
+.content::-webkit-scrollbar-thumb:hover,
+.dashboard-grid::-webkit-scrollbar-thumb:hover,
+.timeline::-webkit-scrollbar-thumb:hover,
+.table-wrap::-webkit-scrollbar-thumb:hover,
+.tabs::-webkit-scrollbar-thumb:hover,
+.player-list::-webkit-scrollbar-thumb:hover,
+.career-grid::-webkit-scrollbar-thumb:hover,
+.full-calendar-list::-webkit-scrollbar-thumb:hover,
+.tactics-panel::-webkit-scrollbar-thumb:hover,
+.settings-modal-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(117,167,255,.82), rgba(163,139,255,.72));
+  background-clip: padding-box;
+}
 
 .card {
   background: linear-gradient(180deg, rgba(20, 35, 46, .96), rgba(13, 25, 35, .98));
@@ -391,6 +453,16 @@ button, input, select {
   justify-content: space-between;
   align-items: flex-start;
   gap: 18px;
+  min-width: 0;
+}
+.section-title-row > div { min-width: 0; }
+.section-title-row h2 {
+  overflow-wrap: anywhere;
+}
+.section-title-row .muted,
+.section-title-row .future-tag,
+.section-title-row .match-tag {
+  flex: 0 0 auto;
 }
 .section-title-row h2 {
   margin: 5px 0 0;
@@ -1483,9 +1555,14 @@ tbody tr.your-club td { color: #e0f4ec; }
   max-width: 690px;
 }
 .hero-badge {
-  width: 58px;
-  height: 58px;
+  width: 60px;
+  height: 60px;
+  flex: 0 0 60px;
   margin-bottom: 20px;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: -.06em;
+  overflow: visible;
 }
 .latest-update {
   max-width: 650px;
@@ -1525,4 +1602,33 @@ tbody tr.your-club td { color: #e0f4ec; }
 .career-card {
   min-width: 0;
   padding: 15px;
+}
+
+.start-stage .section-title-row { align-items: center; }
+.start-stage .section-title-row h2 { max-width: 100%; }
+.start-stage .latest-update p { overflow-wrap: anywhere; }
+.start-stage .career-main strong,
+.start-stage .career-main span,
+.start-stage .career-meta span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.start-stage .career-meta {
+  align-items: center;
+}
+.start-stage .secondary-button,
+.start-stage .primary-button {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.settings-button,
+.fullscreen-button {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
