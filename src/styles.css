@@ -3151,13 +3151,36 @@ tbody tr.your-club td { color: #e0f4ec; }
   }
 }
 
-/* Keep the three Match Center body sections inside the fixed modal height. */
+/* Keep the Match Center timeline compact and give player ratings the main space. */
 .match-center-body {
-  grid-template-rows: minmax(0, 1fr) minmax(178px, .72fr);
+  grid-template-rows: minmax(160px, .55fr) minmax(320px, 1.45fr);
 }
 @media (max-width: 760px) {
   .match-center-body {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(185px, .9fr) minmax(175px, .65fr) minmax(300px, 1fr);
+    grid-template-rows: minmax(165px, .7fr) minmax(170px, .65fr) minmax(330px, 1.25fr);
   }
+}
+/* Match Center player list scrollbar — same treatment as the other scrollable cells. */
+.match-player-rating-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(117,167,255,.55) transparent;
+  scrollbar-gutter: stable;
+}
+.match-player-rating-list::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+.match-player-rating-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.match-player-rating-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(117,167,255,.58), rgba(163,139,255,.46));
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+}
+.match-player-rating-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(117,167,255,.82), rgba(163,139,255,.72));
+  background-clip: padding-box;
 }
