@@ -704,9 +704,9 @@ button, input, select {
 .formation-heading > strong { padding: 7px 11px; border-radius: 9px; background: rgba(163,139,255,.15); color: #c1b5ff; font-size: 14px; }
 .formation-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-top: 13px; }
 .formation-option {
-  min-height: 104px;
+  min-height: 170px;
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 126px auto;
   gap: 8px;
   padding: 11px;
   border: 1px solid rgba(196,216,229,.12);
@@ -720,22 +720,21 @@ button, input, select {
 .formation-option strong { font-size: 13px; }
 .formation-mini {
   position: relative;
-  min-height: 78px;
+  width: 100%;
+  height: 126px;
+  min-height: 0;
   overflow: hidden;
   border-radius: 9px;
   border: 1px solid rgba(85,214,180,.18);
   background:
-    linear-gradient(90deg, transparent 49.5%, rgba(255,255,255,.13) 49.5%, rgba(255,255,255,.13) 50.5%, transparent 50.5%),
-    linear-gradient(180deg, rgba(57,120,105,.27), rgba(24,64,82,.19));
+    linear-gradient(90deg, transparent 49.35%, rgba(255,255,255,.13) 49.35%, rgba(255,255,255,.13) 50.65%, transparent 50.65%),
+    linear-gradient(180deg, rgba(57,120,105,.28), rgba(24,64,82,.18));
 }
 .formation-mini::before {
   content: "";
   position: absolute;
-  left: 9%;
-  right: 9%;
-  top: 10%;
-  bottom: 10%;
-  border: 1px solid rgba(255,255,255,.12);
+  inset: 7% 9%;
+  border: 1px solid rgba(255,255,255,.13);
   border-radius: 6px;
 }
 .formation-mini::after {
@@ -743,21 +742,32 @@ button, input, select {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   transform: translate(-50%, -50%);
   border: 1px solid rgba(255,255,255,.11);
   border-radius: 50%;
 }
-.formation-mini span {
+.formation-dot {
   position: absolute;
   z-index: 2;
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: #8ce8d0;
-  box-shadow: 0 0 0 2px rgba(140,232,208,.12), 0 4px 9px rgba(0,0,0,.20);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.08), 0 4px 9px rgba(0,0,0,.22);
+}
+.formation-dot-keeper {
+  background: #f2be67;
+}
+.formation-dot-defender {
+  background: #75a7ff;
+}
+.formation-dot-midfielder {
+  background: #a38bff;
+}
+.formation-dot-attacker {
+  background: #55d6b4;
 }
 
 .tactic-grid {
