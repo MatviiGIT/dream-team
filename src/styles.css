@@ -379,8 +379,13 @@ button, input, select {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-template-rows: minmax(235px, 1fr) minmax(175px, .78fr);
   gap: 14px;
-  overflow: auto;
+  overflow: hidden;
+  scrollbar-gutter: stable;
   padding: 2px 3px 5px;
+}
+
+.manager-card {
+  contain: layout paint;
 }
 .dashboard-grid > .card {
   min-width: 0;
@@ -1682,6 +1687,7 @@ tbody tr.your-club td { color: #e0f4ec; }
   .tab { flex: 1 0 auto; }
   .dashboard-grid {
     overflow: auto;
+    scrollbar-gutter: stable;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(6, minmax(170px, auto));
     gap: 10px;
