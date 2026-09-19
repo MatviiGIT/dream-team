@@ -101,7 +101,7 @@ function App() {
   const [game, setGame] = useState<GameState | null>(null);
   const [careers, setCareers] = useState<StoredCareer[]>(() => loadCareers());
   const [tab, setTab] = useState<Tab>('overview');
-  const [matchCenter, setMatchCenter] = useState<MatchResult | null>(null);
+  const [matchCenter, setMatchCenter] = useState<{ match: MatchResult; season: number; round: number } | null>(null);
   const [managerName, setManagerName] = useState('');
   const [selectedClub, setSelectedClub] = useState<string>(clubOrder[5]);
   const [nameError, setNameError] = useState('');
@@ -236,9 +236,13 @@ function App() {
             row={tableRow}
             nextFixture={nextFixture}
             onPlay={() => {
+              const matchSeason = game.season;
+              const matchRound = game.currentRound;
               const nextGame = playNextRound(game);
               setGame(nextGame);
-              if (nextGame.lastMatch) setMatchCenter(nextGame.lastMatch);
+              if (nextGame.lastMatch) {
+                setMatchCenter({ match: nextGame.lastMatch, season: matchSeason, round: matchRound });
+              }
             }}
           />
         )}
@@ -257,7 +261,13 @@ function App() {
         {tab === 'table' && <LeagueTable game={game} />}
       </main>
       {matchCenter && (
-        <MatchCenter game={game} match={matchCenter} onClose={() => setMatchCenter(null)} />
+        <MatchCenter
+          game={game}
+          match={matchCenter.match}
+          season={matchCenter.season}
+          round={matchCenter.round}
+          onClose={() => setMatchCenter(null)}
+        />
       )}
     </div>
   );
@@ -741,10 +751,14 @@ function UpcomingCalendar({ game }: { game: GameState }) {
 function MatchCenter({
   game,
   match,
+  season,
+  round,
   onClose,
 }: {
   game: GameState;
   match: MatchResult;
+  season: number;
+  round: number;
   onClose: () => void;
 }) {
   const home = game.clubs[match.homeTeamId];
@@ -770,8 +784,8 @@ function MatchCenter({
             <h2 id="match-center-title">{ru.matchCenter.title}</h2>
           </div>
           <div className="match-center-header-meta">
-            <span>{ru.app.season} {game.season}</span>
-            <span>{ru.matchCenter.round} {Math.max(1, game.currentRound - 1)}</span>
+                <span>{ru.app.season} {season}</span>
+            <span>{ru.matchCenter.round} {round}</span>
             <button className="modal-close" type="button" onClick={onClose} aria-label={ru.common.close}>×</button>
           </div>
         </div>
