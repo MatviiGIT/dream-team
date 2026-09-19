@@ -378,3 +378,9 @@ Then:
 - Kept the event timeline and match-number panels usable by giving them a smaller, fixed minimum area with their own internal overflow.
 - Added the same thin custom scrollbar treatment and stable scrollbar gutter to both player-rating lists.
 - Added a mobile-specific row balance so the player ratings remain the largest section on narrow screens as well.
+### 2026-09-19 — Match Center rating readability + sorting
+- Sorted each team's player ratings from highest to lowest rating.
+- Increased player-name, position, rating and stat typography and row height so the ratings table is comfortable to read.
+- Rebalanced Match Center vertical space so the rating table cannot extend behind the «Продолжить» button; overflow stays inside the rating lists.
+- Reduced padding/space in the upper timeline and match-stat panels to give the ratings section more usable room.
+- Kept the custom scrollbar on the individual rating lists and the existing mobile overflow behavior.
