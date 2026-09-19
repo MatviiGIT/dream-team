@@ -76,6 +76,50 @@ function makePlayer(clubIndex: number, playerIndex: number, clubReputation: numb
   };
 }
 
+const defaultStartingXI: Record<Tactics['formation'], Position[]> = {
+  '4-3-3': ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'FWD'],
+  '4-4-2': ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'MID', 'FWD', 'FWD'],
+  '4-2-3-1': ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'MID', 'MID', 'FWD'],
+};
+
+function buildStartingXI(
+  playerIds: string[],
+  players: Record<string, Player>,
+  formation: Tactics['formation'],
+): string[] {
+  const unused = new Set(playerIds);
+  const lineup: string[] = [];
+
+  for (const position of defaultStartingXI[formation]) {
+    const exact = playerIds.find((id) => unused.has(id) && players[id]?.position === position);
+    if (exact) {
+      lineup.push(exact);
+      unused.delete(exact);
+    }
+  }
+
+  if (lineup.length < 11) {
+    for (const id of playerIds) {
+      if (!unused.has(id)) continue;
+      lineup.push(id);
+      unused.delete(id);
+      if (lineup.length === 11) break;
+    }
+  }
+
+  return lineup;
+}
+
+function needsStartingXIRepair(
+  startingXI: string[] | undefined,
+  players: Record<string, Player>,
+  formation: Tactics['formation'],
+): boolean {
+  if (!startingXI || startingXI.length !== 11) return true;
+  const required = defaultStartingXI[formation];
+  return required.some((position, index) => players[startingXI[index]]?.position !== position);
+}
+
 export function createInitialWorld(): { clubs: Record<string, Club>; players: Record<string, Player>; table: TableRow[] } {
   const clubs: Record<string, Club> = {};
   const players: Record<string, Player> = {};
@@ -97,7 +141,7 @@ export function createInitialWorld(): { clubs: Record<string, Club>; players: Re
       wages: playerIds.reduce((sum, playerId) => sum + players[playerId].wage, 0),
       finance: createClubFinance(),
       playerIds,
-      startingXI: playerIds.slice(0, 11),
+      startingXI: buildStartingXI(playerIds, players, '4-3-3'),
       tactic: { ...defaultTactics },
       color,
     };
@@ -120,7 +164,9 @@ export function createInitialWorld(): { clubs: Record<string, Club>; players: Re
 export function ensureSquadDepth(clubs: Record<string, Club>, players: Record<string, Player>): void {
   Object.values(clubs).forEach((club) => {
     if (club.playerIds.length >= squadPositions.length) {
-      if (club.startingXI?.length !== 11) club.startingXI = club.playerIds.slice(0, 11);
+      if (needsStartingXIRepair(club.startingXI, players, club.tactic.formation)) {
+        club.startingXI = buildStartingXI(club.playerIds, players, club.tactic.formation);
+      }
       return;
     }
 
@@ -131,7 +177,9 @@ export function ensureSquadDepth(clubs: Record<string, Club>, players: Record<st
       club.playerIds.push(player.id);
     }
 
-    club.startingXI = club.startingXI?.length === 11 ? club.startingXI : club.playerIds.slice(0, 11);
+    club.startingXI = needsStartingXIRepair(club.startingXI, players, club.tactic.formation)
+      ? buildStartingXI(club.playerIds, players, club.tactic.formation)
+      : club.startingXI;
     club.wages = club.playerIds.reduce((sum, playerId) => sum + (players[playerId]?.wage ?? 0), 0);
   });
 }
