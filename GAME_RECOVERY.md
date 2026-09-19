@@ -281,3 +281,5 @@ Then:
 - The automatic match simulator now builds team profiles and scorer candidates from the selected starting XI.
 - Tactics now uses compact formation selector buttons without miniature formation diagrams.
 - Added a roster panel beside the pitch so the Squad screen is the main place for lineup management.
+
+- Completed the team-sheet pitch markings after moving the formation view out of Tactics, including full penalty areas and goals on the new large pitch.
