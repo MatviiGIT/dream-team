@@ -1,4 +1,4 @@
-import type { Club, Formation, MatchEvent, MatchResult, Player, Position } from '../domain/types';
+import type { Club, Formation, MatchEvent, MatchPlayerStats, MatchResult, Player, Position } from '../domain/types';
 import { SeededRng } from './rng';
 
 interface TeamProfile {
@@ -181,6 +181,121 @@ function selectScorer(club: Club, players: Record<string, Player>, rng: SeededRn
   return candidates[candidates.length - 1];
 }
 
+function selectWeightedPlayer(
+  candidates: Player[],
+  weightForPlayer: (player: Player) => number,
+  rng: SeededRng,
+): Player | undefined {
+  if (!candidates.length) return undefined;
+
+  const weights = candidates.map((player) => Math.max(1, weightForPlayer(player)));
+  const total = weights.reduce((sum, value) => sum + value, 0);
+  let cursor = rng.range(0, total);
+
+  for (let i = 0; i < candidates.length; i += 1) {
+    cursor -= weights[i];
+    if (cursor <= 0) return candidates[i];
+  }
+
+  return candidates[candidates.length - 1];
+}
+
+function selectAssistProvider(
+  club: Club,
+  players: Record<string, Player>,
+  scorerId: string | undefined,
+  rng: SeededRng,
+): Player | undefined {
+  const selectedIds = club.startingXI?.length ? club.startingXI : club.playerIds.slice(0, 11);
+  const candidates = selectedIds
+    .map((id) => players[id])
+    .filter((player): player is Player => Boolean(player))
+    .filter((player) => player.id !== scorerId && player.position !== 'GK');
+
+  return selectWeightedPlayer(
+    candidates,
+    (player) => player.attributes.passing + player.attributes.technique +
+      (player.position === 'MID' ? 18 : player.position === 'DEF' ? 8 : 4),
+    rng,
+  );
+}
+
+function buildTeamPlayerStats(
+  club: Club,
+  players: Record<string, Player>,
+  totalShots: number,
+  teamGoals: number,
+  opponentGoals: number,
+  events: MatchEvent[],
+  rng: SeededRng,
+): Record<string, MatchPlayerStats> {
+  const selectedIds = club.startingXI?.length ? club.startingXI : club.playerIds.slice(0, 11);
+  const selectedPlayers = selectedIds
+    .map((id) => players[id])
+    .filter((player): player is Player => Boolean(player));
+  const roles = formationRoles(club.tactic.formation);
+  const resultBonus = teamGoals > opponentGoals ? 0.32 : teamGoals === opponentGoals ? 0.06 : -0.24;
+  const shotCounts = new Map(selectedPlayers.map((player) => [player.id, 0]));
+
+  for (let shot = 0; shot < totalShots; shot += 1) {
+    const selected = selectWeightedPlayer(
+      selectedPlayers,
+      (player) => {
+        const index = selectedIds.indexOf(player.id);
+        const expected = roles[index] ?? 'MID';
+        const fit = positionFit(player.position, expected);
+        const roleBonus = player.position === 'FWD' ? 28 : player.position === 'MID' ? 13 : 3;
+        return (player.attributes.shooting + player.attributes.positioning + roleBonus) * (0.72 + fit * 0.28);
+      },
+      rng,
+    );
+    if (selected) shotCounts.set(selected.id, (shotCounts.get(selected.id) ?? 0) + 1);
+  }
+
+  const goalsByPlayer = new Map<string, number>();
+  const assistsByPlayer = new Map<string, number>();
+  for (const event of events) {
+    if (event.type !== 'goal' || event.teamId !== club.id) continue;
+    if (event.playerId) goalsByPlayer.set(event.playerId, (goalsByPlayer.get(event.playerId) ?? 0) + 1);
+    if (event.assistPlayerId) assistsByPlayer.set(event.assistPlayerId, (assistsByPlayer.get(event.assistPlayerId) ?? 0) + 1);
+  }
+
+  return Object.fromEntries(selectedPlayers.map((player) => {
+    const index = selectedIds.indexOf(player.id);
+    const expected = roles[index] ?? 'MID';
+    const fit = positionFit(player.position, expected);
+    const shots = shotCounts.get(player.id) ?? 0;
+    const goals = goalsByPlayer.get(player.id) ?? 0;
+    const assists = assistsByPlayer.get(player.id) ?? 0;
+
+    let rating = 6.25 +
+      clamp((player.overall - 70) * 0.025, -0.45, 0.55) +
+      player.form * 0.012 +
+      (fit - 1) * 0.18 +
+      resultBonus;
+
+    const goalValue = player.position === 'FWD' ? 0.95 : player.position === 'MID' ? 1.05 : 1.15;
+    rating += goals * goalValue + assists * 0.52;
+    rating += Math.min(shots, 5) * 0.045;
+    rating -= Math.max(0, shots - goals * 1.5 - 4) * 0.018;
+
+    if (opponentGoals === 0 && player.position === 'GK') rating += 0.42;
+    if (opponentGoals === 0 && player.position === 'DEF') rating += 0.18;
+
+    return [
+      player.id,
+      {
+        playerId: player.id,
+        minutes: 90,
+        rating: Number(clamp(rating, 4.8, 10).toFixed(1)),
+        shots,
+        goals,
+        assists,
+      },
+    ];
+  }));
+}
+
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
@@ -274,6 +389,23 @@ export function simulateMatch(
     description: 'Full-time',
   });
 
+  const homeShots = Math.max(homeGoals, Math.round(homeChance * rng.range(4.8, 7.1) + rng.range(1, 5)));
+  const awayShots = Math.max(awayGoals, Math.round(awayChance * rng.range(4.8, 7.1) + rng.range(1, 5)));
+
+  for (const event of events) {
+    if (event.type !== 'goal' || !event.playerId) continue;
+    const scoringTeam = event.teamId === homeTeam.id ? homeTeam : awayTeam;
+    if (rng.chance(0.68)) {
+      const assister = selectAssistProvider(scoringTeam, players, event.playerId, rng);
+      if (assister) event.assistPlayerId = assister.id;
+    }
+  }
+
+  const playerStats = {
+    ...buildTeamPlayerStats(homeTeam, players, homeShots, homeGoals, awayGoals, events, rng),
+    ...buildTeamPlayerStats(awayTeam, players, awayShots, awayGoals, homeGoals, events, rng),
+  };
+
   return {
     homeTeamId: homeTeam.id,
     awayTeamId: awayTeam.id,
@@ -281,11 +413,12 @@ export function simulateMatch(
     awayGoals,
     homeXg: Number(homeChance.toFixed(2)),
     awayXg: Number(awayChance.toFixed(2)),
-    homeShots: Math.max(homeGoals, Math.round(homeChance * rng.range(4.8, 7.1) + rng.range(1, 5))),
-    awayShots: Math.max(awayGoals, Math.round(awayChance * rng.range(4.8, 7.1) + rng.range(1, 5))),
+    homeShots,
+    awayShots,
     homePossession: Math.round(homePossession),
     awayPossession: Math.round(awayPossession),
     events,
+    playerStats,
   };
 }
 
