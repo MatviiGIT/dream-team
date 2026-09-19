@@ -443,3 +443,12 @@ Then:
 - Fullscreen remains available as a compact floating control in the bottom-right corner with an accessible label/title.
 - Career navigation was moved into the existing club header alongside the transfer budget, preserving the ability to return to the career menu without restoring the wasted vertical space.
 - Start-screen fullscreen behavior remains unchanged.
+
+### 2026-09-19 — Wide three-zone in-game workspace
+- Replaced the centered 1180px in-game workspace with a full-width desktop shell.
+- Main game layout now uses three zones on wide screens: left persistent navigation, central active screen, and right utility rail.
+- Moved the existing section navigation (Overview, Squad, Tactics, Table) from a horizontal tab bar into the left sidebar.
+- Added a right-side finance preview using already-existing club budget and wage data; this is presentation only and does not introduce new financial simulation logic.
+- Added a small season/round context panel to the right rail.
+- Preserved fullscreen as a floating control and kept career-menu access in the left sidebar.
+- Responsive behavior: at medium widths the right rail is hidden to protect the main screen; on small screens navigation becomes horizontal and the main area remains usable.
