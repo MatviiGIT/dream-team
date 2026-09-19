@@ -384,3 +384,9 @@ Then:
 - Rebalanced Match Center vertical space so the rating table cannot extend behind the «Продолжить» button; overflow stays inside the rating lists.
 - Reduced padding/space in the upper timeline and match-stat panels to give the ratings section more usable room.
 - Kept the custom scrollbar on the individual rating lists and the existing mobile overflow behavior.
+### 2026-09-19 — Match Center expanded layout
+- Expanded the Match Center modal to use more of the desktop viewport, reducing cramped horizontal text wrapping around the final score.
+- Reduced the vertical footprint of the top scoreboard while keeping the score and team identities prominent.
+- Increased the width available to the timeline and match-stat panels so all core statistics can be shown together.
+- Rebalanced vertical rows so the timeline and match statistics receive substantially more space while the player ratings panel remains the largest detailed section.
+- Kept the mobile-specific layout and internal scrolling behavior intact.
