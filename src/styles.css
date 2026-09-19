@@ -105,38 +105,38 @@ button, input, select {
 .app-shell::after {
   content: "";
   position: absolute;
+  inset: -14%;
   pointer-events: none;
   z-index: 0;
-  border-radius: 50%;
   will-change: transform;
   contain: paint;
 }
 .app-shell::before {
-  inset: -10%;
   background:
-    radial-gradient(circle at 20% 28%, rgba(85,214,180,.14), transparent 24%),
-    radial-gradient(circle at 78% 22%, rgba(117,167,255,.12), transparent 22%),
-    radial-gradient(circle at 65% 80%, rgba(163,139,255,.11), transparent 24%);
-  opacity: .82;
-  animation: ambientDrift 42s linear infinite alternate;
+    radial-gradient(38% 48% at 15% 28%, rgba(85,214,180,.15), transparent 72%),
+    radial-gradient(34% 44% at 82% 22%, rgba(117,167,255,.15), transparent 72%),
+    radial-gradient(42% 48% at 70% 82%, rgba(163,139,255,.13), transparent 74%),
+    radial-gradient(26% 34% at 42% 60%, rgba(242,190,103,.055), transparent 76%);
+  opacity: .76;
+  animation: ambientFieldPrimary 28s ease-in-out infinite alternate;
 }
 .app-shell::after {
-  width: 58%;
-  height: 58%;
-  right: -12%;
-  bottom: -18%;
-  background: radial-gradient(circle, rgba(117,167,255,.08), transparent 68%);
-  opacity: .9;
-  animation: ambientDriftSecondary 56s linear infinite alternate-reverse;
+  inset: -18%;
+  background:
+    radial-gradient(30% 34% at 24% 78%, rgba(117,167,255,.10), transparent 74%),
+    radial-gradient(32% 38% at 78% 58%, rgba(85,214,180,.08), transparent 74%),
+    radial-gradient(26% 32% at 52% 16%, rgba(163,139,255,.075), transparent 76%);
+  opacity: .5;
+  animation: ambientFieldSecondary 38s ease-in-out infinite alternate-reverse;
 }
-@keyframes ambientDrift {
-  0% { transform: translate3d(-2%, -1%, 0) scale(1); }
-  50% { transform: translate3d(2%, 1.5%, 0) scale(1.025); }
-  100% { transform: translate3d(-1%, 2%, 0) scale(1.01); }
+@keyframes ambientFieldPrimary {
+  0% { transform: translate3d(-3%, -1%, 0) scale(1); }
+  50% { transform: translate3d(2%, 2%, 0) scale(1.035); }
+  100% { transform: translate3d(-1%, 3%, 0) scale(1.02); }
 }
-@keyframes ambientDriftSecondary {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-3%, -2%, 0); }
+@keyframes ambientFieldSecondary {
+  0% { transform: translate3d(2%, -2%, 0) scale(1.015); }
+  100% { transform: translate3d(-3%, 3%, 0) scale(1.04); }
 }
 .topbar {
   position: relative;
@@ -720,65 +720,45 @@ button, input, select {
 .formation-option strong { font-size: 13px; }
 .formation-mini {
   position: relative;
-  min-height: 65px;
-  border-radius: 8px;
+  min-height: 78px;
+  overflow: hidden;
+  border-radius: 9px;
+  border: 1px solid rgba(85,214,180,.18);
   background:
-    linear-gradient(90deg, transparent 49.5%, rgba(255,255,255,.14) 49.5%, rgba(255,255,255,.14) 50.5%, transparent 50.5%),
-    linear-gradient(160deg, rgba(39,135,105,.30), rgba(21,74,91,.24));
-  border: 1px solid rgba(85,214,180,.15);
+    linear-gradient(90deg, transparent 49.5%, rgba(255,255,255,.13) 49.5%, rgba(255,255,255,.13) 50.5%, transparent 50.5%),
+    linear-gradient(180deg, rgba(57,120,105,.27), rgba(24,64,82,.19));
 }
-.formation-mini::before,
+.formation-mini::before {
+  content: "";
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  top: 10%;
+  bottom: 10%;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 6px;
+}
 .formation-mini::after {
   content: "";
   position: absolute;
-  left: 12%;
-  right: 12%;
-  height: 1px;
-  background: rgba(255,255,255,.12);
+  left: 50%;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 50%;
 }
-.formation-mini::before { top: 33%; }
-.formation-mini::after { top: 66%; }
 .formation-mini span {
   position: absolute;
-  width: 7px;
-  height: 7px;
+  z-index: 2;
+  width: 9px;
+  height: 9px;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   background: #8ce8d0;
-  box-shadow: 0 0 0 2px rgba(140,232,208,.10);
+  box-shadow: 0 0 0 2px rgba(140,232,208,.12), 0 4px 9px rgba(0,0,0,.20);
 }
-.mini-433 span:nth-child(1) { left: calc(50% - 3.5px); bottom: 7px; }
-.mini-433 span:nth-child(2) { left: 16%; bottom: 20px; }
-.mini-433 span:nth-child(3) { left: 38%; bottom: 20px; }
-.mini-433 span:nth-child(4) { left: 62%; bottom: 20px; }
-.mini-433 span:nth-child(5) { left: 84%; bottom: 20px; }
-.mini-433 span:nth-child(6) { left: 25%; top: 33%; }
-.mini-433 span:nth-child(7) { left: 50%; top: 33%; }
-.mini-433 span:nth-child(8) { left: 75%; top: 33%; }
-.mini-433 span:nth-child(9) { left: 18%; top: 7px; }
-.mini-433 span:nth-child(10) { left: 50%; top: 5px; }
-.mini-433 span:nth-child(11) { left: 82%; top: 7px; }
-.mini-442 span:nth-child(1) { left: calc(50% - 3.5px); bottom: 7px; }
-.mini-442 span:nth-child(2) { left: 16%; bottom: 20px; }
-.mini-442 span:nth-child(3) { left: 38%; bottom: 20px; }
-.mini-442 span:nth-child(4) { left: 62%; bottom: 20px; }
-.mini-442 span:nth-child(5) { left: 84%; bottom: 20px; }
-.mini-442 span:nth-child(6) { left: 15%; top: 34%; }
-.mini-442 span:nth-child(7) { left: 37%; top: 34%; }
-.mini-442 span:nth-child(8) { left: 63%; top: 34%; }
-.mini-442 span:nth-child(9) { left: 85%; top: 34%; }
-.mini-442 span:nth-child(10) { left: 33%; top: 7px; }
-.mini-442 span:nth-child(11) { left: 67%; top: 7px; }
-.mini-4231 span:nth-child(1) { left: calc(50% - 3.5px); bottom: 7px; }
-.mini-4231 span:nth-child(2) { left: 16%; bottom: 20px; }
-.mini-4231 span:nth-child(3) { left: 38%; bottom: 20px; }
-.mini-4231 span:nth-child(4) { left: 62%; bottom: 20px; }
-.mini-4231 span:nth-child(5) { left: 84%; bottom: 20px; }
-.mini-4231 span:nth-child(6) { left: 33%; top: 38%; }
-.mini-4231 span:nth-child(7) { left: 67%; top: 38%; }
-.mini-4231 span:nth-child(8) { left: 18%; top: 22%; }
-.mini-4231 span:nth-child(9) { left: 50%; top: 22%; }
-.mini-4231 span:nth-child(10) { left: 82%; top: 22%; }
-.mini-4231 span:nth-child(11) { left: calc(50% - 3.5px); top: 6px; }
 
 .tactic-grid {
   display: grid;
@@ -926,16 +906,6 @@ tbody tr.your-club td { color: #e0f4ec; }
     radial-gradient(circle at 91% 10%, rgba(117, 167, 255, .09), transparent 25%),
     linear-gradient(180deg, #09151e 0%, #071018 100%);
 }
-.start-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(10px);
-  pointer-events: none;
-  opacity: .16;
-}
-.orb-one { width: 320px; height: 320px; background: #55d6b4; top: -180px; left: -150px; }
-.orb-two { width: 280px; height: 280px; background: #75a7ff; right: -120px; top: 100px; }
-
 .start-toolbar {
   position: absolute;
   top: 22px;
@@ -949,24 +919,24 @@ tbody tr.your-club td { color: #e0f4ec; }
   margin: auto;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows: minmax(250px, .86fr) minmax(220px, 1.14fr);
+  grid-template-rows: minmax(0, .96fr) minmax(0, 1.04fr);
   gap: 20px;
   align-items: stretch;
   position: relative;
   z-index: 1;
   overflow: hidden;
 }
-.start-hero { grid-column: span 7; min-height: 0; padding: 12px 8px 8px 0; display: flex; flex-direction: column; justify-content: center; }
-.hero-badge {
-  width: 62px;
-  height: 62px;
-  border-radius: 18px;
-  font-size: 19px;
-  margin-bottom: 25px;
-  box-shadow: 0 12px 30px rgba(85, 214, 180, .13);
+.start-hero {
+  grid-column: span 7;
+  min-height: 0;
+  padding: 18px 8px 8px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
 }
 .start-hero h1 {
-  margin: 8px 0 16px;
+  margin: 6px 0 12px;
   font-size: clamp(48px, 6.2vw, 82px);
   line-height: .94;
   letter-spacing: -.07em;
@@ -978,8 +948,8 @@ tbody tr.your-club td { color: #e0f4ec; }
 }
 .latest-update {
   max-width: 650px;
-  margin-top: 18px;
-  padding: 17px 18px;
+  margin-top: 12px;
+  padding: 15px 18px;
   border-radius: 16px;
   border: 1px solid rgba(117,167,255,.18);
   background:
@@ -1586,9 +1556,10 @@ tbody tr.your-club td { color: #e0f4ec; }
   grid-row: 2;
   min-width: 0;
   min-height: 0;
+  padding-top: 4px;
   overflow: hidden;
 }
-.saves-heading { margin-bottom: 10px; }
+.saves-heading { margin-bottom: 8px; }
 .career-grid {
   width: 100%;
   min-height: 0;
@@ -1782,20 +1753,4 @@ tbody tr.your-club td { color: #e0f4ec; }
 .danger-button:hover {
   border-color: rgba(239,113,136,.58);
   background: linear-gradient(135deg, rgba(239,113,136,.32), rgba(184,57,88,.24));
-}
-
-/* Formation mini-pitches use direct positions from the formation data. */
-.formation-mini {
-  position: relative;
-  min-height: 72px;
-  overflow: hidden;
-}
-.formation-mini span {
-  position: absolute;
-  width: 9px;
-  height: 9px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: #8ce8d0;
-  box-shadow: 0 0 0 2px rgba(140,232,208,.11);
 }
