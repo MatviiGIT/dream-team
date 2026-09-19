@@ -11,6 +11,7 @@ export interface StoredCareer {
   id: string;
   managerName: string;
   clubName: string;
+  createdAt: string;
   updatedAt: string;
   state: GameState;
 }
@@ -27,7 +28,12 @@ function readV2(): StoredCareer[] {
   try {
     const parsed = JSON.parse(raw) as StoredCareer[];
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter((item) => item?.state?.saveVersion === 2 && item.state.careerId);
+    return parsed
+      .filter((item) => item?.state?.saveVersion === 2 && item.state.careerId)
+      .map((item) => ({
+        ...item,
+        createdAt: item.createdAt ?? item.state.createdAt ?? item.updatedAt,
+      }));
   } catch {
     return [];
   }
@@ -52,6 +58,7 @@ function migrateLegacy(): StoredCareer[] {
       id: state.careerId,
       managerName: state.managerName,
       clubName: state.clubs[state.clubId]?.name ?? 'Dream Team',
+      createdAt: state.createdAt,
       updatedAt: state.updatedAt,
       state,
     };
@@ -66,7 +73,7 @@ function migrateLegacy(): StoredCareer[] {
 
 export function loadCareers(): StoredCareer[] {
   const current = readV2();
-  if (current.length) return [...current].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  if (current.length) return [...current].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   return migrateLegacy();
 }
 
@@ -74,10 +81,12 @@ export function saveGame(state: GameState): void {
   const careers = loadCareers().filter((career) => career.id !== state.careerId);
   const clubName = state.clubs[state.clubId]?.name ?? 'Dream Team';
 
+  const existing = careers.find((career) => career.id === state.careerId);
   careers.push({
     id: state.careerId,
     managerName: state.managerName,
     clubName,
+    createdAt: existing?.createdAt ?? state.createdAt,
     updatedAt: state.updatedAt,
     state,
   });
