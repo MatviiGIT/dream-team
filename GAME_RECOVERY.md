@@ -290,3 +290,8 @@ Then:
 - Added subtle card hover depth, cleaner active-tab indicators and more consistent table row treatments.
 - Refined the team-sheet field, player markers and roster cards so the Squad screen reads as a single polished management surface.
 - Polished formation and tactic controls with clearer hover/open states and stronger visual hierarchy.
+
+### 2026-09-19 — Career selection + season snapshot polish
+- Removed the upward hover translation from saved-career cards so their top edge and manager avatar never get clipped by the scroll container.
+- Kept hover feedback through border, shadow and avatar treatment instead of moving the whole save card.
+- Reworked the «Состояние сезона» metrics into four independent rounded tiles with small semantic accent bars, removing the old cross-shaped separator lines.
