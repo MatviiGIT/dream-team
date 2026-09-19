@@ -154,7 +154,7 @@ function App() {
         </div>
       </header>
 
-      <main className="content">
+      <main className={`content content-${tab}`}>
         <section className="club-header card">
           <div>
             <div className="eyebrow">{ru.overview.yourClub}</div>
