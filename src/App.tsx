@@ -54,6 +54,16 @@ function formatDate(value: string): string {
   return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value));
 }
 
+function formatDateTime(value: string): string {
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(value));
+}
+
 function formatMoney(value: number): string {
   if (value >= 1_000_000) return `€${(value / 1_000_000).toFixed(1)} млн`;
   return `€${Math.round(value / 1000)} тыс.`;
@@ -254,6 +264,7 @@ function StartScreen(props: {
   onThemeChange: (theme: Theme) => void;
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<StoredCareer | null>(null);
   const START_WIDTH = 1440;
   const START_HEIGHT = 900;
   const readViewport = () => ({
@@ -357,7 +368,7 @@ function StartScreen(props: {
               <div className="section-title-row saves-heading">
                 <div>
                   <div className="eyebrow">{ru.career.yourCareers}</div>
-                  <h2>{props.careers.length ? ru.career.chooseCareer : ru.career.noCareers}</h2>
+                  <h2>{props.careers.length ? ru.career.chooseCareer : ru.career.emptySectionTitle}</h2>
                 </div>
               </div>
 
@@ -367,7 +378,13 @@ function StartScreen(props: {
                     <article className="career-card card" key={career.id}>
                       <div className="career-card-top">
                         <div className="career-avatar">{career.managerName.slice(0, 1).toUpperCase()}</div>
-                        <button className="delete-button" aria-label={ru.career.delete} onClick={() => props.onDelete(career.id)}>×</button>
+                        <button
+                          className="delete-button"
+                          aria-label={ru.career.delete}
+                          onClick={() => setDeleteTarget(career)}
+                        >
+                          ×
+                        </button>
                       </div>
                       <div className="career-index">{ru.career.saveNumber} №{index + 1}</div>
 
@@ -378,7 +395,7 @@ function StartScreen(props: {
 
                       <div className="career-meta">
                         <span>{ru.app.season} {career.state.season}</span>
-                        <span>{formatDate(career.updatedAt)}</span>
+                        <span title={formatDateTime(career.createdAt)}>{ru.career.addedAt} {formatDateTime(career.createdAt)}</span>
                       </div>
 
                       <button className="secondary-button full" onClick={() => props.onOpen(career)}>
@@ -397,7 +414,44 @@ function StartScreen(props: {
             </section>
           </main>
 
-          {settingsOpen && (
+          {deleteTarget && (
+        <div
+          className="modal-backdrop confirm-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setDeleteTarget(null);
+          }}
+        >
+          <section className="modal-window confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-career-title">
+            <div className="modal-header">
+              <div>
+                <div className="eyebrow">{ru.career.deleteEyebrow}</div>
+                <h2 id="delete-career-title">{ru.career.deleteTitle}</h2>
+              </div>
+              <button className="modal-close" type="button" onClick={() => setDeleteTarget(null)} aria-label={ru.common.close}>×</button>
+            </div>
+            <p className="confirm-copy">
+              {ru.career.deleteDescriptionPrefix} «{deleteTarget.managerName}»?
+            </p>
+            <div className="confirm-actions">
+              <button className="secondary-button" type="button" onClick={() => setDeleteTarget(null)}>
+                {ru.career.cancel}
+              </button>
+              <button
+                className="danger-button"
+                type="button"
+                onClick={() => {
+                  props.onDelete(deleteTarget.id);
+                  setDeleteTarget(null);
+                }}
+              >
+                {ru.career.delete}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+      {settingsOpen && (
             <SettingsModal
               theme={props.theme}
               onThemeChange={props.onThemeChange}
@@ -733,6 +787,27 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
   const [openField, setOpenField] = useState<TacticSettingKey | null>(null);
 
   const formations: Tactics['formation'][] = ['4-3-3', '4-4-2', '4-2-3-1'];
+  const formationPositions: Record<Tactics['formation'], Array<[number, number]>> = {
+    '4-3-3': [
+      [50, 88],
+      [16, 68], [38, 68], [62, 68], [84, 68],
+      [25, 45], [50, 45], [75, 45],
+      [18, 20], [50, 16], [82, 20],
+    ],
+    '4-4-2': [
+      [50, 88],
+      [16, 68], [38, 68], [62, 68], [84, 68],
+      [16, 45], [38, 45], [62, 45], [84, 45],
+      [35, 18], [65, 18],
+    ],
+    '4-2-3-1': [
+      [50, 88],
+      [16, 68], [38, 68], [62, 68], [84, 68],
+      [34, 51], [66, 51],
+      [18, 34], [50, 31], [82, 34],
+      [50, 12],
+    ],
+  };
   const fields: Array<{
     label: string;
     key: TacticSettingKey;
@@ -816,8 +891,10 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
               className={tactic.formation === formation ? 'formation-option active' : 'formation-option'}
               onClick={() => onChange({ ...tactic, formation })}
             >
-              <div className={`formation-mini mini-${formation.replace(/-/g, '')}`}>
-                {Array.from({ length: 11 }, (_, index) => <span key={index} />)}
+              <div className="formation-mini" aria-label={formation}>
+                {formationPositions[formation].map(([left, top], index) => (
+                  <span key={index} style={{ left: `${left}%`, top: `${top}%` }} />
+                ))}
               </div>
               <strong>{formation}</strong>
             </button>
@@ -874,7 +951,7 @@ function TacticChoice({
         onClick={onToggle}
       >
         <strong>{selected?.label ?? value}</strong>
-        <span className="tactic-choice-arrow" aria-hidden="true">⌄</span>
+        <span className="tactic-choice-arrow" aria-hidden="true" />
       </button>
 
       {open && (
