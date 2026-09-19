@@ -345,3 +345,11 @@ Then:
 ### 2026-09-19 — Match Center round metadata
 - Match Center now stores the exact season and round from before simulation, so a final-round result remains labeled with the season and round that were actually played.
 - Added an internal mobile overflow guard so the Match Center's event/stat panels remain usable on short screens.
+
+
+### 2026-09-19 — Tactical match impact
+- Connected the selected starting XI to the chosen formation during match simulation. Each lineup slot now has a formation-specific expected position, so players used outside their natural positional role reduce tactical execution slightly.
+- Made mentality, tempo, pressing, defensive line and width affect attack, defense and possession with modest, deterministic modifiers rather than relying on a single generic tactic value.
+- Added small player-attribute checks for tactic execution: pace matters more for fast tempo/high pressing, passing supports slow-possession styles, and defending supports aggressive pressing.
+- Kept the current fitness drain rule unchanged; stamina will be tied to tactical workload later as planned.
+- No save-model changes were required.
