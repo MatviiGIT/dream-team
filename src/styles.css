@@ -726,49 +726,81 @@ button, input, select {
   overflow: hidden;
   border-radius: 9px;
   border: 1px solid rgba(85,214,180,.18);
-  background:
-    linear-gradient(90deg, transparent 49.35%, rgba(255,255,255,.13) 49.35%, rgba(255,255,255,.13) 50.65%, transparent 50.65%),
-    linear-gradient(180deg, rgba(57,120,105,.28), rgba(24,64,82,.18));
+  background: linear-gradient(180deg, rgba(57,120,105,.28), rgba(24,64,82,.18));
 }
-.formation-mini::before {
-  content: "";
+.pitch-half-line {
   position: absolute;
-  inset: 7% 9%;
-  border: 1px solid rgba(255,255,255,.13);
-  border-radius: 6px;
+  left: 9%;
+  right: 9%;
+  top: 50%;
+  height: 1px;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,.15);
 }
-.formation-mini::after {
-  content: "";
+.pitch-center-circle {
   position: absolute;
   left: 50%;
   top: 50%;
   width: 34px;
   height: 34px;
   transform: translate(-50%, -50%);
-  border: 1px solid rgba(255,255,255,.11);
+  border: 1px solid rgba(255,255,255,.12);
   border-radius: 50%;
 }
+.pitch-box {
+  position: absolute;
+  left: 27%;
+  width: 46%;
+  border: 1px solid rgba(255,255,255,.13);
+}
+.pitch-penalty-top {
+  top: 7%;
+  height: 24%;
+  border-top: 0;
+}
+.pitch-penalty-bottom {
+  bottom: 7%;
+  height: 24%;
+  border-bottom: 0;
+}
+.pitch-six-top {
+  top: 7%;
+  left: 39%;
+  width: 22%;
+  height: 11%;
+  border-top: 0;
+}
+.pitch-six-bottom {
+  bottom: 7%;
+  left: 39%;
+  width: 22%;
+  height: 11%;
+  border-bottom: 0;
+}
+.pitch-goal {
+  position: absolute;
+  z-index: 1;
+  left: 44%;
+  width: 12%;
+  height: 5px;
+  border: 1px solid rgba(255,255,255,.17);
+  background: rgba(255,255,255,.035);
+}
+.pitch-goal-top { top: 0; border-top: 0; }
+.pitch-goal-bottom { bottom: 0; border-bottom: 0; }
 .formation-dot {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   width: 10px;
   height: 10px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   box-shadow: 0 0 0 2px rgba(255,255,255,.08), 0 4px 9px rgba(0,0,0,.22);
 }
-.formation-dot-keeper {
-  background: #f2be67;
-}
-.formation-dot-defender {
-  background: #75a7ff;
-}
-.formation-dot-midfielder {
-  background: #a38bff;
-}
-.formation-dot-attacker {
-  background: #55d6b4;
-}
+.formation-dot-keeper { background: #f2be67; }
+.formation-dot-defender { background: #75a7ff; }
+.formation-dot-midfielder { background: #a38bff; }
+.formation-dot-attacker { background: #55d6b4; }
 
 .tactic-grid {
   display: grid;
