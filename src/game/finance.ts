@@ -19,17 +19,24 @@ export function createClubFinance(): ClubFinance {
   return {
     seasonIncome: 0,
     seasonExpenses: 0,
+    seasonTransferIncome: 0,
+    seasonTransferExpenses: 0,
     lastIncome: 0,
     lastExpenses: 0,
     lastNet: 0,
     lastMatchdayIncome: 0,
     lastBroadcastIncome: 0,
     lastResultBonus: 0,
+    lastTransferIncome: 0,
+    lastTransferExpense: 0,
   };
 }
 
 export function ensureClubFinance(club: Club): void {
-  club.finance ??= createClubFinance();
+  club.finance = {
+    ...createClubFinance(),
+    ...(club.finance ?? {}),
+  };
 }
 
 function getResultBonus(clubId: string, result: MatchResult): number {
@@ -71,12 +78,16 @@ export function applyRoundFinance(clubs: Record<string, Club>, results: MatchRes
       if (!club) continue;
 
       const delta = calculateRoundFinance(club, result);
-      const finance = club.finance ?? createClubFinance();
+      const finance = {
+        ...createClubFinance(),
+        ...(club.finance ?? {}),
+      };
 
       nextClubs[teamId] = {
         ...club,
         budget: Math.max(0, club.budget + delta.net),
         finance: {
+          ...finance,
           seasonIncome: finance.seasonIncome + delta.income,
           seasonExpenses: finance.seasonExpenses + delta.expenses,
           lastIncome: delta.income,
@@ -103,6 +114,8 @@ export function resetSeasonFinance(clubs: Record<string, Club>): Record<string, 
           ...finance,
           seasonIncome: 0,
           seasonExpenses: 0,
+          seasonTransferIncome: 0,
+          seasonTransferExpenses: 0,
         },
       }];
     }),
