@@ -3,6 +3,10 @@ import type { GameState } from '../domain/types';
 const STORAGE_KEY = 'dream-team:careers:v2';
 const LEGACY_STORAGE_KEY = 'dream-team:career:v1';
 
+interface LegacyGameState extends Omit<GameState, 'saveVersion' | 'careerId'> {
+  saveVersion: 1;
+}
+
 export interface StoredCareer {
   id: string;
   managerName: string;
@@ -34,15 +38,15 @@ function migrateLegacy(): StoredCareer[] {
   if (!raw) return [];
 
   try {
-    const old = JSON.parse(raw) as GameState;
+    const old = JSON.parse(raw) as LegacyGameState;
     if (old.saveVersion !== 1 || !old.clubs || !old.players || !old.fixtures) return [];
 
-    const state = {
+    const state: GameState = {
       ...old,
-      saveVersion: 2 as const,
+      saveVersion: 2,
       careerId: makeId(),
       updatedAt: old.updatedAt ?? new Date().toISOString(),
-    } satisfies GameState;
+    };
 
     const career: StoredCareer = {
       id: state.careerId,
