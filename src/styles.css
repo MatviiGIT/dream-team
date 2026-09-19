@@ -1641,3 +1641,161 @@ tbody tr.your-club td { color: #e0f4ec; }
   max-height: min(520px, calc(100dvh - 190px));
   overflow: auto;
 }
+
+/* Tactics dropdowns open above the layout without changing grid geometry. */
+.tactic-field.open {
+  z-index: 60;
+}
+.tactic-menu {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  margin-top: 0;
+  max-height: 260px;
+  overflow: auto;
+  z-index: 100;
+}
+.tactic-choice-arrow {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-right: 2px solid #b9adff;
+  border-bottom: 2px solid #b9adff;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform .16s ease, border-color .16s ease;
+}
+.tactic-choice.open .tactic-choice-arrow {
+  transform: rotate(225deg) translateY(-1px);
+  border-color: #ddd6ff;
+}
+
+/* Clear, card-like settings groups. */
+.settings-modal {
+  width: min(720px, 100%);
+}
+.settings-modal-body {
+  gap: 14px;
+  padding-right: 4px;
+}
+.settings-modal-group {
+  padding: 18px;
+  border: 1px solid rgba(196,216,229,.12);
+  border-radius: 15px;
+  background: linear-gradient(145deg, rgba(255,255,255,.035), rgba(255,255,255,.015));
+}
+.settings-modal-group .settings-label {
+  display: block;
+  margin-bottom: 11px;
+  color: var(--text-soft);
+  font-size: 12px;
+  font-weight: 850;
+}
+.settings-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.setting-option {
+  min-width: 0;
+  min-height: 66px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 11px 12px;
+  border: 1px solid rgba(196,216,229,.14);
+  border-radius: 12px;
+  background: rgba(7,16,24,.42);
+  color: var(--text);
+  text-align: left;
+}
+.setting-option:hover:not(:disabled) {
+  border-color: rgba(117,167,255,.42);
+  background: rgba(117,167,255,.07);
+}
+.setting-option.active {
+  border-color: rgba(85,214,180,.42);
+  background: linear-gradient(145deg, rgba(85,214,180,.13), rgba(117,167,255,.06));
+}
+.setting-option.disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+.setting-option strong {
+  font-size: 12px;
+}
+.setting-option span:last-child {
+  color: var(--muted);
+  font-size: 10px;
+}
+.theme-option {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+}
+.theme-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,.22);
+}
+.theme-aurora { background: linear-gradient(135deg, #55d6b4, #75a7ff, #a38bff); }
+.theme-midnight { background: linear-gradient(135deg, #121b2b, #334c81); }
+.theme-light { background: linear-gradient(135deg, #f8fbfc, #a7bed0); }
+
+/* Stable save heading, including the empty state. */
+.saves-heading {
+  min-height: 50px;
+  align-items: flex-start;
+}
+.saves-heading h2 {
+  min-height: 24px;
+}
+
+/* Custom confirmation dialog inside the game UI. */
+.confirm-modal {
+  width: min(470px, 100%);
+}
+.confirm-copy {
+  margin: 20px 0 0;
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 22px;
+}
+.danger-button {
+  min-height: 44px;
+  border: 1px solid rgba(239,113,136,.36);
+  border-radius: 11px;
+  background: linear-gradient(135deg, rgba(239,113,136,.24), rgba(184,57,88,.18));
+  color: #ffdbe2;
+  font-weight: 850;
+}
+.danger-button:hover {
+  border-color: rgba(239,113,136,.58);
+  background: linear-gradient(135deg, rgba(239,113,136,.32), rgba(184,57,88,.24));
+}
+
+/* Formation mini-pitches use direct positions from the formation data. */
+.formation-mini {
+  position: relative;
+  min-height: 72px;
+  overflow: hidden;
+}
+.formation-mini span {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #8ce8d0;
+  box-shadow: 0 0 0 2px rgba(140,232,208,.11);
+}
