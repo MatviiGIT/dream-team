@@ -235,3 +235,12 @@ Then:
 - Separated the toolbar from the content grid so Settings and Fullscreen controls cannot overlap the hero or career cards.
 - Kept the saved-career section anchored to the entire lower row; many saves scroll inside that section instead of pushing the layout upward.
 - Kept the fixed-viewport rule and avoided relying on stacked responsive breakpoints for the desktop start screen.
+
+### 2026-09-19 — Performance + scrollbar polish
+- Replaced the expensive full-screen blurred rotating background layers with lightweight transform-based ambient motion.
+- Removed the topbar backdrop blur to reduce compositor work.
+- Paused ambient background animation while the tactics tab is active to prioritize interaction smoothness there.
+- Added custom scrollbar styling across saved careers, squad/player lists, dashboard/timeline, league table, tactics panel, calendar and other scrollable areas.
+- Tightened text layout rules with stable flex/grid sizing, no-wrap/ellipsis for save metadata and consistent button alignment.
+- Improved the Dream Team DT marks so their glyphs are not visually clipped.
+- Kept the fixed 1440×900 start-screen canvas and proportional viewport scaling.
