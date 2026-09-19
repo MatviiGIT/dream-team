@@ -48,6 +48,17 @@ export interface Tactics {
   width: Width;
 }
 
+export interface ClubFinance {
+  seasonIncome: number;
+  seasonExpenses: number;
+  lastIncome: number;
+  lastExpenses: number;
+  lastNet: number;
+  lastMatchdayIncome: number;
+  lastBroadcastIncome: number;
+  lastResultBonus: number;
+}
+
 export interface Club {
   id: string;
   name: string;
@@ -56,6 +67,7 @@ export interface Club {
   reputation: number;
   budget: number;
   wages: number;
+  finance?: ClubFinance;
   playerIds: string[];
   startingXI?: string[];
   tactic: Tactics;
