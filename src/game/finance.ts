@@ -93,3 +93,19 @@ export function applyRoundFinance(clubs: Record<string, Club>, results: MatchRes
 
   return nextClubs;
 }
+
+export function resetSeasonFinance(clubs: Record<string, Club>): Record<string, Club> {
+  return Object.fromEntries(
+    Object.entries(clubs).map(([teamId, club]) => {
+      ensureClubFinance(club);
+      return [teamId, {
+        ...club,
+        finance: {
+          ...club.finance!,
+          seasonIncome: 0,
+          seasonExpenses: 0,
+        },
+      }];
+    }),
+  );
+}
