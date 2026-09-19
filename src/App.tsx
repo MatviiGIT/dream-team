@@ -1007,7 +1007,7 @@ function MatchCenter({
         </div>
 
         <div className="match-center-menu-grid">
-          <button className="match-center-menu-card timeline" type="button" onClick={() => setDetailPanel('timeline')}>
+          <button className="match-center-menu-card events-menu" type="button" onClick={() => setDetailPanel('timeline')}>
             <span className="match-center-menu-icon">◷</span>
             <div>
               <div className="eyebrow">{ru.matchCenter.eventsLabel}</div>
