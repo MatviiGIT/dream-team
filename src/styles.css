@@ -2892,3 +2892,117 @@ tbody tr.your-club td { color: #e0f4ec; }
     min-height: 0;
   }
 }
+
+/* 2026-09-19 — Clear team-sheet substitutions and Russian position labels. */
+.squad-player-marker.swap-target {
+  border-color: rgba(117,167,255,.30);
+  box-shadow: 0 0 0 1px rgba(117,167,255,.10), 0 8px 22px rgba(0,0,0,.24);
+}
+.squad-player-marker.swap-target:hover {
+  border-color: rgba(117,167,255,.58);
+  transform: translate(-50%, -52%);
+}
+.squad-pitch-note {
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  gap: 3px;
+}
+.squad-pitch-note strong {
+  color: #8ce8d0;
+}
+.squad-pitch-note span {
+  display: block;
+}
+.squad-roster.has-selection {
+  border-color: rgba(85,214,180,.26);
+}
+.squad-selection-card {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 11px;
+  border: 1px solid rgba(85,214,180,.24);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(85,214,180,.10), rgba(117,167,255,.045));
+}
+.squad-selection-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+}
+.squad-selection-card small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.squad-selection-card .secondary-button {
+  white-space: nowrap;
+  padding: 8px 10px;
+  font-size: 10px;
+}
+.squad-roster-card.reserve {
+  grid-template-columns: 34px minmax(0,1fr) 42px 42px minmax(92px,auto);
+}
+.squad-roster-card:disabled {
+  cursor: default;
+}
+.squad-roster-card:disabled:hover {
+  border-color: transparent;
+  background: rgba(255,255,255,.018);
+}
+.squad-roster-card.good {
+  border-color: rgba(85,214,180,.27);
+  background: linear-gradient(145deg, rgba(85,214,180,.065), rgba(255,255,255,.018));
+}
+.squad-roster-card.adaptable {
+  border-color: rgba(242,190,103,.22);
+  background: linear-gradient(145deg, rgba(242,190,103,.055), rgba(255,255,255,.018));
+}
+.squad-roster-card.poor {
+  border-color: rgba(239,113,136,.16);
+  background: linear-gradient(145deg, rgba(239,113,136,.035), rgba(255,255,255,.018));
+}
+.squad-roster-fit {
+  min-width: 92px;
+  padding: 5px 7px;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 8px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.squad-roster-fit.good {
+  color: #85e6cb;
+  background: rgba(85,214,180,.10);
+}
+.squad-roster-fit.adaptable {
+  color: #f2cd88;
+  background: rgba(242,190,103,.10);
+}
+.squad-roster-fit.poor {
+  color: #ff92a7;
+  background: rgba(239,113,136,.08);
+}
+.squad-roster-fit.idle {
+  color: #6f8392;
+  background: rgba(255,255,255,.035);
+}
+@media (max-width: 620px) {
+  .squad-roster-card.reserve {
+    grid-template-columns: 32px minmax(0,1fr) 40px;
+  }
+  .squad-roster-fit,
+  .squad-roster-card .squad-fitness {
+    display: none;
+  }
+  .squad-selection-card {
+    grid-template-columns: 1fr;
+  }
+  .squad-selection-card .secondary-button {
+    width: 100%;
+  }
+}
