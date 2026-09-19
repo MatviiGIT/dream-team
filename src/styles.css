@@ -3554,14 +3554,22 @@ tbody tr.your-club td { color: #e0f4ec; }
 
 /* 2026-09-19 — Calendar modal scroll safety + typography pass. */
 .calendar-modal {
-  height: min(720px, calc(100dvh - 48px));
-  max-height: min(720px, calc(100dvh - 48px));
+  width: min(760px, calc(100vw - 48px));
+  height: min(760px, calc(100dvh - 48px));
+  max-height: calc(100dvh - 48px);
   min-height: 0;
+  overflow: hidden;
+}
+.calendar-modal .modal-header {
+  flex: 0 0 auto;
 }
 .calendar-modal .full-calendar-list {
-  flex: 1 1 auto;
+  flex: 1 1 0;
+  height: 0;
   min-height: 0;
+  max-height: none;
   overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
 }
@@ -3618,6 +3626,7 @@ table th { font-size: 11px; }
   .player-main span { font-size: 11px; }
   .player-metric span { font-size: 9px; }
   .calendar-modal {
+    width: calc(100vw - 20px);
     height: calc(100dvh - 20px);
     max-height: calc(100dvh - 20px);
   }
