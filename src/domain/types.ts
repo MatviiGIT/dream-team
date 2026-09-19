@@ -105,7 +105,8 @@ export interface TableRow {
 }
 
 export interface GameState {
-  saveVersion: 1;
+  saveVersion: 2;
+  careerId: string;
   managerName: string;
   clubId: string;
   season: number;
