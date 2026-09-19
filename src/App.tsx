@@ -253,11 +253,17 @@ function StartScreen(props: {
   theme: Theme;
   onThemeChange: (theme: Theme) => void;
 }) {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   return (
     <div className="start-screen">
       <div className="start-orb orb-one" />
       <div className="start-orb orb-two" />
       <div className="start-toolbar">
+        <button className="ghost-button settings-button" type="button" onClick={() => setSettingsOpen(true)}>
+          <span aria-hidden="true">⚙</span>
+          {ru.settings.openButton}
+        </button>
         <FullscreenButton />
       </div>
 
@@ -266,12 +272,18 @@ function StartScreen(props: {
           <div className="hero-badge">DT</div>
           <div className="eyebrow">{ru.start.eyebrow}</div>
           <h1>{ru.start.titleLineOne}<span>{ru.start.titleLineTwo}</span></h1>
-          <p className="hero-copy">{ru.start.description}</p>
-
-          <div className="hero-points">
-            <span>◈ {ru.start.featureSimulation}</span>
-            <span>◈ {ru.start.featureTactics}</span>
-            <span>◈ {ru.start.featureHistory}</span>
+          <div className="latest-update">
+            <div className="latest-update-header">
+              <span className="eyebrow">{ru.start.latestUpdate}</span>
+              <span className="update-badge">NEW</span>
+            </div>
+            <h2>{ru.start.updateTitle}</h2>
+            <p>{ru.start.updateDescription}</p>
+            <div className="update-list">
+              <span>✦ {ru.start.updateItemOne}</span>
+              <span>✦ {ru.start.updateItemTwo}</span>
+              <span>✦ {ru.start.updateItemThree}</span>
+            </div>
           </div>
         </section>
 
@@ -354,13 +366,44 @@ function StartScreen(props: {
           )}
         </section>
 
-        <section className="settings-card card">
+
+      </main>
+
+      {settingsOpen && (
+        <SettingsModal
+          theme={props.theme}
+          onThemeChange={props.onThemeChange}
+          onClose={() => setSettingsOpen(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+function SettingsModal({
+  theme,
+  onThemeChange,
+  onClose,
+}: {
+  theme: Theme;
+  onThemeChange: (theme: Theme) => void;
+  onClose: () => void;
+}) {
+  return (
+    <div className="modal-backdrop settings-backdrop" role="presentation" onMouseDown={(event) => {
+      if (event.target === event.currentTarget) onClose();
+    }}>
+      <section className="modal-window settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div className="modal-header">
           <div>
             <div className="eyebrow">{ru.settings.eyebrow}</div>
-            <h2>{ru.settings.title}</h2>
+            <h2 id="settings-title">{ru.settings.title}</h2>
           </div>
+          <button className="modal-close" type="button" onClick={onClose} aria-label={ru.common.close}>×</button>
+        </div>
 
-          <div className="settings-group">
+        <div className="settings-modal-body">
+          <div className="settings-modal-group">
             <span className="settings-label">{ru.settings.language}</span>
             <div className="settings-options language-options">
               <button className="setting-option active" type="button">
@@ -378,7 +421,7 @@ function StartScreen(props: {
             </div>
           </div>
 
-          <div className="settings-group">
+          <div className="settings-modal-group">
             <span className="settings-label">{ru.settings.theme}</span>
             <div className="settings-options theme-options">
               {([
@@ -389,8 +432,8 @@ function StartScreen(props: {
                 <button
                   key={value}
                   type="button"
-                  className={props.theme === value ? 'setting-option theme-option active' : 'setting-option theme-option'}
-                  onClick={() => props.onThemeChange(value)}
+                  className={theme === value ? 'setting-option theme-option active' : 'setting-option theme-option'}
+                  onClick={() => onThemeChange(value)}
                 >
                   <span className={`theme-swatch theme-${value}`} />
                   <strong>{label}</strong>
@@ -400,8 +443,8 @@ function StartScreen(props: {
           </div>
 
           <div className="settings-footnote">{ru.settings.note}</div>
-        </section>
-      </main>
+        </div>
+      </section>
     </div>
   );
 }
@@ -647,16 +690,76 @@ function Squad({ game }: { game: GameState }) {
   );
 }
 
+type TacticSettingKey = Exclude<keyof Tactics, 'formation'>;
+
+type TacticOption = {
+  value: string;
+  label: string;
+};
+
 function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tactics) => void }) {
   const tactic = game.clubs[game.clubId].tactic;
+  const [openField, setOpenField] = useState<TacticSettingKey | null>(null);
+
   const formations: Tactics['formation'][] = ['4-3-3', '4-4-2', '4-2-3-1'];
-  const fields: Array<[string, Exclude<keyof Tactics, 'formation'>, string[]]> = [
-    [ru.tactics.mentality, 'mentality', [ru.tactics.options.veryDefensive, ru.tactics.options.defensive, ru.tactics.options.balanced, ru.tactics.options.attacking, ru.tactics.options.veryAttacking]],
-    [ru.tactics.tempo, 'tempo', [ru.tactics.options.slow, ru.tactics.options.normal, ru.tactics.options.fast]],
-    [ru.tactics.pressing, 'pressing', [ru.tactics.options.low, ru.tactics.options.medium, ru.tactics.options.high]],
-    [ru.tactics.defensiveLine, 'defensiveLine', [ru.tactics.options.low, ru.tactics.options.normal, ru.tactics.options.high]],
-    [ru.tactics.width, 'width', [ru.tactics.options.narrow, ru.tactics.options.balanced, ru.tactics.options.wide]],
+  const fields: Array<{
+    label: string;
+    key: TacticSettingKey;
+    options: TacticOption[];
+  }> = [
+    {
+      label: ru.tactics.mentality,
+      key: 'mentality',
+      options: [
+        { value: 'Very Defensive', label: ru.tactics.options.veryDefensive },
+        { value: 'Defensive', label: ru.tactics.options.defensive },
+        { value: 'Balanced', label: ru.tactics.options.balanced },
+        { value: 'Attacking', label: ru.tactics.options.attacking },
+        { value: 'Very Attacking', label: ru.tactics.options.veryAttacking },
+      ],
+    },
+    {
+      label: ru.tactics.tempo,
+      key: 'tempo',
+      options: [
+        { value: 'Slow', label: ru.tactics.options.slow },
+        { value: 'Normal', label: ru.tactics.options.normal },
+        { value: 'Fast', label: ru.tactics.options.fast },
+      ],
+    },
+    {
+      label: ru.tactics.pressing,
+      key: 'pressing',
+      options: [
+        { value: 'Low', label: ru.tactics.options.low },
+        { value: 'Medium', label: ru.tactics.options.medium },
+        { value: 'High', label: ru.tactics.options.high },
+      ],
+    },
+    {
+      label: ru.tactics.defensiveLine,
+      key: 'defensiveLine',
+      options: [
+        { value: 'Low', label: ru.tactics.options.low },
+        { value: 'Normal', label: ru.tactics.options.normal },
+        { value: 'High', label: ru.tactics.options.high },
+      ],
+    },
+    {
+      label: ru.tactics.width,
+      key: 'width',
+      options: [
+        { value: 'Narrow', label: ru.tactics.options.narrow },
+        { value: 'Balanced', label: ru.tactics.options.balanced },
+        { value: 'Wide', label: ru.tactics.options.wide },
+      ],
+    },
   ];
+
+  const updateField = (key: TacticSettingKey, value: string) => {
+    onChange({ ...tactic, [key]: value } as Tactics);
+    setOpenField(null);
+  };
 
   return (
     <section className="card content-card tactics-panel">
@@ -682,8 +785,8 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
               className={tactic.formation === formation ? 'formation-option active' : 'formation-option'}
               onClick={() => onChange({ ...tactic, formation })}
             >
-              <div className="formation-mini">
-                <span /><span /><span /><span /><span />
+              <div className={`formation-mini mini-${formation.replace(/-/g, '')}`}>
+                {Array.from({ length: 11 }, (_, index) => <span key={index} />)}
               </div>
               <strong>{formation}</strong>
             </button>
@@ -692,13 +795,16 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
       </div>
 
       <div className="tactic-grid">
-        {fields.map(([label, key, options]) => (
-          <label key={key} className="tactic-field">
-            {label}
-            <select value={translateTacticToRussian(tactic[key])} onChange={(event) => onChange({ ...tactic, [key]: translateTacticFromRussian(event.target.value) })}>
-              {options.map((option) => <option key={option} value={option}>{option}</option>)}
-            </select>
-          </label>
+        {fields.map((field) => (
+          <TacticChoice
+            key={field.key}
+            label={field.label}
+            value={tactic[field.key]}
+            options={field.options}
+            open={openField === field.key}
+            onToggle={() => setOpenField(openField === field.key ? null : field.key)}
+            onChange={(value) => updateField(field.key, value)}
+          />
         ))}
       </div>
 
@@ -710,42 +816,55 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
   );
 }
 
-function translateTacticToRussian(value: string): string {
-  const map: Record<string, string> = {
-    'Very Defensive': ru.tactics.options.veryDefensive,
-    Defensive: ru.tactics.options.defensive,
-    Balanced: ru.tactics.options.balanced,
-    Attacking: ru.tactics.options.attacking,
-    'Very Attacking': ru.tactics.options.veryAttacking,
-    Slow: ru.tactics.options.slow,
-    Normal: ru.tactics.options.normal,
-    Fast: ru.tactics.options.fast,
-    Low: ru.tactics.options.low,
-    Medium: ru.tactics.options.medium,
-    High: ru.tactics.options.high,
-    Narrow: ru.tactics.options.narrow,
-    Wide: ru.tactics.options.wide,
-  };
-  return map[value] ?? value;
-}
+function TacticChoice({
+  label,
+  value,
+  options,
+  open,
+  onToggle,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: TacticOption[];
+  open: boolean;
+  onToggle: () => void;
+  onChange: (value: string) => void;
+}) {
+  const selected = options.find((option) => option.value === value);
 
-function translateTacticFromRussian(value: string): Tactics[keyof Tactics] {
-  const map: Record<string, string> = {
-    [ru.tactics.options.veryDefensive]: 'Very Defensive',
-    [ru.tactics.options.defensive]: 'Defensive',
-    [ru.tactics.options.balanced]: 'Balanced',
-    [ru.tactics.options.attacking]: 'Attacking',
-    [ru.tactics.options.veryAttacking]: 'Very Attacking',
-    [ru.tactics.options.slow]: 'Slow',
-    [ru.tactics.options.normal]: 'Normal',
-    [ru.tactics.options.fast]: 'Fast',
-    [ru.tactics.options.low]: 'Low',
-    [ru.tactics.options.medium]: 'Medium',
-    [ru.tactics.options.high]: 'High',
-    [ru.tactics.options.narrow]: 'Narrow',
-    [ru.tactics.options.wide]: 'Wide',
-  };
-  return (map[value] ?? value) as Tactics[keyof Tactics];
+  return (
+    <div className={open ? 'tactic-field open' : 'tactic-field'}>
+      <span>{label}</span>
+      <button
+        className={open ? 'tactic-choice open' : 'tactic-choice'}
+        type="button"
+        aria-expanded={open}
+        onClick={onToggle}
+      >
+        <strong>{selected?.label ?? value}</strong>
+        <span className="tactic-choice-arrow" aria-hidden="true">⌄</span>
+      </button>
+
+      {open && (
+        <div className="tactic-menu" role="listbox">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              className={option.value === value ? 'tactic-option active' : 'tactic-option'}
+              type="button"
+              role="option"
+              aria-selected={option.value === value}
+              onClick={() => onChange(option.value)}
+            >
+              <span>{option.label}</span>
+              {option.value === value && <strong aria-hidden="true">✓</strong>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function LeagueTable({ game }: { game: GameState }) {
