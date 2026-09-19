@@ -51,12 +51,16 @@ export interface Tactics {
 export interface ClubFinance {
   seasonIncome: number;
   seasonExpenses: number;
+  seasonTransferIncome: number;
+  seasonTransferExpenses: number;
   lastIncome: number;
   lastExpenses: number;
   lastNet: number;
   lastMatchdayIncome: number;
   lastBroadcastIncome: number;
   lastResultBonus: number;
+  lastTransferIncome: number;
+  lastTransferExpense: number;
 }
 
 export interface Club {
