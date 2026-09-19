@@ -4557,3 +4557,113 @@ table th { font-size: 11px; }
     grid-template-columns: 1fr;
   }
 }
+
+/* 2026-09-19 — Full-width non-overview screens + squad roster readability. */
+.workspace-grid-compact {
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+.workspace-grid-compact .workspace-main > .content-card {
+  margin-top: 0;
+}
+.workspace-grid-compact .workspace-main {
+  width: 100%;
+}
+.squad-panel .team-sheet {
+  grid-template-columns: minmax(0, 1.65fr) minmax(360px, .9fr);
+}
+.squad-pitch {
+  width: min(100%, 860px);
+}
+.squad-roster-card {
+  grid-template-columns: 40px minmax(155px, 1fr) 48px 60px minmax(112px, auto);
+  gap: 11px;
+  min-height: 58px;
+  padding: 10px 11px;
+}
+.squad-roster-main strong {
+  font-size: 14px;
+  line-height: 1.15;
+}
+.squad-roster-main small {
+  margin-top: 4px;
+  font-size: 11px;
+}
+.squad-roster-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.squad-roster-stat small {
+  font-size: 9px;
+  letter-spacing: .05em;
+}
+.squad-roster-stat strong {
+  margin-top: 2px;
+  font-size: 15px;
+}
+.squad-roster-fit {
+  min-width: 0;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 850;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+}
+.squad-roster-fit.good {
+  color: #86e7ce;
+  background: rgba(85,214,180,.10);
+}
+.squad-roster-fit.adaptable {
+  color: #f2ce88;
+  background: rgba(242,190,103,.10);
+}
+.squad-roster-fit.poor {
+  color: #ff9aad;
+  background: rgba(239,113,136,.09);
+}
+.squad-roster-fit.idle {
+  color: #9badb9;
+  background: rgba(255,255,255,.045);
+}
+@media (max-width: 1199px) {
+  .workspace-grid-compact {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+  .squad-panel .team-sheet {
+    grid-template-columns: minmax(0, 1.5fr) minmax(330px, .92fr);
+  }
+  .squad-roster-card {
+    grid-template-columns: 38px minmax(120px, 1fr) 44px 54px minmax(96px, auto);
+    gap: 8px;
+  }
+}
+@media (max-width: 760px) {
+  .workspace-grid-compact {
+    grid-template-columns: 1fr;
+  }
+  .workspace-grid-compact .workspace-main > .content-card {
+    margin-top: 0;
+  }
+  .squad-panel .team-sheet {
+    grid-template-columns: 1fr;
+  }
+  .squad-pitch {
+    width: 100%;
+    max-width: 860px;
+  }
+  .squad-roster-card {
+    grid-template-columns: 40px minmax(0, 1fr) 48px 60px minmax(110px, auto);
+  }
+}
+@media (max-width: 560px) {
+  .squad-roster-card {
+    grid-template-columns: 36px minmax(120px, 1fr) 44px;
+  }
+  .squad-roster-card .squad-fitness,
+  .squad-roster-card .squad-roster-fit {
+    display: none;
+  }
+}
