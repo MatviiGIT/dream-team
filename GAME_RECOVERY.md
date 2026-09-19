@@ -254,3 +254,10 @@ Then:
 - Tactic dropdown menus now use absolute positioning and overlay neighboring fields instead of changing grid height.
 - Replaced the text arrow on tactic selectors with a CSS chevron that rotates cleanly when opened.
 - Reworked formation mini-pitches to use explicit 11-player positions for 4-3-3, 4-4-2 and 4-2-3-1 instead of generic/random-looking dots.
+
+
+### 2026-09-19 — Start screen + ambient lighting correction
+- Removed the standalone DT badge/orb elements from above the start-screen hero heading so no clipped blue/green texture appears above the “БРАУЗЕРНЫЙ ФУТБОЛЬНЫЙ МЕНЕДЖЕР” eyebrow.
+- Moved the Dream Team title area upward and constrained the hero row so the “ВАШИ КАРЬЕРЫ” section cannot be overlapped by the latest-update panel.
+- Reworked the three formation mini-pitches to use clearer, explicit 11-player rows for 4-3-3, 4-4-2 and 4-2-3-1 with pitch markings.
+- Replaced the in-game ambient background’s large circular field with a multi-layer rectangular gradient field containing mint, blue, violet and subtle gold lighting that drifts independently.
