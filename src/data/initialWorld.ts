@@ -1,5 +1,7 @@
 import type { Club, Player, TableRow, Tactics } from '../domain/types';
 
+const squadPositions = ['GK', 'GK', 'DEF', 'DEF', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'FWD', 'FWD'] as const;
+
 const defaultTactics: Tactics = {
   formation: '4-3-3',
   mentality: 'Balanced',
@@ -31,8 +33,7 @@ const lastNames = [
 ];
 
 function makePlayer(clubIndex: number, playerIndex: number, clubReputation: number): Player {
-  const positions = ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'FWD'] as const;
-  const position = positions[playerIndex];
+  const position = squadPositions[playerIndex % squadPositions.length];
   const base = Math.max(48, clubReputation - 5 + ((playerIndex * 7 + clubIndex * 3) % 10));
   const age = 18 + ((clubIndex * 5 + playerIndex * 3) % 16);
   const pace = Math.min(94, base + ((playerIndex * 5) % 14));
@@ -80,7 +81,7 @@ export function createInitialWorld(): { clubs: Record<string, Club>; players: Re
 
   clubSeeds.forEach(([id, name, shortName, city, reputation, budget, color], clubIndex) => {
     const playerIds: string[] = [];
-    for (let i = 0; i < 11; i += 1) {
+    for (let i = 0; i < squadPositions.length; i += 1) {
       const player = makePlayer(clubIndex, i, reputation);
       players[player.id] = player;
       playerIds.push(player.id);
@@ -114,4 +115,24 @@ export function createInitialWorld(): { clubs: Record<string, Club>; players: Re
   return { clubs, players, table };
 }
 
+export function ensureSquadDepth(clubs: Record<string, Club>, players: Record<string, Player>): void {
+  Object.values(clubs).forEach((club) => {
+    if (club.playerIds.length >= squadPositions.length) {
+      if (!club.startingXI?.length) club.startingXI = club.playerIds.slice(0, 11);
+      return;
+    }
+
+    const clubIndex = Math.max(0, clubSeeds.findIndex(([id]) => id === club.id));
+    for (let i = club.playerIds.length; i < squadPositions.length; i += 1) {
+      const player = makePlayer(clubIndex, i, club.reputation);
+      players[player.id] = player;
+      club.playerIds.push(player.id);
+    }
+
+    club.startingXI = club.startingXI?.length === 11 ? club.startingXI : club.playerIds.slice(0, 11);
+    club.wages = club.playerIds.reduce((sum, playerId) => sum + (players[playerId]?.wage ?? 0), 0);
+  });
+}
+
 export const clubOrder = clubSeeds.map(([id]) => id);
+
