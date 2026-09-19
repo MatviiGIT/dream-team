@@ -3414,3 +3414,102 @@ tbody tr.your-club td { color: #e0f4ec; }
     grid-template-columns: 1fr;
   }
 }
+
+/* 2026-09-19 — Match Center summary balance and equal menu cards. */
+.match-center-summary {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(240px, 1.25fr);
+  gap: 10px;
+}
+.match-center-summary-stat,
+.match-center-summary-player {
+  min-width: 0;
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: linear-gradient(145deg, rgba(255,255,255,.04), rgba(255,255,255,.018));
+}
+.match-center-summary-stat {
+  display: grid;
+  align-content: center;
+}
+.match-center-summary-stat span,
+.match-center-summary-player span {
+  display: block;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.2;
+}
+.match-center-summary-stat strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.1;
+}
+.match-center-summary-player {
+  border-color: rgba(85,214,180,.18);
+  background: linear-gradient(145deg, rgba(85,214,180,.07), rgba(117,167,255,.035));
+}
+.match-center-summary-player-icon {
+  width: 35px;
+  height: 35px;
+  flex: 0 0 35px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(85,214,180,.11);
+  color: #8ce8d0;
+  font-size: 15px;
+}
+.match-center-summary-player > div:nth-child(2) {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.match-center-summary-player strong {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-size: 13px;
+}
+.match-center-summary-player b {
+  flex: 0 0 auto;
+  min-width: 38px;
+  padding: 6px 5px;
+  border-radius: 7px;
+  background: rgba(85,214,180,.13);
+  color: #8ce8d0;
+  font-size: 13px;
+  text-align: center;
+}
+.match-center-menu-card {
+  height: 100%;
+  min-height: 128px;
+}
+.match-center-menu-grid {
+  align-items: stretch;
+}
+@media (max-width: 900px) {
+  .match-center-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .match-center-summary-player {
+    grid-column: span 2;
+  }
+}
+@media (max-width: 760px) {
+  .match-center-summary {
+    grid-template-columns: 1fr;
+  }
+  .match-center-summary-player {
+    grid-column: auto;
+  }
+}
