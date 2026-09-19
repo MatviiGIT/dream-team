@@ -51,9 +51,45 @@ button, input, select {
   min-height: 0;
   display: flex;
   flex-direction: column;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.app-shell::before,
+.app-shell::after {
+  content: "";
+  position: absolute;
+  inset: -22%;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(85,214,180,.12), transparent 25%),
+    radial-gradient(circle at 82% 18%, rgba(117,167,255,.12), transparent 24%),
+    radial-gradient(circle at 62% 88%, rgba(163,139,255,.10), transparent 27%);
+  filter: blur(26px);
+  transform: scale(1.06);
+}
+.app-shell::before {
+  animation: ambientDriftOne 18s ease-in-out infinite alternate;
+}
+.app-shell::after {
+  animation: ambientDriftTwo 24s ease-in-out infinite alternate;
+  opacity: .72;
+}
+@keyframes ambientDriftOne {
+  0% { transform: translate3d(-3%, -2%, 0) scale(1.05); }
+  50% { transform: translate3d(3%, 2%, 0) scale(1.1); }
+  100% { transform: translate3d(-1%, 4%, 0) scale(1.07); }
+}
+@keyframes ambientDriftTwo {
+  0% { transform: translate3d(4%, 1%, 0) scale(1.08); }
+  50% { transform: translate3d(-3%, -3%, 0) scale(1.04); }
+  100% { transform: translate3d(2%, 3%, 0) scale(1.1); }
 }
 
 .topbar {
+  position: relative;
+  z-index: 2;
   flex: 0 0 auto;
   min-height: 76px;
   border-bottom: 1px solid var(--line);
@@ -106,6 +142,8 @@ button, input, select {
 }
 
 .content {
+  position: relative;
+  z-index: 1;
   flex: 1 1 auto;
   min-height: 0;
   width: min(1180px, calc(100% - 48px));
@@ -232,13 +270,16 @@ button, input, select {
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-template-rows: minmax(290px, 1fr) minmax(220px, .78fr);
+  grid-template-rows: minmax(235px, 1fr) minmax(175px, .78fr);
   gap: 14px;
+  overflow: auto;
+  padding: 2px 3px 5px;
 }
 .dashboard-grid > .card {
   min-width: 0;
   min-height: 0;
   padding: 22px;
+  border-radius: 18px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -389,6 +430,13 @@ button, input, select {
 .ghost-button:hover {
   border-color: rgba(85, 214, 180, .3);
   background: rgba(85, 214, 180, .04);
+}
+.fullscreen-button {
+  white-space: nowrap;
+}
+.fullscreen-button span {
+  margin-right: 5px;
+  font-size: 15px;
 }
 .full { width: 100%; }
 .large { padding: 14px 16px; font-size: 14px; }
@@ -619,14 +667,20 @@ tbody tr.your-club td { color: #e0f4ec; }
 .orb-one { width: 320px; height: 320px; background: #55d6b4; top: -180px; left: -150px; }
 .orb-two { width: 280px; height: 280px; background: #75a7ff; right: -120px; top: 100px; }
 
+.start-toolbar {
+  position: absolute;
+  top: 22px;
+  right: 28px;
+  z-index: 5;
+}
 .start-layout {
   width: min(1180px, 100%);
   height: 100%;
   min-height: 0;
   margin: auto;
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr);
-  grid-template-rows: minmax(0, 1fr) minmax(150px, .48fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(390px, .92fr);
+  grid-template-rows: minmax(0, 1fr) minmax(170px, .46fr);
   gap: 24px 58px;
   align-items: center;
   position: relative;
@@ -676,8 +730,10 @@ tbody tr.your-club td { color: #e0f4ec; }
 
 .start-panel {
   padding: 29px;
+  border-color: rgba(85,214,180,.25);
   background:
-    linear-gradient(180deg, rgba(21, 37, 49, .98), rgba(14, 27, 38, .98));
+    radial-gradient(circle at 100% 0%, rgba(85,214,180,.10), transparent 40%),
+    linear-gradient(145deg, rgba(21, 47, 49, .98), rgba(13, 27, 38, .99));
 }
 .version-pill {
   border-radius: 999px;
@@ -731,8 +787,21 @@ tbody tr.your-club td { color: #e0f4ec; }
   padding: 2px 4px 4px 0;
 }
 .career-card {
-  padding: 17px;
+  padding: 18px;
+  border-radius: 16px;
   transition: transform .16s ease, border-color .16s ease, background .16s ease;
+}
+.career-card:nth-child(3n + 1) {
+  background: linear-gradient(145deg, rgba(20,44,49,.98), rgba(13,27,38,.99));
+  border-color: rgba(85,214,180,.18);
+}
+.career-card:nth-child(3n + 2) {
+  background: linear-gradient(145deg, rgba(23,38,59,.98), rgba(13,25,38,.99));
+  border-color: rgba(117,167,255,.18);
+}
+.career-card:nth-child(3n + 3) {
+  background: linear-gradient(145deg, rgba(40,34,58,.98), rgba(18,23,36,.99));
+  border-color: rgba(163,139,255,.18);
 }
 .career-card:hover {
   transform: translateY(-3px);
@@ -1027,6 +1096,7 @@ tbody tr.your-club td { color: #e0f4ec; }
 }
 
 @media (max-width: 760px) {
+  .start-toolbar { top: 14px; right: 16px; }
   .topbar { min-height: 70px; padding: 10px 16px; }
   .topbar-meta { gap: 7px; }
   .topbar-meta > span:nth-child(3) { display: none; }
@@ -1035,7 +1105,7 @@ tbody tr.your-club td { color: #e0f4ec; }
   .budget-block { min-width: 170px; }
   .career-grid { grid-template-columns: 1fr; }
   .start-screen { padding: 22px 16px; }
-  .start-layout { gap: 18px; grid-template-rows: minmax(0, 1fr) minmax(130px, .52fr); }
+  .start-layout { gap: 18px; grid-template-rows: minmax(0, 1fr) minmax(140px, .52fr); }
   .dashboard-grid > .card { padding: 18px; }
 }
 
@@ -1073,6 +1143,7 @@ tbody tr.your-club td { color: #e0f4ec; }
   .player-metric span { font-size: 8px; }
   .player-metric strong { font-size: 12px; }
   .start-panel { padding: 21px; }
+  .fullscreen-button { font-size: 11px; padding: 8px 10px; }
   .start-hero h1 { font-size: clamp(43px, 15vw, 61px); }
   .hero-copy { font-size: 14px; }
   .hero-points { font-size: 12px; }
