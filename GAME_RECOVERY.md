@@ -420,3 +420,8 @@ Then:
 - Gave the «Ближайшие туры» window a dedicated overlay layer above the in-game topbar/content so background tabs and controls cannot be activated while the modal is open.
 - Kept the calendar fixture list in its own internal scroll region with the close action outside that region.
 - Added a stronger in-game typography scale for recurring labels, metadata, fixture text, squad data, table cells and Match Center details so important information is not rendered at near-technical-label size.
+
+### 2026-09-19 — Calendar modal viewport lock
+- Changed the upcoming-fixtures modal to use a strict viewport-bounded height instead of relying on content-driven sizing.
+- Made the fixture list a zero-basis flex scroll region (`height: 0` + `flex: 1`) so all 14 rounds scroll inside the window without pushing the modal itself beyond the viewport.
+- Kept the modal header and «Закрыть» action fixed outside the scrolling fixture list.
