@@ -1712,9 +1712,6 @@ tbody tr.your-club td { color: #e0f4ec; }
 }
 
 @media (max-width: 620px) {
-  .topbar { min-height: 64px; }
-  .brand span { display: none; }
-  .topbar-meta > span:nth-child(2) { display: none; }
   .content { width: min(100% - 18px, 1180px); }
   .club-header { display: grid; gap: 12px; padding: 18px; }
   .budget-block { min-width: 0; text-align: left; }
@@ -2582,13 +2579,6 @@ tbody tr.your-club td { color: #e0f4ec; }
   min-height: 0;
 }
 
-.app-shell > .topbar {
-  height: 80px;
-  min-height: 80px;
-  max-height: 80px;
-  flex: none;
-  overflow: hidden;
-}
 
 .app-shell > .content {
   width: min(1180px, calc(100% - 48px));
