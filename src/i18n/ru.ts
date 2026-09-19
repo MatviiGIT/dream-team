@@ -180,6 +180,7 @@ export const ru = {
     shotsShort: 'Удары',
     playerRatingsEmpty: 'Для этого старого матча индивидуальной статистики ещё нет.',
     playerRatingsPreview: 'Все игроки · оценка, голы, ассисты, удары',
+    playerOfMatch: 'Лучший игрок матча',
     eventCount: (count: number) => `${count} событий · открыть хронологию`,
     statsPreview: (homePossession: number, awayPossession: number) => `Владение ${homePossession}% — ${awayPossession}% · открыть цифры`,
     noGoals: 'Голов не было.',
