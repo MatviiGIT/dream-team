@@ -294,9 +294,6 @@ function StartScreen(props: {
             transform: `scale(${scale})`,
           }}
         >
-          <div className="start-orb orb-one" />
-          <div className="start-orb orb-two" />
-
           <div className="start-toolbar">
             <button className="ghost-button settings-button" type="button" onClick={() => setSettingsOpen(true)}>
               <span aria-hidden="true">⚙</span>
