@@ -295,3 +295,10 @@ Then:
 - Removed the upward hover translation from saved-career cards so their top edge and manager avatar never get clipped by the scroll container.
 - Kept hover feedback through border, shadow and avatar treatment instead of moving the whole save card.
 - Reworked the «Состояние сезона» metrics into four independent rounded tiles with small semantic accent bars, removing the old cross-shaped separator lines.
+
+### 2026-09-19 — Full squad depth
+- Expanded newly generated clubs from 11 to 18 players: 2 goalkeepers, 6 defenders, 6 midfielders and 4 forwards.
+- Added automatic squad-depth migration for existing v2 and legacy careers so old saves gain the additional players when they are loaded/saved.
+- Made reserve players functional in the team sheet: selecting a starter and then clicking a reserve player replaces that position.
+- Updated the lineup instruction so the UI explicitly explains the reserve replacement action.
+- Kept the selected starting XI as the only group used by the match simulator, so reserve players do not affect matches until they are promoted into the XI.
