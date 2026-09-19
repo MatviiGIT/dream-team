@@ -2063,3 +2063,329 @@ tbody tr.your-club td { color: #e0f4ec; }
     display: none;
   }
 }
+
+
+/* Visual refinement pass — unify the in-game shell and make the team sheet feel like one interface. */
+.topbar {
+  min-height: 80px;
+  padding-inline: 30px;
+  border-bottom-color: rgba(196,216,229,.11);
+  background:
+    linear-gradient(180deg, rgba(9,20,29,.985), rgba(7,16,24,.965));
+  box-shadow: 0 10px 34px rgba(0,0,0,.15);
+}
+.brand {
+  gap: 13px;
+}
+.brand-mark {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #6be2c4, #75a7ff 58%, #a38bff);
+  box-shadow: 0 10px 28px rgba(85,214,180,.12);
+}
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 13px;
+  border: 1px solid rgba(255,255,255,.20);
+  pointer-events: none;
+}
+.brand strong {
+  font-size: 16px;
+}
+.brand span {
+  font-size: 11px;
+}
+.topbar-meta {
+  gap: 8px;
+}
+.topbar-meta > span {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border-color: rgba(196,216,229,.10);
+  background: rgba(255,255,255,.028);
+}
+.topbar-meta > span:nth-child(1) {
+  color: #9fc3ff;
+  border-color: rgba(117,167,255,.14);
+}
+.topbar-meta > span:nth-child(2) {
+  color: #bcb0ff;
+  border-color: rgba(163,139,255,.14);
+}
+.topbar-meta > span:nth-child(3) {
+  color: #8ce8d0;
+  border-color: rgba(85,214,180,.14);
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.club-header {
+  position: relative;
+  overflow: hidden;
+  padding: 24px 26px;
+  border-color: rgba(196,216,229,.12);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(85,214,180,.08), transparent 38%),
+    radial-gradient(circle at 100% 100%, rgba(117,167,255,.06), transparent 36%),
+    linear-gradient(145deg, rgba(20,35,46,.98), rgba(11,23,32,.99));
+}
+.club-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(85,214,180,.85), rgba(117,167,255,.65), rgba(163,139,255,.45));
+  opacity: .7;
+}
+.club-header > div:first-child {
+  position: relative;
+  z-index: 1;
+}
+.club-header h1 {
+  font-size: clamp(30px, 3vw, 40px);
+}
+.club-header p {
+  font-size: 12px;
+}
+.budget-block {
+  position: relative;
+  z-index: 1;
+  min-width: 205px;
+  padding: 13px 15px;
+  border-radius: 13px;
+  border-color: rgba(242,190,103,.15);
+  background:
+    linear-gradient(145deg, rgba(242,190,103,.09), rgba(255,255,255,.018));
+}
+.budget-block strong {
+  font-size: 22px;
+}
+
+.tabs {
+  gap: 5px;
+  padding: 5px;
+  margin: 12px 0 14px;
+  background: rgba(7,16,24,.72);
+  border-color: rgba(196,216,229,.10);
+  box-shadow: 0 10px 25px rgba(0,0,0,.10);
+}
+.tab {
+  position: relative;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  transition: transform .16s ease, color .16s ease, background .16s ease, border-color .16s ease;
+}
+.tab.active::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 5px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: .8;
+}
+.tab:hover {
+  transform: translateY(-1px);
+}
+
+.dashboard-grid > .card {
+  box-shadow: 0 18px 42px rgba(0,0,0,.14);
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.dashboard-grid > .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 48px rgba(0,0,0,.18);
+}
+.next-match .section-title-row h2,
+.stat-card .eyebrow,
+.last-match-card .eyebrow,
+.events-card .eyebrow,
+.calendar-card .eyebrow,
+.manager-card .eyebrow {
+  letter-spacing: .02em;
+}
+.next-match .section-title-row h2 {
+  font-size: 23px;
+}
+.mini-stats span {
+  border: 1px solid rgba(196,216,229,.06);
+}
+
+.content-card {
+  border-color: rgba(196,216,229,.12);
+  box-shadow: 0 20px 50px rgba(0,0,0,.16);
+}
+.content-card > .section-title-row {
+  padding-bottom: 3px;
+}
+.content-card > .section-title-row h2 {
+  font-size: 23px;
+}
+
+.squad-panel {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(117,167,255,.09), transparent 34%),
+    radial-gradient(circle at 100% 100%, rgba(85,214,180,.05), transparent 34%),
+    linear-gradient(145deg, rgba(18,34,51,.99), rgba(10,23,34,.99));
+}
+.squad-formation-pill strong {
+  box-shadow: inset 0 0 0 1px rgba(117,167,255,.11);
+}
+.squad-pitch {
+  border-color: rgba(140,232,208,.24);
+  background:
+    radial-gradient(circle at 50% 34%, rgba(95,177,120,.20), transparent 46%),
+    radial-gradient(circle at 50% 88%, rgba(117,167,255,.07), transparent 28%),
+    linear-gradient(180deg, #17503d 0%, #0f392d 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.035),
+    inset 0 0 80px rgba(0,0,0,.11),
+    0 24px 55px rgba(0,0,0,.22);
+}
+.squad-pitch::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.028), transparent 18%, transparent 82%, rgba(0,0,0,.06));
+  pointer-events: none;
+}
+.squad-player-marker {
+  width: 82px;
+  min-height: 66px;
+  border-color: rgba(255,255,255,.12);
+  background:
+    linear-gradient(145deg, rgba(14,28,40,.96), rgba(8,18,27,.92));
+  backdrop-filter: none;
+}
+.squad-player-marker:hover {
+  border-color: rgba(140,232,208,.42);
+  box-shadow: 0 8px 22px rgba(0,0,0,.30);
+}
+.squad-player-marker.selected {
+  border-color: #8ce8d0;
+  background: linear-gradient(145deg, rgba(28,62,59,.98), rgba(8,23,29,.96));
+  box-shadow: 0 0 0 2px rgba(140,232,208,.19), 0 10px 26px rgba(0,0,0,.34);
+}
+.squad-player-rating {
+  background: linear-gradient(135deg, #8ce8d0, #75a7ff);
+}
+.squad-player-marker small {
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: rgba(255,255,255,.045);
+  color: #9fb8c5;
+}
+.squad-roster {
+  border-color: rgba(117,167,255,.16);
+  background:
+    linear-gradient(180deg, rgba(9,20,30,.60), rgba(7,16,24,.42));
+}
+.squad-roster-card {
+  min-height: 54px;
+  transition: transform .14s ease, background .14s ease, border-color .14s ease;
+}
+.squad-roster-card:hover {
+  transform: translateX(2px);
+}
+.squad-roster-card.selected {
+  box-shadow: inset 3px 0 0 #55d6b4;
+}
+.squad-roster-status.active {
+  box-shadow: inset 0 0 0 1px rgba(85,214,180,.10);
+}
+
+.formation-block {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.formation-select-button {
+  transition: transform .14s ease, border-color .14s ease, background .14s ease;
+}
+.formation-select-button:hover {
+  transform: translateY(-1px);
+}
+.tactic-choice {
+  min-height: 50px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.018);
+}
+.tactic-choice:hover,
+.tactic-choice.open {
+  transform: translateY(-1px);
+}
+.tactic-menu {
+  box-shadow: 0 18px 45px rgba(0,0,0,.36);
+  background: #101827;
+}
+.tactic-option {
+  min-height: 42px;
+}
+.tactic-option:hover {
+  background: rgba(163,139,255,.09);
+}
+
+.content-table .content-card {
+  overflow: hidden;
+}
+.content-table table {
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+.content-table thead th {
+  padding: 8px 12px;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.content-table tbody tr {
+  transition: transform .14s ease, background .14s ease;
+}
+.content-table tbody tr:hover {
+  background: rgba(255,255,255,.035);
+}
+.content-table tbody td {
+  padding: 11px 12px;
+  border-top: 1px solid rgba(196,216,229,.06);
+  border-bottom: 1px solid rgba(196,216,229,.06);
+}
+.content-table tbody td:first-child {
+  border-left: 1px solid rgba(196,216,229,.06);
+  border-radius: 10px 0 0 10px;
+}
+.content-table tbody td:last-child {
+  border-right: 1px solid rgba(196,216,229,.06);
+  border-radius: 0 10px 10px 0;
+}
+.content-table tbody tr.your-club {
+  background: linear-gradient(90deg, rgba(242,190,103,.12), rgba(85,214,180,.045));
+  box-shadow: inset 3px 0 0 rgba(242,190,103,.75);
+}
+
+.career-card {
+  box-shadow: 0 14px 32px rgba(0,0,0,.12);
+}
+.career-card:hover {
+  box-shadow: 0 20px 40px rgba(0,0,0,.18);
+}
+.delete-button {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  transition: background .14s ease, color .14s ease;
+}
+.delete-button:hover {
+  background: rgba(239,113,136,.10);
+}
