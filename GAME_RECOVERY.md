@@ -262,3 +262,11 @@ Then:
 - Reworked the three formation mini-pitches to use clearer, explicit 11-player rows for 4-3-3, 4-4-2 and 4-2-3-1 with pitch markings.
 - Replaced the in-game ambient background’s large circular field with a multi-layer rectangular gradient field containing mint, blue, violet and subtle gold lighting that drifts independently.
 - Removed the remaining start-menu orb JSX so the clipped texture cannot reappear above the hero area.
+
+### 2026-09-19 — Formation diagram redesign
+- Rebuilt the formation preview as a portrait-oriented mini pitch instead of a short horizontal strip.
+- Added role-aware player markers: keeper, defenders, midfielders and attackers now use separate visual colors.
+- Changed 4-3-3 to a recognizable midfield triangle: one deeper midfielder with two more advanced midfielders, plus wide wingers and a central forward.
+- Kept 4-4-2 as a flat four-player midfield line with two forwards.
+- Kept 4-2-3-1 as a back four, double pivot, attacking three and lone striker.
+- Added clearer pitch markings and increased the formation cards so the 11-player structure can be read at a glance.
