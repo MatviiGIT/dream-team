@@ -410,3 +410,8 @@ Then:
 - Refined the Overview next-match panel into a clearer matchday entry point with explicit round progress, home/away context and a ready-for-match status.
 - Renamed the primary action from «Симулировать матч» to «Играть матч» to make the career loop feel like entering the next fixture rather than opening a developer-facing simulation control.
 - Kept this pass presentation-only: no new saved game parameters or simulation rules were introduced.
+
+### 2026-09-19 — Calendar scrolling + readability pass
+- Made the full upcoming-fixtures modal a fixed-height flex container so the fixture list owns the available scroll area and the «Закрыть» button stays visible.
+- Added stable internal scrolling to the 14-round calendar list so all remaining fixtures can be reached without pushing the modal action below the viewport.
+- Increased several recurring small UI text sizes across the overview, calendar, squad, table and Match Center while preserving compact labels where they are purely decorative.
