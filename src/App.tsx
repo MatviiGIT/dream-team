@@ -253,132 +253,162 @@ function StartScreen(props: {
   theme: Theme;
   onThemeChange: (theme: Theme) => void;
 }) {
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const START_WIDTH = 1440;
+  const START_HEIGHT = 900;
+  const readViewport = () => ({
+    width: Math.max(1, window.visualViewport?.width ?? window.innerWidth),
+    height: Math.max(1, window.visualViewport?.height ?? window.innerHeight),
+  });
+  const [viewport, setViewport] = useState(readViewport);
+
+  useEffect(() => {
+    const syncViewport = () => setViewport(readViewport());
+    window.addEventListener('resize', syncViewport);
+    document.addEventListener('fullscreenchange', syncViewport);
+    window.visualViewport?.addEventListener('resize', syncViewport);
+
+    return () => {
+      window.removeEventListener('resize', syncViewport);
+      document.removeEventListener('fullscreenchange', syncViewport);
+      window.visualViewport?.removeEventListener('resize', syncViewport);
+    };
+  }, []);
+
+  const scale = Math.min(viewport.width / START_WIDTH, viewport.height / START_HEIGHT);
 
   return (
     <div className="start-screen">
-      <div className="start-orb orb-one" />
-      <div className="start-orb orb-two" />
-      <div className="start-toolbar">
-        <button className="ghost-button settings-button" type="button" onClick={() => setSettingsOpen(true)}>
-          <span aria-hidden="true">⚙</span>
-          {ru.settings.openButton}
-        </button>
-        <FullscreenButton />
-      </div>
+      <div className="start-stage-frame">
+        <div
+          className="start-stage"
+          style={{
+            transform: `scale(${scale})`,
+          }}
+        >
+          <div className="start-orb orb-one" />
+          <div className="start-orb orb-two" />
 
-      <main className="start-layout">
-        <section className="start-hero">
-          <div className="hero-badge">DT</div>
-          <div className="eyebrow">{ru.start.eyebrow}</div>
-          <h1>{ru.start.titleLineOne}<span>{ru.start.titleLineTwo}</span></h1>
-          <div className="latest-update">
-            <div className="latest-update-header">
-              <span className="eyebrow">{ru.start.latestUpdate}</span>
-              <span className="update-badge">NEW</span>
-            </div>
-            <h2>{ru.start.updateTitle}</h2>
-            <p>{ru.start.updateDescription}</p>
-            <div className="update-list">
-              <span>✦ {ru.start.updateItemOne}</span>
-              <span>✦ {ru.start.updateItemTwo}</span>
-              <span>✦ {ru.start.updateItemThree}</span>
-            </div>
-          </div>
-        </section>
-
-        <section className="start-panel card">
-          <div className="section-title-row">
-            <div>
-              <div className="eyebrow">{ru.career.newCareer}</div>
-              <h2>{ru.career.beginTitle}</h2>
-            </div>
-            <span className="version-pill">MVP</span>
-          </div>
-
-          <div className="form-stack">
-            <label>
-              {ru.career.managerName} <span className="required">*</span>
-              <input
-                value={props.managerName}
-                onChange={(event) => props.setManagerName(event.target.value)}
-                placeholder={ru.career.namePlaceholder}
-                maxLength={30}
-                autoComplete="off"
-                aria-invalid={Boolean(props.nameError)}
-              />
-              {props.nameError && <small className="form-error">{props.nameError}</small>}
-            </label>
-
-            <label>
-              {ru.career.club}
-              <select value={props.selectedClub} onChange={(event) => props.setSelectedClub(event.target.value)}>
-                {clubOrder.map((id) => <option key={id} value={id}>{clubLabels[id]}</option>)}
-              </select>
-            </label>
-
-            <button className="primary-button full large" onClick={props.onStart}>
-              {ru.career.startButton}
+          <div className="start-toolbar">
+            <button className="ghost-button settings-button" type="button" onClick={() => setSettingsOpen(true)}>
+              <span aria-hidden="true">⚙</span>
+              {ru.settings.openButton}
             </button>
-          </div>
-        </section>
-
-        <section className="saves-section">
-          <div className="section-title-row saves-heading">
-            <div>
-              <div className="eyebrow">{ru.career.yourCareers}</div>
-              <h2>{props.careers.length ? ru.career.chooseCareer : ru.career.noCareers}</h2>
-            </div>
+            <FullscreenButton />
           </div>
 
-          {props.careers.length ? (
-            <div className="career-grid">
-              {props.careers.map((career, index) => (
-                <article className="career-card card" key={career.id}>
-                  <div className="career-card-top">
-                    <div className="career-avatar">{career.managerName.slice(0, 1).toUpperCase()}</div>
-                    <button className="delete-button" aria-label={ru.career.delete} onClick={() => props.onDelete(career.id)}>×</button>
-                  </div>
-                  <div className="career-index">{ru.career.saveNumber} №{index + 1}</div>
+          <main className="start-layout">
+            <section className="start-hero">
+              <div className="hero-badge">DT</div>
+              <div className="eyebrow">{ru.start.eyebrow}</div>
+              <h1>{ru.start.titleLineOne}<span>{ru.start.titleLineTwo}</span></h1>
+              <div className="latest-update">
+                <div className="latest-update-header">
+                  <span className="eyebrow">{ru.start.latestUpdate}</span>
+                  <span className="update-badge">NEW</span>
+                </div>
+                <h2>{ru.start.updateTitle}</h2>
+                <p>{ru.start.updateDescription}</p>
+                <div className="update-list">
+                  <span>✦ {ru.start.updateItemOne}</span>
+                  <span>✦ {ru.start.updateItemTwo}</span>
+                  <span>✦ {ru.start.updateItemThree}</span>
+                </div>
+              </div>
+            </section>
 
-                  <div className="career-main">
-                    <strong>{career.managerName}</strong>
-                    <span>{career.clubName}</span>
-                  </div>
+            <section className="start-panel card">
+              <div className="section-title-row">
+                <div>
+                  <div className="eyebrow">{ru.career.newCareer}</div>
+                  <h2>{ru.career.beginTitle}</h2>
+                </div>
+                <span className="version-pill">MVP</span>
+              </div>
 
-                  <div className="career-meta">
-                    <span>{ru.app.season} {career.state.season}</span>
-                    <span>{formatDate(career.updatedAt)}</span>
-                  </div>
+              <div className="form-stack">
+                <label>
+                  {ru.career.managerName} <span className="required">*</span>
+                  <input
+                    value={props.managerName}
+                    onChange={(event) => props.setManagerName(event.target.value)}
+                    placeholder={ru.career.namePlaceholder}
+                    maxLength={30}
+                    autoComplete="off"
+                    aria-invalid={Boolean(props.nameError)}
+                  />
+                  {props.nameError && <small className="form-error">{props.nameError}</small>}
+                </label>
 
-                  <button className="secondary-button full" onClick={() => props.onOpen(career)}>
-                    {ru.career.continueButton}
-                  </button>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="empty-careers card">
-              <div className="empty-icon">✦</div>
-              <strong>{ru.career.emptyTitle}</strong>
-              <span>{ru.career.emptyDescription}</span>
-            </div>
+                <label>
+                  {ru.career.club}
+                  <select value={props.selectedClub} onChange={(event) => props.setSelectedClub(event.target.value)}>
+                    {clubOrder.map((id) => <option key={id} value={id}>{clubLabels[id]}</option>)}
+                  </select>
+                </label>
+
+                <button className="primary-button full large" onClick={props.onStart}>
+                  {ru.career.startButton}
+                </button>
+              </div>
+            </section>
+
+            <section className="saves-section">
+              <div className="section-title-row saves-heading">
+                <div>
+                  <div className="eyebrow">{ru.career.yourCareers}</div>
+                  <h2>{props.careers.length ? ru.career.chooseCareer : ru.career.noCareers}</h2>
+                </div>
+              </div>
+
+              {props.careers.length ? (
+                <div className="career-grid">
+                  {props.careers.map((career, index) => (
+                    <article className="career-card card" key={career.id}>
+                      <div className="career-card-top">
+                        <div className="career-avatar">{career.managerName.slice(0, 1).toUpperCase()}</div>
+                        <button className="delete-button" aria-label={ru.career.delete} onClick={() => props.onDelete(career.id)}>×</button>
+                      </div>
+                      <div className="career-index">{ru.career.saveNumber} №{index + 1}</div>
+
+                      <div className="career-main">
+                        <strong>{career.managerName}</strong>
+                        <span>{career.clubName}</span>
+                      </div>
+
+                      <div className="career-meta">
+                        <span>{ru.app.season} {career.state.season}</span>
+                        <span>{formatDate(career.updatedAt)}</span>
+                      </div>
+
+                      <button className="secondary-button full" onClick={() => props.onOpen(career)}>
+                        {ru.career.continueButton}
+                      </button>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-careers card">
+                  <div className="empty-icon">✦</div>
+                  <strong>{ru.career.emptyTitle}</strong>
+                  <span>{ru.career.emptyDescription}</span>
+                </div>
+              )}
+            </section>
+          </main>
+
+          {settingsOpen && (
+            <SettingsModal
+              theme={props.theme}
+              onThemeChange={props.onThemeChange}
+              onClose={() => setSettingsOpen(false)}
+            />
           )}
-        </section>
-
-
-      </main>
-
-      {settingsOpen && (
-        <SettingsModal
-          theme={props.theme}
-          onThemeChange={props.onThemeChange}
-          onClose={() => setSettingsOpen(false)}
-        />
-      )}
+        </div>
+      </div>
     </div>
   );
 }
+
 
 function SettingsModal({
   theme,
