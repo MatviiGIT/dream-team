@@ -461,3 +461,10 @@ Then:
 - Added a dedicated Финансы screen to the left navigation with current budget, wage cost, season income/expenses and the latest round ledger.
 - The right utility rail shows a compact finance preview using the same live budget and wage data.
 - Finance is intentionally limited to cashflow for now; transfers, contracts and richer accounting are future systems.
+
+### 2026-09-19 — Full-width management screens and squad readability fix
+- The large `Ваш клуб` header and right finance/season rail are now shown only on Overview; Squad, Tactics, Table and Finance use the available central width.
+- Non-overview screens therefore use a two-zone layout: persistent left navigation plus an expanded main workspace.
+- Fixed the Squad reserve-card grid: the markup has five data elements, so the grid now explicitly uses five columns instead of relying on an implicit fifth column.
+- Increased reserve-card avatar, name/position, OVR and fitness readability and added controlled fit-status badges.
+- Added responsive fallbacks that collapse secondary reserve information on very narrow screens instead of allowing overlap.
