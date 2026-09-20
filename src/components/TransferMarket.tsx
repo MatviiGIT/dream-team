@@ -60,10 +60,68 @@ function numberValue(value: string): number | undefined {
   return Number.isFinite(parsed) && value !== '' ? parsed : undefined;
 }
 
+type TransferChoiceOption = {
+  value: string;
+  label: string;
+};
+
+function TransferChoice({
+  label,
+  value,
+  options,
+  open,
+  onToggle,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: TransferChoiceOption[];
+  open: boolean;
+  onToggle: () => void;
+  onChange: (value: string) => void;
+}) {
+  const selected = options.find((option) => option.value === value);
+
+  return (
+    <div className={open ? 'transfer-filter-field open' : 'transfer-filter-field'}>
+      <span>{label}</span>
+      <button
+        className={open ? 'transfer-choice open' : 'transfer-choice'}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={onToggle}
+      >
+        <strong>{selected?.label ?? value}</strong>
+        <span className="transfer-choice-arrow" aria-hidden="true" />
+      </button>
+
+      {open && (
+        <div className="transfer-choice-menu" role="listbox">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              className={option.value === value ? 'transfer-choice-option active' : 'transfer-choice-option'}
+              type="button"
+              role="option"
+              aria-selected={option.value === value}
+              onClick={() => onChange(option.value)}
+            >
+              <span>{option.label}</span>
+              {option.value === value && <strong aria-hidden="true">✓</strong>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function TransferMarket({ game, onChange }: { game: GameState; onChange: (nextGame: GameState) => void }) {
   const club = game.clubs[game.clubId];
   const [search, setSearch] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [openFilter, setOpenFilter] = useState<('club' | 'nationality' | 'role') | null>(null);
   const [filters, setFilters] = useState<MarketFilters>(defaultFilters);
   const [notice, setNotice] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -160,7 +218,12 @@ export function TransferMarket({ game, onChange }: { game: GameState; onChange: 
         <button
           type="button"
           className={filtersOpen ? 'transfer-filter-trigger open' : 'transfer-filter-trigger'}
-          onClick={() => setFiltersOpen((open) => !open)}
+          onClick={() => {
+            setFiltersOpen((open) => {
+              if (open) setOpenFilter(null);
+              return !open;
+            });
+          }}
           aria-expanded={filtersOpen}
         >
           <span>⚙</span>
@@ -204,32 +267,53 @@ export function TransferMarket({ game, onChange }: { game: GameState; onChange: 
               </div>
             </div>
 
-            <label className="transfer-filter-field">
-              <span>{ru.transfers.filterClub}</span>
-              <select value={filters.clubId} onChange={(event) => updateFilter('clubId', event.target.value)}>
-                <option value="ALL">{ru.transfers.allClubs}</option>
-                {marketClubs.map((otherClub) => <option key={otherClub.id} value={otherClub.id}>{otherClub.name}</option>)}
-              </select>
-            </label>
+            <TransferChoice
+              label={ru.transfers.filterClub}
+              value={filters.clubId}
+              options={[
+                { value: 'ALL', label: ru.transfers.allClubs },
+                ...marketClubs.map((otherClub) => ({ value: otherClub.id, label: otherClub.name })),
+              ]}
+              open={openFilter === 'club'}
+              onToggle={() => setOpenFilter(openFilter === 'club' ? null : 'club')}
+              onChange={(value) => {
+                updateFilter('clubId', value);
+                setOpenFilter(null);
+              }}
+            />
 
-            <label className="transfer-filter-field">
-              <span>{ru.transfers.filterNationality}</span>
-              <select value={filters.nationality} onChange={(event) => updateFilter('nationality', event.target.value)}>
-                <option value="ALL">{ru.transfers.allNationalities}</option>
-                {nationalities.map((nationality) => <option key={nationality} value={nationality}>{nationality}</option>)}
-              </select>
-            </label>
+            <TransferChoice
+              label={ru.transfers.filterNationality}
+              value={filters.nationality}
+              options={[
+                { value: 'ALL', label: ru.transfers.allNationalities },
+                ...nationalities.map((nationality) => ({ value: nationality, label: nationality })),
+              ]}
+              open={openFilter === 'nationality'}
+              onToggle={() => setOpenFilter(openFilter === 'nationality' ? null : 'nationality')}
+              onChange={(value) => {
+                updateFilter('nationality', value);
+                setOpenFilter(null);
+              }}
+            />
 
-            <label className="transfer-filter-field">
-              <span>{ru.transfers.filterRole}</span>
-              <select value={filters.role} onChange={(event) => updateFilter('role', event.target.value as MarketFilters['role'])}>
-                <option value="ALL">{ru.transfers.allRoles}</option>
-                <option value="starter">{ru.contracts.roles.starter}</option>
-                <option value="rotation">{ru.contracts.roles.rotation}</option>
-                <option value="prospect">{ru.contracts.roles.prospect}</option>
-                <option value="reserve">{ru.contracts.roles.reserve}</option>
-              </select>
-            </label>
+            <TransferChoice
+              label={ru.transfers.filterRole}
+              value={filters.role}
+              options={[
+                { value: 'ALL', label: ru.transfers.allRoles },
+                { value: 'starter', label: ru.contracts.roles.starter },
+                { value: 'rotation', label: ru.contracts.roles.rotation },
+                { value: 'prospect', label: ru.contracts.roles.prospect },
+                { value: 'reserve', label: ru.contracts.roles.reserve },
+              ]}
+              open={openFilter === 'role'}
+              onToggle={() => setOpenFilter(openFilter === 'role' ? null : 'role')}
+              onChange={(value) => {
+                updateFilter('role', value as MarketFilters['role']);
+                setOpenFilter(null);
+              }}
+            />
 
             <div className="transfer-filter-range">
               <span>{ru.transfers.filterAge}</span>
