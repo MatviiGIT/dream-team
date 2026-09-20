@@ -1,3 +1,9 @@
+
+### 2026-09-20 — Squad field and native dropdown readability
+- Rebuilt the Squad team-sheet pitch as a complete vertical football field with consistent proportions, inset boundary lines, half-way line, centre spot, penalty spots, penalty arcs, corner arcs and connected goal/net areas.
+- Repositioned the goal graphics inside the pitch geometry so they no longer appear detached from the field or visually outside the goal line.
+- Added subtle mowing stripes and layered lighting/edge treatment while keeping player markers and responsive sizing intact.
+- Added explicit dark/light native-select styling and color-scheme handling so dropdown options such as club and nationality remain visible instead of appearing as blank white cells.
 # Dream Team — Recovery Snapshot
 
 > Persistent context file for restoring the project direction if the surrounding chat context is lost.
