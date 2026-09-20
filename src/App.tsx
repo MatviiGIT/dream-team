@@ -1729,7 +1729,6 @@ function FinanceScreen({ game }: { game: GameState }) {
     <section className="card content-card finance-page">
       <div className="section-title-row">
         <div>
-          <div className="eyebrow">{ru.financesPage.eyebrow}</div>
           <h2>{ru.financesPage.title}</h2>
         </div>
       </div>
@@ -1800,21 +1799,22 @@ function FinanceScreen({ game }: { game: GameState }) {
             <h2>{ru.financesPage.lastRound}</h2>
           </div>
           {hasActivity && (
-            <span className={net >= 0 ? 'finance-flow-badge positive' : 'finance-flow-badge negative'}>
-              {net >= 0 ? '+' : ''}{formatMoney(net)}
-            </span>
+            <div className={net >= 0 ? 'finance-round-result positive' : 'finance-round-result negative'}>
+              <span>{ru.financesPage.net}</span>
+              <strong>{net >= 0 ? '+' : ''}{formatMoney(net)}</strong>
+            </div>
           )}
         </div>
 
         {hasActivity ? (
           <div className="finance-ledger">
-            <div className="finance-ledger-section">
+            <div className="finance-ledger-section finance-ledger-card income">
               <span className="finance-ledger-label">{ru.financesPage.incomeLabel}</span>
               <div><span>{ru.financesPage.matchdayIncome}</span><strong>+{formatMoney(finance.lastMatchdayIncome)}</strong></div>
               <div><span>{ru.financesPage.broadcastIncome}</span><strong>+{formatMoney(finance.lastBroadcastIncome)}</strong></div>
               <div><span>{ru.financesPage.resultBonus}</span><strong>+{formatMoney(finance.lastResultBonus)}</strong></div>
             </div>
-            <div className="finance-ledger-section expense">
+            <div className="finance-ledger-section finance-ledger-card expenses">
               <span className="finance-ledger-label">{ru.financesPage.expenseLabel}</span>
               <div><span>{ru.financesPage.wageExpense}</span><strong>-{formatMoney(finance.lastExpenses)}</strong></div>
             </div>
