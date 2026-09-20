@@ -653,4 +653,4 @@ Then:
 ### 2026-09-20 — League Table form position and equal points scale
 - Restored the user's club points value to the same 22px numeric scale used by all other clubs; there is no special smaller points treatment now.
 - Shifted only the standings-table form indicators 8px left inside the third column so the five badges use the available space more evenly.
-
+- Cleaned obsolete 17px/19px user-club points overrides so the League Table has one authoritative 22px points size for every club.
