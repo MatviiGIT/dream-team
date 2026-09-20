@@ -1332,7 +1332,7 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
                 clipPath="url(#pitch-penalty-arc-clip)"
               />
 
-              <path className="pitch-marking-goal-net" d="M30.34 52.1 H37.66 V51.15 H30.34 Z" />
+              <path className="pitch-marking-goal-net" d="M30.34 52.5 H37.66 V51.15 H30.34 Z" />
               <line className="pitch-marking-goal-post" x1="30.34" y1="52.5" x2="30.34" y2="51.15" />
               <line className="pitch-marking-goal-post" x1="37.66" y1="52.5" x2="37.66" y2="51.15" />
               <line className="pitch-marking-goal-crossbar" x1="30.34" y1="51.15" x2="37.66" y2="51.15" />
