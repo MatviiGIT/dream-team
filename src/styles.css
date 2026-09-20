@@ -5632,3 +5632,33 @@ select optgroup {
   font-size: 14px;
   flex: 0 0 36px;
 }
+
+/* 2026-09-20 — League Table compact header and rank scale. */
+.content-table thead th {
+  padding: 20px 9px;
+  font-size: 17px;
+  font-weight: 950;
+  line-height: 1.1;
+  letter-spacing: .03em;
+}
+.content-table thead th:first-child {
+  font-size: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+.content-table .table-rank {
+  min-width: 44px;
+  height: 44px;
+  padding: 0 7px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 950;
+}
+.content-table tbody tr.your-club td:first-child .table-rank {
+  min-width: 46px;
+  height: 46px;
+  font-size: 19px;
+}
+.content-table td:nth-child(n+4) {
+  font-size: 22px;
+}
