@@ -5168,10 +5168,10 @@ select optgroup {
   width: min(100%, 760px);
   height: auto;
   min-height: 0;
-  aspect-ratio: 68 / 52.5;
+  aspect-ratio: 68 / 56.5;
   margin: 0 auto;
   overflow: hidden;
-  border-radius: 0;
+  border-radius: 14px;
   border: 0;
   background:
     radial-gradient(circle at 50% 34%, rgba(95,167,116,.16), transparent 50%),
@@ -5257,12 +5257,12 @@ select optgroup {
 @media (max-width: 980px) {
   .squad-pitch {
     width: min(100%, 720px);
-    aspect-ratio: 68 / 52.5;
+    aspect-ratio: 68 / 56.5;
   }
 }
 @media (max-width: 620px) {
   .squad-pitch {
     width: 100%;
-    aspect-ratio: 68 / 52.5;
+    aspect-ratio: 68 / 56.5;
   }
 }
