@@ -5657,3 +5657,18 @@ select optgroup {
 .content-table td:nth-child(n+4) {
   font-size: 22px;
 }
+
+
+.content-table tbody tr.your-club td:last-child strong {
+  font-size: inherit;
+  font-weight: 950;
+}
+
+/* 2026-09-20 — League Table form position and equal points scale. */
+.content-table tbody tr.your-club td:last-child strong {
+  font-size: 22px;
+  font-weight: 950;
+}
+.content-table .table-wrap tbody td:nth-child(3) > .table-form {
+  transform: translateX(-8px);
+}
