@@ -642,3 +642,8 @@ Then:
 - Kept the enlarged League Table overview scale unchanged while narrowing only the «Последние 5 игр» card's horizontal padding and reducing its five form indicators to fit cleanly inside the card.
 - This avoids a global padding reduction that would unnecessarily change other management screens.
 
+### 2026-09-20 — League Table compact headings and rank readability
+- Removed the visible `#` heading from the position column while keeping the rank numbers themselves.
+- Shortened standings headings to common football-table abbreviations: И, В, Н, П, МЗ, МП, РМ, О.
+- Increased the standings header typography and enlarged the position badges, with an extra readability bump for the user's club rank.
+
