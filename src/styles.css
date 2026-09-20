@@ -5893,3 +5893,162 @@ select optgroup {
     font-size: 27px;
   }
 }
+
+/* 2026-09-20 — Finance round cards aligned with summary grid. */
+/* Finance title, round-result card and ledger cards share the same block geometry. */
+.finance-page > .section-title-row > div {
+  min-width: 0;
+}
+.finance-page > .section-title-row h2 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.05;
+  font-weight: 950;
+}
+
+.finance-page .finance-round-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.finance-page .finance-round-header {
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+.finance-page .finance-round-header > div:first-child {
+  min-width: 0;
+}
+.finance-page .finance-round-header h2 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.05;
+  font-weight: 950;
+}
+.finance-page .finance-round-result {
+  flex: 0 0 auto;
+  min-width: 180px;
+  padding: 16px 20px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: 0 10px 24px rgba(0,0,0,.10);
+}
+.finance-page .finance-round-result span {
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.finance-page .finance-round-result strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 30px;
+  font-weight: 950;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.finance-page .finance-round-result.positive {
+  border-color: rgba(85,214,180,.28);
+  background: linear-gradient(145deg, rgba(85,214,180,.13), rgba(85,214,180,.035));
+}
+.finance-page .finance-round-result.positive span,
+.finance-page .finance-round-result.positive strong {
+  color: #86e7ce;
+}
+.finance-page .finance-round-result.negative {
+  border-color: rgba(239,113,136,.32);
+  background: linear-gradient(145deg, rgba(239,113,136,.15), rgba(239,113,136,.04));
+}
+.finance-page .finance-round-result.negative span,
+.finance-page .finance-round-result.negative strong {
+  color: #ff9aad;
+}
+
+.finance-page .finance-ledger {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 0;
+  margin-top: 14px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.finance-page .finance-ledger-section {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.finance-page .finance-ledger-card {
+  padding: 22px;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.finance-page .finance-ledger-card.income {
+  border-color: rgba(85,214,180,.24);
+  background: linear-gradient(145deg, rgba(85,214,180,.12), rgba(85,214,180,.035));
+}
+.finance-page .finance-ledger-card.expenses {
+  border-color: rgba(239,113,136,.28);
+  background: linear-gradient(145deg, rgba(239,113,136,.13), rgba(239,113,136,.035));
+}
+.finance-page .finance-ledger-card.income .finance-ledger-label,
+.finance-page .finance-ledger-card.income > div strong {
+  color: #86e7ce;
+}
+.finance-page .finance-ledger-card.expenses .finance-ledger-label,
+.finance-page .finance-ledger-card.expenses > div strong {
+  color: #ff9aad;
+}
+.finance-page .finance-ledger-label {
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 950;
+  letter-spacing: .07em;
+}
+.finance-page .finance-ledger-section > div {
+  min-width: 0;
+  gap: 12px;
+  padding: 11px 0;
+}
+.finance-page .finance-ledger-section > div span {
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+.finance-page .finance-ledger-section > div strong {
+  flex: 0 0 auto;
+  font-size: 21px;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 760px) {
+  .finance-page > .section-title-row h2 {
+    font-size: 27px;
+  }
+  .finance-page .finance-round-header {
+    align-items: stretch;
+  }
+  .finance-page .finance-round-result {
+    min-width: 150px;
+    padding: 13px 16px;
+  }
+  .finance-page .finance-round-result strong {
+    font-size: 25px;
+  }
+  .finance-page .finance-round-header h2 {
+    font-size: 27px;
+  }
+  .finance-page .finance-ledger {
+    grid-template-columns: 1fr;
+  }
+}
