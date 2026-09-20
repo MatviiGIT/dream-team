@@ -660,3 +660,7 @@ Then:
 - Enlarged the Finance screen typography proportionally across the title, budget/wage cards, season summary, transfer/contract strips and round ledger, including the numeric values.
 - Added explicit semantic money-flow surfaces: income uses a green treatment, expenses use a red treatment, and net result switches between green and red according to the actual sign.
 - Kept the responsive Finance layout while reducing the mobile scale slightly so the larger desktop typography remains usable on narrow screens.
+
+### 2026-09-20 — Last round finance summary prominence
+- Removed the duplicate «Последний тур» eyebrow so the block has one clear title.
+- Enlarged the round net result badge substantially and kept its green/red semantic treatment, making the per-round financial outcome one of the most prominent elements in the Finance screen.
