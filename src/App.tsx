@@ -1309,14 +1309,27 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
       <div className="team-sheet">
         <div className="squad-pitch-wrap">
           <div className="squad-pitch">
+            <span className="pitch-outline" aria-hidden="true" />
             <span className="pitch-half-line" aria-hidden="true" />
             <span className="pitch-center-circle" aria-hidden="true" />
+            <span className="pitch-center-spot" aria-hidden="true" />
+
             <span className="pitch-box pitch-penalty-top" aria-hidden="true" />
             <span className="pitch-box pitch-six-top" aria-hidden="true" />
+            <span className="pitch-penalty-spot pitch-penalty-spot-top" aria-hidden="true" />
+            <span className="pitch-penalty-arc pitch-penalty-arc-top" aria-hidden="true" />
             <span className="pitch-goal pitch-goal-top" aria-hidden="true" />
+
             <span className="pitch-box pitch-penalty-bottom" aria-hidden="true" />
             <span className="pitch-box pitch-six-bottom" aria-hidden="true" />
+            <span className="pitch-penalty-spot pitch-penalty-spot-bottom" aria-hidden="true" />
+            <span className="pitch-penalty-arc pitch-penalty-arc-bottom" aria-hidden="true" />
             <span className="pitch-goal pitch-goal-bottom" aria-hidden="true" />
+
+            <span className="pitch-corner pitch-corner-top-left" aria-hidden="true" />
+            <span className="pitch-corner pitch-corner-top-right" aria-hidden="true" />
+            <span className="pitch-corner pitch-corner-bottom-left" aria-hidden="true" />
+            <span className="pitch-corner pitch-corner-bottom-right" aria-hidden="true" />
 
             {slots.map((slot, index) => {
               const player = game.players[lineupIds[index]];
