@@ -200,6 +200,7 @@ export function ensurePlayerMarketData(
         player.contract = {
           yearsRemaining: 1 + ((player.age + player.overall + index) % 4),
           releaseClause: roundContractValue(player.value * 2.2),
+          role: deriveContractRole(club, player),
         };
       }
 
