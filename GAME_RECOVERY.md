@@ -1,3 +1,10 @@
+### 2026-09-20 — Rebuilt squad pitch from field coordinates
+- Replaced the squad-pitch's manually positioned CSS marking spans with a single inline SVG coordinate system sized as a 68 m × 52.5 m own-half from a 68 m × 105 m full field.
+- The pitch now uses explicit real-world field relationships for the halfway line, centre circle, penalty area (16.5 m), goal area (5.5 m), penalty mark (11 m) and penalty arc (9.15 m), avoiding visual drift caused by independent percentage positioning.
+- Removed the decorative rounded corner treatment from the playing surface and kept the field boundary rectangular.
+- Reworked the goalmouth as a simple aligned goal frame/net attached to the lower goal line so it cannot float independently of the field.
+- Player-marker positioning remains separate and interactive; the SVG is only responsible for the pitch markings and goal geometry.
+
 ### 2026-09-20 — Squad pitch geometry + transfer dropdown theme cleanup
 - Removed the separate squad-pitch corner arcs and reduced the field container rounding so the football-field markings read as a clean square/rectangular playing surface instead of mixing rounded-corner treatment with rectangular field lines.
 - Corrected the squad penalty spot/arc relationship: the penalty arc is now a true circular half-arc centered on the penalty spot, rather than a shallow oval sitting too far upward.
