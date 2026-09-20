@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import type { ContractRole, GameState, Position } from '../domain/types';
-import { getSquadRole } from '../game/contracts';
 import { buyPlayer, getTransferMarket, type TransferError } from '../game/transfers';
 import { ru } from '../i18n/ru';
 import '../styles/transfers.css';
@@ -95,7 +94,7 @@ export function TransferMarket({ game, onChange }: { game: GameState; onChange: 
     const maxPotential = numberValue(filters.maxPotential);
 
     return getTransferMarket(game).filter(({ player, seller }) => {
-      const role = player.contract?.role ?? getSquadRole(game, player.id);
+      const role = player.contract?.role ?? 'reserve';
       const matchesSearch = !query || player.name.toLocaleLowerCase('ru-RU').includes(query);
       const matchesPosition = filters.position === 'ALL' || player.position === filters.position;
       const matchesNationality = filters.nationality === 'ALL' || player.nationality === filters.nationality;
