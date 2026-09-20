@@ -285,7 +285,7 @@ export function TransferMarket({ game, onChange }: { game: GameState; onChange: 
 
       <div className="transfer-market-list">
         {market.map(({ player, seller, price }) => {
-          const role = player.contract?.role ?? getSquadRole(game, player.id);
+          const role = player.contract?.role ?? 'reserve';
           return (
             <article className="transfer-player-card" key={player.id}>
               <div className="transfer-player-avatar">{player.name.slice(0, 1).toUpperCase()}</div>
