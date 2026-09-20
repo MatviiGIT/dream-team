@@ -1645,6 +1645,7 @@ function LeagueTable({ game }: { game: GameState }) {
           <strong>{(userRow ? userRow.goalsFor - userRow.goalsAgainst : 0) > 0 ? '+' : ''}{userRow ? userRow.goalsFor - userRow.goalsAgainst : 0}</strong>
         </div>
         <div className="table-overview-card form">
+          <span>{ru.table.form}</span>
           <TableForm results={userForm} />
         </div>
       </div>
@@ -1660,9 +1661,9 @@ function LeagueTable({ game }: { game: GameState }) {
               <th>{ru.table.wins}</th>
               <th>{ru.table.draws}</th>
               <th>{ru.table.losses}</th>
-              <th>ЗГ</th>
-              <th>ПГ</th>
-              <th>РЗ</th>
+              <th>{ru.table.goalsFor}</th>
+              <th>{ru.table.goalsAgainst}</th>
+              <th>{ru.table.goalDifference}</th>
               <th>{ru.table.points}</th>
             </tr>
           </thead>
