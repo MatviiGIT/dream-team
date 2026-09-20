@@ -1654,7 +1654,7 @@ function LeagueTable({ game }: { game: GameState }) {
         <table>
           <thead>
             <tr>
-              <th>#</th>
+              <th aria-label={ru.table.position}></th>
               <th>{ru.table.club}</th>
               <th>{ru.table.form}</th>
               <th>{ru.table.played}</th>
