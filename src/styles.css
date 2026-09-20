@@ -5391,21 +5391,11 @@ select optgroup {
 .content-table tbody tr.your-club td:last-child strong {
   font-size: 19px;
 }
-.content-table .table-overview-card.matches > span {
-  text-transform: none;
-  letter-spacing: 0;
-}
 .content-table .table-overview-card.form {
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 9px;
-}
-.content-table .table-overview-card.form > span {
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 13px;
-  font-weight: 900;
 }
 .content-table th { color: #aab8c2; }
 
