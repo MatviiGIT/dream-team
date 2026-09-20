@@ -21,6 +21,10 @@
 - Added transfer-specific finance tracking for seasonal transfer income/expenses and the latest transfer transaction.
 - Kept the existing save version compatible by migrating missing finance fields through the existing finance migration path.
 
+### 2026-09-20 — CI fix after transfer/contract refactor
+- Removed the stale `getSquadRole` reference from `TransferMarket.tsx` after role data was moved to the persistent player contract metadata.
+- No gameplay behavior changed; this is a compile/typecheck correction only.
+
 ## Project identity
 
 - Name: **Dream Team**

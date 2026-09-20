@@ -68,7 +68,13 @@ export function TransferMarket({ game, onChange }: { game: GameState; onChange: 
   const [notice, setNotice] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const nationalities = useMemo(
-    () => Array.from(new Set(getTransferMarket(game).map(({ player }) => player.nationality).filter(Boolean))).sort(),
+    () => Array.from(
+      new Set(
+        getTransferMarket(game)
+          .map(({ player }) => player.nationality)
+          .filter((nationality): nationality is string => Boolean(nationality)),
+      ),
+    ).sort(),
     [game],
   );
 
@@ -285,7 +291,7 @@ export function TransferMarket({ game, onChange }: { game: GameState; onChange: 
 
       <div className="transfer-market-list">
         {market.map(({ player, seller, price }) => {
-          const role = player.contract?.role ?? getSquadRole(game, player.id);
+          const role = player.contract?.role ?? 'reserve';
           return (
             <article className="transfer-player-card" key={player.id}>
               <div className="transfer-player-avatar">{player.name.slice(0, 1).toUpperCase()}</div>
