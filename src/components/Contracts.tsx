@@ -234,14 +234,6 @@ export function Contracts({ game, onChange }: { game: GameState; onChange: (next
         )}
       </div>
 
-      <div className="contract-footer-note">
-        <span>ⓘ</span>
-        <div>
-          <strong>{ru.contracts.footerTitle}</strong>
-          <span>{ru.contracts.footerText}</span>
-        </div>
-      </div>
-
       {notice && (
         <div className={'transfer-notice ' + notice.type} role="status">
           <span>{notice.type === 'success' ? '✓' : '!'}</span>
