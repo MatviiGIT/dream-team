@@ -5338,3 +5338,143 @@ select optgroup {
   font-size: 28px;
   line-height: 1.08;
 }
+
+
+/* 2026-09-20 — Readable management-table and tactics scale. */
+.content-table > .table-wrap {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.content-table table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+.content-table thead th {
+  vertical-align: middle;
+  white-space: normal;
+  line-height: 1.15;
+}
+.content-table th:nth-child(1) { width: 5%; }
+.content-table th:nth-child(2) { width: 20%; }
+.content-table th:nth-child(3) { width: 16%; }
+.content-table th:nth-child(4) { width: 7%; }
+.content-table th:nth-child(5) { width: 7%; }
+.content-table th:nth-child(6) { width: 7%; }
+.content-table th:nth-child(7) { width: 8%; }
+.content-table th:nth-child(8) { width: 8%; }
+.content-table th:nth-child(9) { width: 8%; }
+.content-table th:nth-child(10) { width: 7%; }
+.content-table th:nth-child(11) { width: 7%; }
+.content-table th,
+.content-table td {
+  padding: 17px 10px;
+}
+.content-table th {
+  font-size: 13px;
+  font-weight: 900;
+  color: #aab8c2;
+}
+.content-table td {
+  font-size: 17px;
+  font-weight: 800;
+}
+.content-table .table-club-cell strong {
+  font-size: 18px;
+  font-weight: 950;
+}
+.content-table .table-form-dot {
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
+}
+.content-table tbody tr.your-club td:last-child strong {
+  font-size: 19px;
+}
+.content-table .table-overview-card.matches > span {
+  text-transform: none;
+  letter-spacing: 0;
+}
+.content-table .table-overview-card.form {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+.content-table .table-overview-card.form > span {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+  font-weight: 900;
+}
+.content-table th { color: #aab8c2; }
+
+.tactics-panel {
+  padding: 34px;
+}
+.tactics-panel .section-title-row h2 {
+  font-size: 28px;
+  line-height: 1.08;
+}
+.tactics-panel .section-title-row .eyebrow {
+  font-size: 12px;
+}
+.tactics-panel .formation-block {
+  margin-top: 24px;
+  padding: 22px;
+  border-radius: 16px;
+}
+.tactics-panel .formation-heading span {
+  font-size: 16px;
+  font-weight: 850;
+}
+.tactics-panel .formation-heading > strong {
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 900;
+}
+.tactics-panel .formation-selector-buttons {
+  gap: 10px;
+  margin-top: 16px;
+}
+.tactics-panel .formation-select-button {
+  min-height: 56px;
+  border-radius: 11px;
+  font-size: 16px;
+  font-weight: 900;
+}
+.tactics-panel .tactic-grid {
+  gap: 22px;
+  margin-top: 30px;
+}
+.tactics-panel .tactic-field {
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 800;
+}
+.tactics-panel .tactic-choice {
+  min-height: 60px;
+  padding: 14px 16px;
+  border-radius: 13px;
+}
+.tactics-panel .tactic-choice strong {
+  font-size: 16px;
+  font-weight: 900;
+}
+.tactics-panel .tactic-choice-arrow {
+  font-size: 19px;
+}
+.tactics-panel .tactic-menu {
+  margin-top: 7px;
+  padding: 7px;
+  gap: 5px;
+  border-radius: 13px;
+}
+.tactics-panel .tactic-option {
+  min-height: 48px;
+  padding: 11px 13px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 800;
+}
