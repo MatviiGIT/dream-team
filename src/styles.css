@@ -773,7 +773,7 @@ button, input, select {
   min-height: 470px;
   margin: 0 auto;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 4px;
   border: 1px solid rgba(85,214,180,.28);
   background:
     radial-gradient(circle at 50% 45%, rgba(95,167,116,.20), transparent 55%),
@@ -5116,33 +5116,29 @@ select optgroup {
   border-bottom: 0;
 }
 .squad-pitch .pitch-penalty-spot-bottom {
-  bottom: 23.2%;
+  bottom: 22.25%;
 }
 .squad-pitch .pitch-penalty-arc {
-  width: 27%;
-  height: 13%;
+  width: 25.7%;
+  height: auto;
+  aspect-ratio: 1;
 }
 .squad-pitch .pitch-penalty-arc-bottom {
-  bottom: 20.7%;
+  bottom: 5.58%;
   clip-path: inset(0 0 50% 0);
 }
 .squad-pitch .pitch-goal {
-  left: 39%;
-  width: 22%;
-  height: 5.8%;
+  left: 44.6%;
+  width: 10.8%;
+  height: 4.55%;
 }
 .squad-pitch .pitch-goal-bottom {
-  bottom: 1.25%;
+  bottom: -2.3%;
   border-bottom: 0;
   border-top-color: rgba(255,255,255,.40);
   box-shadow:
     inset 0 0 0 1px rgba(255,255,255,.035),
     0 -1px 0 rgba(255,255,255,.20);
-}
-.squad-pitch .pitch-corner-bottom-left,
-.squad-pitch .pitch-corner-bottom-right {
-  width: 18px;
-  height: 18px;
 }
 .squad-pitch-note {
   min-height: 42px;
