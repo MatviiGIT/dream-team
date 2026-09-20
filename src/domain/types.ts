@@ -5,6 +5,13 @@ export type Tempo = 'Slow' | 'Normal' | 'Fast';
 export type Pressing = 'Low' | 'Medium' | 'High';
 export type DefensiveLine = 'Low' | 'Normal' | 'High';
 export type Width = 'Narrow' | 'Balanced' | 'Wide';
+export type ContractRole = 'starter' | 'rotation' | 'prospect' | 'reserve';
+
+export interface PlayerContract {
+  yearsRemaining: number;
+  releaseClause: number;
+  role: ContractRole;
+}
 
 export interface PlayerAttributes {
   pace: number;
@@ -28,6 +35,9 @@ export interface Player {
   overall: number;
   potential: number;
   preferredFoot: 'L' | 'R';
+  nationality?: string;
+  transferListed?: boolean;
+  contract?: PlayerContract;
   value: number;
   wage: number;
   attributes: PlayerAttributes;
@@ -53,6 +63,7 @@ export interface ClubFinance {
   seasonExpenses: number;
   seasonTransferIncome: number;
   seasonTransferExpenses: number;
+  seasonContractExpenses: number;
   lastIncome: number;
   lastExpenses: number;
   lastNet: number;
@@ -61,6 +72,7 @@ export interface ClubFinance {
   lastResultBonus: number;
   lastTransferIncome: number;
   lastTransferExpense: number;
+  lastContractExpense: number;
 }
 
 export interface Club {

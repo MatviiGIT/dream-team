@@ -3,6 +3,16 @@
 > Persistent context file for restoring the project direction if the surrounding chat context is lost.
 > This file intentionally contains project information only and must not contain the user's personal name or other personal data.
 
+### 2026-09-20 — Transfer market + contract center refinement
+- Split the external transfer market from owned-player management.
+- Added player nationality, transfer-list status and contract metadata with migration for existing saves.
+- Added a dedicated filter menu for position, club, nationality, role, age, OVR, potential and preferred foot.
+- The transfer market now only contains external players explicitly listed by their clubs; buying removes them from the market and updates budget/wages.
+- Added a separate «Контракты» screen for owned players, renewal offers, signing bonuses and transfer-list controls.
+- Added a contract-expense line to club finances.
+- Reworked the in-game section palette so the active screen changes accent color instead of keeping every management screen blue.
+- Reworked the team-sheet pitch sizing so the complete field, including both ends, stays visible inside the available viewport.
+
 ### 2026-09-19 — Transfer market MVP
 - Added a dedicated «Трансферы» management screen with player search and position filters.
 - Added deterministic transfer pricing based on player value, age, potential and club reputation.
@@ -41,7 +51,8 @@ The manager does **not** directly control players during matches. Matches are si
 - 14-match league season per club (7 home + 7 away) for the current 8-club world.
 - Fictional clubs and players.
 - League fixtures and table.
-- Transfer market with player search, buying and reserve-player sales.
+- Transfer market with player search, filters, market-listed external players and purchases.
+- Contract center for owned players, contract renewals and transfer-list status.
 - Squad screen.
 - Tactics screen.
 - Match events and latest-match statistics.
@@ -61,7 +72,7 @@ Key files:
 - `src/App.tsx`
   - Main application flow and screens.
   - Career start/open/delete.
-  - Tab navigation including the transfer market.
+  - Tab navigation including transfers and contracts.
   - Match simulation trigger.
 - `src/domain/types.ts`
   - GameState, Player, Club, MatchResult, Fixture, TableRow, Tactics and related types.
@@ -71,9 +82,22 @@ Key files:
   - League table updates.
   - Next-round simulation.
 - `src/game/transfers.ts`
-  - Deterministic transfer pricing and safe roster-depth rules.
-  - Buying from other clubs and selling non-starting players.
+  - Deterministic transfer pricing.
+  - Market-list availability and external-player purchases.
+  - Transfer-list toggling for owned players.
   - Budget, wages and transfer-finance updates.
+
+- `src/game/contracts.ts`
+  - Contract role derivation and renewal offers.
+  - Renewal signing bonuses and wage adjustments.
+  - Contract-expense tracking through club finances.
+
+- `src/components/Contracts.tsx`
+  - Owned-player contract center.
+  - Renewal modal and transfer-list controls.
+
+- `src/styles/contracts.css`
+  - Contract-center layout and renewal modal styling.
 
 - `src/components/TransferMarket.tsx`
   - Searchable/filterable transfer market screen.

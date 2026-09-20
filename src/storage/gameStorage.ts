@@ -1,5 +1,5 @@
 import type { GameState } from '../domain/types';
-import { ensureSquadDepth } from '../data/initialWorld';
+import { ensurePlayerMarketData, ensureSquadDepth } from '../data/initialWorld';
 import { ensureClubFinance } from '../game/finance';
 
 const STORAGE_KEY = 'dream-team:careers:v2';
@@ -34,6 +34,7 @@ function readV2(): StoredCareer[] {
       .filter((item) => item?.state?.saveVersion === 2 && item.state.careerId)
       .map((item) => {
         ensureSquadDepth(item.state.clubs, item.state.players);
+        ensurePlayerMarketData(item.state.clubs, item.state.players);
         Object.values(item.state.clubs).forEach(ensureClubFinance);
         return {
           ...item,
@@ -61,7 +62,7 @@ function migrateLegacy(): StoredCareer[] {
     };
 
     ensureSquadDepth(state.clubs, state.players);
-  Object.values(state.clubs).forEach(ensureClubFinance);
+    ensurePlayerMarketData(state.clubs, state.players);
     Object.values(state.clubs).forEach(ensureClubFinance);
 
     const career: StoredCareer = {
@@ -89,6 +90,7 @@ export function loadCareers(): StoredCareer[] {
 
 export function saveGame(state: GameState): void {
   ensureSquadDepth(state.clubs, state.players);
+  ensurePlayerMarketData(state.clubs, state.players);
   const careers = loadCareers().filter((career) => career.id !== state.careerId);
   const clubName = state.clubs[state.clubId]?.name ?? 'Dream Team';
 
