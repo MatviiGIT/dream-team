@@ -647,3 +647,6 @@ Then:
 - Shortened standings headings to common football-table abbreviations: И, В, Н, П, МЗ, МП, РМ, О.
 - Increased the standings header typography and enlarged the position badges, with an extra readability bump for the user's club rank.
 
+### 2026-09-20 — Unified League Table rank sizing
+- Removed the special larger rank badge for the user's club so every club uses exactly the same position-badge size and typography.
+
