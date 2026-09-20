@@ -5165,8 +5165,9 @@ select optgroup {
    The markings use the IFAB distances: 16.5 m penalty area, 5.5 m goal area,
    11 m penalty mark and 9.15 m centre/penalty arcs. */
 .squad-pitch {
-  width: min(100%, 760px);
-  height: auto;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
   min-height: 0;
   aspect-ratio: 68 / 56.5;
   margin: 0 auto;
@@ -5256,13 +5257,16 @@ select optgroup {
 
 @media (max-width: 980px) {
   .squad-pitch {
-    width: min(100%, 720px);
+    width: auto;
+    height: 100%;
+    max-width: 100%;
     aspect-ratio: 68 / 56.5;
   }
 }
 @media (max-width: 620px) {
   .squad-pitch {
     width: 100%;
+    height: auto;
     aspect-ratio: 68 / 56.5;
   }
 }
