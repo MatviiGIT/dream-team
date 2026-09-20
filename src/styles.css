@@ -5066,3 +5066,99 @@ select optgroup {
   background: #ffffff;
   color: #17232c;
 }
+
+
+/* 2026-09-20 — Squad uses a single own-half team sheet.
+   Markings follow the official field geometry: the cropped top edge is the halfway line,
+   the centre circle is shown only as its near half, and the lower end contains the goal,
+   six-yard box, penalty area, spot and penalty arc. */
+.squad-pitch {
+  width: min(100%, 760px);
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 68 / 52.5;
+}
+.squad-pitch .pitch-outline {
+  inset: 2.25%;
+}
+.squad-pitch .pitch-half-line {
+  left: 2.25%;
+  right: 2.25%;
+  top: 2.25%;
+}
+.squad-pitch .pitch-center-circle {
+  left: 50%;
+  top: 2.25%;
+  width: 27%;
+  height: auto;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+}
+.squad-pitch .pitch-center-spot {
+  left: 50%;
+  top: 2.25%;
+  transform: translate(-50%, -50%);
+}
+.squad-pitch .pitch-box {
+  left: 20.35%;
+  width: 59.3%;
+}
+.squad-pitch .pitch-penalty-bottom {
+  bottom: 2.25%;
+  height: 31.4%;
+  border-bottom: 0;
+}
+.squad-pitch .pitch-six-bottom {
+  bottom: 2.25%;
+  left: 36.55%;
+  width: 26.9%;
+  height: 10.5%;
+  border-bottom: 0;
+}
+.squad-pitch .pitch-penalty-spot-bottom {
+  bottom: 23.2%;
+}
+.squad-pitch .pitch-penalty-arc {
+  width: 27%;
+  height: 13%;
+}
+.squad-pitch .pitch-penalty-arc-bottom {
+  bottom: 20.7%;
+  clip-path: inset(0 0 50% 0);
+}
+.squad-pitch .pitch-goal {
+  left: 39%;
+  width: 22%;
+  height: 5.8%;
+}
+.squad-pitch .pitch-goal-bottom {
+  bottom: 1.25%;
+  border-bottom: 0;
+  border-top-color: rgba(255,255,255,.40);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.035),
+    0 -1px 0 rgba(255,255,255,.20);
+}
+.squad-pitch .pitch-corner-bottom-left,
+.squad-pitch .pitch-corner-bottom-right {
+  width: 18px;
+  height: 18px;
+}
+.squad-pitch-note {
+  min-height: 42px;
+}
+
+@media (max-width: 980px) {
+  .squad-pitch {
+    width: min(100%, 720px);
+    min-height: 0;
+    aspect-ratio: 68 / 52.5;
+  }
+}
+@media (max-width: 620px) {
+  .squad-pitch {
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 1.18 / 1;
+  }
+}
