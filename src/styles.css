@@ -3754,15 +3754,6 @@ table th { font-size: 11px; }
   }
 }
 
-/* 2026-09-19 — League table visual hierarchy + recent-form layer. */
-.content-table {
-  background:
-    radial-gradient(circle at 96% 0%, rgba(242,190,103,.10), transparent 34%),
-    linear-gradient(145deg, rgba(42,35,26,.98), rgba(20,23,29,.99));
-}
-.table-page-header {
-  align-items: center;
-}
 .table-season-pill {
   padding: 8px 11px;
   border: 1px solid rgba(242,190,103,.18);
