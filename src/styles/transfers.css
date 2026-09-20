@@ -790,3 +790,109 @@
   .transfer-player-finance { text-align:right; }
   .transfer-buy-button { grid-column:1/-1; }
 }
+
+
+/* 2026-09-20 — Transfer filters use the same custom dropdown interaction pattern as Tactics.
+   Do not reintroduce native <select> controls for management filters. */
+.transfer-filter-field {
+  position: relative;
+}
+.transfer-filter-field.open {
+  z-index: 80;
+}
+.transfer-choice {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 13px;
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(58,43,87,.72), rgba(12,20,31,.96));
+  border: 1px solid rgba(163,139,255,.22);
+  border-radius: 11px;
+  text-align: left;
+}
+.transfer-choice:hover,
+.transfer-choice.open {
+  border-color: rgba(163,139,255,.55);
+  background: linear-gradient(135deg, rgba(73,56,108,.86), rgba(13,22,34,.98));
+  transform: translateY(-1px);
+}
+.transfer-choice strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.transfer-choice-arrow {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-right: 2px solid #b9adff;
+  border-bottom: 2px solid #b9adff;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform .16s ease, border-color .16s ease;
+}
+.transfer-choice.open .transfer-choice-arrow {
+  transform: rotate(225deg) translateY(-1px);
+  border-color: #ddd6ff;
+}
+.transfer-choice-menu {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow: auto;
+  padding: 6px;
+  display: grid;
+  gap: 4px;
+  border: 1px solid rgba(163,139,255,.28);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #1a2033, #101821);
+  box-shadow: 0 18px 36px rgba(0,0,0,.32);
+  z-index: 100;
+  scrollbar-gutter: stable;
+}
+.transfer-choice-option {
+  width: 100%;
+  min-height: 39px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #cbd6df;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+}
+.transfer-choice-option:hover {
+  background: rgba(163,139,255,.10);
+  color: var(--text);
+}
+.transfer-choice-option.active {
+  background: rgba(163,139,255,.16);
+  color: #e9e3ff;
+}
+.transfer-choice-option.active strong {
+  color: #bdaeff;
+}
+
+@media (max-width:760px) {
+  .transfer-filter-field.open {
+    z-index: 90;
+  }
+  .transfer-choice-menu {
+    max-height: 220px;
+  }
+}
+
+/* Future management control standard: range sliders should use the same in-app,
+   non-native visual language as these dropdowns rather than browser-default controls. */
