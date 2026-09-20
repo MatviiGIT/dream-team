@@ -1,3 +1,9 @@
+### 2026-09-20 — Fixed squad pitch stretching at the SVG coordinate level
+- Identified that the stretched circles came from the SVG using `preserveAspectRatio="none"` with a 68 × 52.5 viewBox inside the intentionally lengthened desktop pitch.
+- Rebuilt the marking coordinate space as 68 × 68 and scaled the real field coordinates vertically instead of distorting the SVG viewport.
+- Restored the centre circle and penalty arc to true SVG circles with radius 9.15; they no longer need manual vertical compensation.
+- Updated penalty-area, goal-area, penalty-spot, goal-net and rounded-boundary coordinates to the new vertical field scale.
+
 ### 2026-09-20 — More vertical space for the desktop squad pitch
 - Rebalanced the desktop Squad team-sheet columns toward the pitch so the field has more horizontal room while keeping the roster usable.
 - Lengthened the desktop visual pitch canvas to a 68 x 68 display ratio; the internal SVG still uses the same real field-coordinate system for the markings, with the visual canvas intentionally stretched to use the available fullscreen space.
