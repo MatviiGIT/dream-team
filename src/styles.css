@@ -5654,11 +5654,6 @@ select optgroup {
   font-size: 18px;
   font-weight: 950;
 }
-.content-table tbody tr.your-club td:first-child .table-rank {
-  min-width: 46px;
-  height: 46px;
-  font-size: 19px;
-}
 .content-table td:nth-child(n+4) {
   font-size: 22px;
 }
