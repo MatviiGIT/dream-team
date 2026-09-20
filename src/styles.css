@@ -4754,8 +4754,8 @@ table th { font-size: 11px; }
 /* 2026-09-20 — Rebuilt Squad team-sheet field: realistic full-pitch geometry and connected goal areas. */
 .squad-pitch-wrap {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 10px;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 0;
   overflow: hidden;
 }
 .squad-pitch {
@@ -5246,4 +5246,103 @@ select optgroup {
 }
 .squad-roster-card {
   min-width: 0;
+}
+
+
+/* 2026-09-20 — League table spacious alignment pass. */
+.content-table {
+  background:
+    linear-gradient(145deg, rgba(20,31,40,.98), rgba(12,22,30,.99));
+  border-radius: 18px;
+}
+.table-overview {
+  gap: 14px;
+  margin-top: 20px;
+}
+.table-overview-card {
+  min-height: 108px;
+  padding: 18px 20px;
+  border-radius: 15px;
+  gap: 7px;
+}
+.table-overview-card > span,
+.table-overview-card.form span {
+  font-size: 12px;
+}
+.table-overview-card > strong {
+  font-size: 29px;
+  font-weight: 950;
+}
+.table-overview-card > strong small {
+  font-size: 13px;
+  font-weight: 850;
+}
+.table-overview-card.form {
+  justify-content: center;
+  align-items: center;
+}
+.table-wrap {
+  margin-top: 18px;
+}
+.content-table table {
+  width: 100%;
+  min-width: 1180px;
+}
+.content-table th {
+  padding: 15px 14px;
+  color: #9fb0bc;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .10em;
+  text-align: center;
+}
+.content-table th:nth-child(2),
+.content-table td:nth-child(2) {
+  text-align: left;
+}
+.content-table th:nth-child(3),
+.content-table td:nth-child(3) {
+  width: 190px;
+  min-width: 190px;
+  text-align: center;
+}
+.content-table td {
+  padding: 17px 14px;
+  font-size: 16px;
+  font-weight: 750;
+  text-align: center;
+}
+.content-table .table-club-cell {
+  gap: 0;
+}
+.content-table .table-club-cell strong {
+  font-size: 17px;
+  font-weight: 900;
+}
+.content-table .table-rank {
+  min-width: 34px;
+  height: 34px;
+  font-size: 14px;
+  font-weight: 950;
+}
+.content-table .table-form {
+  min-width: 0;
+  width: max-content;
+  margin: 0 auto;
+  justify-content: center;
+  gap: 7px;
+}
+.content-table .table-form-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 950;
+}
+.content-table tbody tr.your-club td {
+  font-weight: 800;
+}
+.content-table tbody tr.your-club td:last-child strong {
+  font-size: 17px;
+  font-weight: 950;
 }
