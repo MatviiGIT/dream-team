@@ -1,3 +1,11 @@
+### 2026-09-20 — Single-half squad pitch + custom transfer filters
+- Reworked the Squad team sheet into a single own-half pitch: the top edge represents the halfway line, the centre circle is shown only as the near half of the circle, and only the user's goal end is rendered.
+- Removed the unused opponent-half penalty area, goal, centre-half markings and top corner arcs from the Squad pitch.
+- Repositioned the starting-XI formation slots so every player sits within the displayed own half.
+- Reworked the pitch geometry toward the official IFAB field proportions and marking relationships, including penalty-area/goal-area sizing, penalty spot placement, the penalty arc, and an integrated goalmouth presentation.
+- Replaced native transfer-market Club, Nationality and Role select controls with custom in-app dropdown menus matching the interaction pattern used by Tactics: overlay menus, custom arrow, active option state and checkmark.
+- Future management dropdowns and range sliders should use the same custom in-app control language rather than browser-native controls.
+
 
 ### 2026-09-20 — Squad field and native dropdown readability
 - Rebuilt the Squad team-sheet pitch as a complete vertical football field with consistent proportions, inset boundary lines, half-way line, centre spot, penalty spots, penalty arcs, corner arcs and connected goal/net areas.
