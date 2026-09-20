@@ -1,3 +1,7 @@
+### 2026-09-20 — Final League Table typography pass
+- Unified the «Игры» and «Форма» overview labels with the same typography as neighboring overview labels instead of using a special lowercase/unstyled treatment.
+- Increased all main League Table row numbers and text again: numeric cells, goals for/against, goal difference and points now use large bold tabular numerals; club names, ranks and form indicators were enlarged accordingly.
+- Increased table header typography and row padding so readability is prioritized over fitting many teams into a short viewport.
 ### 2026-09-20 — Responsive follow-up for readable table and tactics scale
 - Kept the enlarged Tactics controls responsive on tablet/mobile widths by reducing outer padding while retaining larger labels, buttons and selectors.
 - On narrow screens the tactic controls use one column so full labels remain readable instead of being compressed into two narrow columns.
