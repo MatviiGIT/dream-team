@@ -5324,11 +5324,6 @@ select optgroup {
 .content-table tbody tr.your-club td {
   font-weight: 800;
 }
-.content-table tbody tr.your-club td:last-child strong {
-  font-size: 17px;
-  font-weight: 950;
-}
-
 
 /* 2026-09-20 — Increase League Table heading scale to match the expanded workspace. */
 .content-table .table-page-header .eyebrow {
@@ -5387,9 +5382,6 @@ select optgroup {
   width: 30px;
   height: 30px;
   font-size: 12px;
-}
-.content-table tbody tr.your-club td:last-child strong {
-  font-size: 19px;
 }
 .content-table .table-overview-card.form {
   flex-direction: column;
