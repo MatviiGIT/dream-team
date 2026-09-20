@@ -370,7 +370,6 @@ export function TransferMarket({ game, onChange }: { game: GameState; onChange: 
           <strong>{market.length}</strong>
           <span>{ru.transfers.availablePlayers}</span>
         </div>
-        <span className="transfer-market-meta-note">{ru.transfers.marketRule}</span>
       </div>
 
       <div className="transfer-market-list">
@@ -419,14 +418,6 @@ export function TransferMarket({ game, onChange }: { game: GameState; onChange: 
             <span>{ru.transfers.noPlayersHint}</span>
           </div>
         )}
-      </div>
-
-      <div className="transfer-footer-note">
-        <span>ⓘ</span>
-        <div>
-          <strong>{ru.transfers.noOwnPlayers}</strong>
-          <span>{ru.transfers.noOwnPlayersHint}</span>
-        </div>
       </div>
 
       {notice && (
