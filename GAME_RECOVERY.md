@@ -1,3 +1,10 @@
+### 2026-09-20 — Larger readable table and tactics controls
+- Removed horizontal scrolling from the League Table; the table now uses fixed column proportions and only the table container may scroll vertically when the list becomes long.
+- Replaced abbreviated table headers («И», «В», «Н», «П», «ЗГ», «ПГ», «РЗ», «ОЧК») with full words such as «Игры», «Победы», «Ничьи», «Поражения», «Забито», «Пропущено», «Разница» and «Очки».
+- Kept the Form column wide and centered while increasing row height, typography, club names, numeric values and form indicators so readability is prioritized over fitting many rows on screen.
+- Added a simple «Форма» label to the overview form card instead of the deleted helper copy.
+- Increased the whole Tactics screen scale: heading, formation block, formation buttons, tactic labels, selectors, dropdown options and spacing now use the available workspace more deliberately.
+
 ### 2026-09-20 — Removed obsolete table color layer
 - Removed the old orange League Table background layer from the CSS so the final neutral rounded dark surface is the only active table-card treatment.
 - The Squad pitch wrapper now has an explicit single-row layout with zero gap; the field itself, not a leftover helper gap, owns the available vertical space.
