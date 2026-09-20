@@ -1793,7 +1793,7 @@ function FinanceScreen({ game }: { game: GameState }) {
         </div>
       </div>
 
-      <div className="finance-round-card">
+      <div className="finance-round-card finance-section">
         <div className="section-title-row finance-round-header">
           <div>
             <h2>{ru.financesPage.lastRound}</h2>
