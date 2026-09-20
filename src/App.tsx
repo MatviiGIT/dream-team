@@ -6,8 +6,9 @@ import { createCareer, getNextFixture, playNextRound } from './game/career';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
 import { ru } from './i18n/ru';
 import { TransferMarket } from './components/TransferMarket';
+import { Contracts } from './components/Contracts';
 
-const tabs = ['overview', 'squad', 'transfers', 'tactics', 'table', 'finances'] as const;
+const tabs = ['overview', 'squad', 'transfers', 'contracts', 'tactics', 'table', 'finances'] as const;
 type Tab = (typeof tabs)[number];
 type Theme = 'aurora' | 'midnight' | 'light';
 
@@ -278,6 +279,12 @@ function App() {
             )}
             {tab === 'transfers' && (
               <TransferMarket
+                game={game}
+                onChange={(nextGame) => setGame(nextGame)}
+              />
+            )}
+            {tab === 'contracts' && (
+              <Contracts
                 game={game}
                 onChange={(nextGame) => setGame(nextGame)}
               />
@@ -1731,6 +1738,7 @@ function FinanceScreen({ game }: { game: GameState }) {
     seasonExpenses: 0,
     seasonTransferIncome: 0,
     seasonTransferExpenses: 0,
+    seasonContractExpenses: 0,
     lastIncome: 0,
     lastExpenses: 0,
     lastNet: 0,
@@ -1739,6 +1747,7 @@ function FinanceScreen({ game }: { game: GameState }) {
     lastResultBonus: 0,
     lastTransferIncome: 0,
     lastTransferExpense: 0,
+    lastContractExpense: 0,
   };
   const net = finance.lastNet;
   const hasActivity = finance.lastIncome > 0 || finance.lastExpenses > 0;
@@ -1795,6 +1804,21 @@ function FinanceScreen({ game }: { game: GameState }) {
           <strong className={finance.seasonTransferIncome - finance.seasonTransferExpenses >= 0 ? 'positive' : 'negative'}>
             {(finance.seasonTransferIncome - finance.seasonTransferExpenses) > 0 ? '+' : ''}{formatMoney(finance.seasonTransferIncome - finance.seasonTransferExpenses)}
           </strong>
+        </div>
+      </div>
+
+      <div className="finance-transfer-strip">
+        <div>
+          <span>{ru.financesPage.transferExpenses}</span>
+          <strong>-{formatMoney(finance.seasonTransferExpenses)}</strong>
+        </div>
+        <div>
+          <span>{ru.financesPage.transferIncome}</span>
+          <strong>+{formatMoney(finance.seasonTransferIncome)}</strong>
+        </div>
+        <div>
+          <span>{ru.financesPage.contractExpenses}</span>
+          <strong>-{formatMoney(finance.seasonContractExpenses)}</strong>
         </div>
       </div>
 
