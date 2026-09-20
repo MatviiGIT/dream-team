@@ -206,19 +206,6 @@ function App() {
       <main className="content">
         <div className={tab === "overview" ? "workspace-grid workspace-grid-overview" : "workspace-grid workspace-grid-compact"}>
           <aside className="workspace-sidebar left-sidebar">
-            <section className="workspace-brand">
-              <div className="brand-mark">DT</div>
-              <div>
-                <strong>Dream Team</strong>
-                <span>{ru.app.subtitle}</span>
-              </div>
-            </section>
-
-            <section className="workspace-club-mini">
-              <div className="eyebrow">{ru.overview.yourClub}</div>
-              <strong>{club.name}</strong>
-              <span>{club.city}</span>
-            </section>
 
             <nav className="workspace-nav" aria-label={ru.app.sections}>
               <div className="workspace-nav-label">РАЗДЕЛЫ</div>
@@ -228,7 +215,6 @@ function App() {
                   className={tab === item ? 'workspace-nav-item active' : 'workspace-nav-item'}
                   onClick={() => setTab(item)}
                 >
-                  <span className={'workspace-nav-icon ' + item} aria-hidden="true" />
                   <span>{ru.tabs[item]}</span>
                 </button>
               ))}
@@ -323,8 +309,6 @@ function App() {
                   <strong>{ru.sidePanel.stable}</strong>
                 </div>
               </div>
-              <div className="side-panel-divider" />
-              <div className="side-panel-note">{ru.sidePanel.financeHint}</div>
               </section>
             </aside>
           )}
@@ -670,10 +654,6 @@ function Overview({
                 <div className="team-badge" style={{ background: opponent.color }}>{opponent.shortName}</div>
                 <strong>{opponent.name}</strong>
               </div>
-            </div>
-            <div className="matchday-readiness">
-              <span className="matchday-readiness-dot" aria-hidden="true" />
-              <span>{ru.overview.readyForMatch}</span>
             </div>
             <button className="primary-button full" onClick={onPlay}>{ru.overview.playMatch}</button>
           </>
@@ -1373,17 +1353,6 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
               );
             })}
           </div>
-
-          <div className="squad-pitch-note">
-            {selectedSlot === null ? (
-              ru.squad.selectPlayer
-            ) : (
-              <>
-                <strong>{ru.squad.selectedLabel}:</strong> {selectedPlayer?.name} → {selectedSlotData?.label}
-                <span>{ru.squad.substitutionHint}</span>
-              </>
-            )}
-          </div>
         </div>
 
         <aside className={selectedSlot === null ? 'squad-roster' : 'squad-roster has-selection'}>
@@ -1392,7 +1361,6 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
               <div className="eyebrow">{ru.squad.benchTitle}</div>
               <strong>{ru.squad.substitutes} · {substitutes.length}</strong>
             </div>
-            <span>{ru.squad.benchHint}</span>
           </div>
 
           {selectedPlayer && selectedSlotData && (
@@ -1521,14 +1489,12 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
     <section className="card content-card tactics-panel">
       <div className="section-title-row">
         <div><div className="eyebrow">{ru.tactics.eyebrow}</div><h2>{ru.tabs.tactics}</h2></div>
-        <span className="muted">{ru.tactics.hint}</span>
       </div>
 
       <div className="formation-block compact-formation-selector">
         <div className="formation-heading">
           <div>
             <span>{ru.tactics.formation}</span>
-            <small>{ru.tactics.formationHint}</small>
           </div>
           <strong>{tactic.formation}</strong>
         </div>
@@ -1559,11 +1525,6 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
             onChange={(value) => updateField(field.key, value)}
           />
         ))}
-      </div>
-
-      <div className="tactic-explainer">
-        <strong>{ru.tactics.howItWorks}</strong>
-        <span>{ru.tactics.explanation}</span>
       </div>
     </section>
   );
