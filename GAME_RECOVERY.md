@@ -1,3 +1,10 @@
+### 2026-09-20 — Expanded league table and removed redundant visual elements
+- Removed the leftover 10px gap below the Squad pitch; the old gap belonged to the deleted pitch helper strip, so the field now uses the available team-sheet height directly.
+- Removed club-color dots from every league-table row and removed the «Последние 5 / Осталось N туров» helper text from the form summary.
+- Centered the «Форма» table column over its five W/D/L indicators with a dedicated column width.
+- Reworked the League Table card toward the same neutral rounded dark surface as the rest of the game instead of the previous orange-tinted background.
+- Increased the League Table overview cards, headings, team names, row numbers, table numbers and form indicators; table values are now visibly bold and the table uses more of the available horizontal space.
+
 ### 2026-09-20 — Simplified in-game navigation and squad layout
 - Removed the redundant in-game Dream Team brand block and compact club identity block from the persistent sidebar; the active screen and Overview already provide the relevant context.
 - Removed decorative navigation icons/emblem-like marks before section names and increased the section-menu typography so «РАЗДЕЛЫ» and the actual section names use a coherent hierarchy with centered labels.
