@@ -1,3 +1,7 @@
+### 2026-09-20 — More vertical space for the desktop squad pitch
+- Rebalanced the desktop Squad team-sheet columns toward the pitch so the field has more horizontal room while keeping the roster usable.
+- Lengthened the desktop visual pitch canvas to a 68 x 68 display ratio; the internal SVG still uses the same real field-coordinate system for the markings, with the visual canvas intentionally stretched to use the available fullscreen space.
+- Kept the narrow-screen breakpoints responsive rather than applying the desktop stretch blindly to mobile.
 ### 2026-09-20 — Corrected circular markings on stretched squad pitch
 - Removed the separate top halfway-line element because the rounded outer field boundary already provides the visible top/halfway line.
 - Changed the centre-circle and penalty-arc primitives from SVG circles to vertically compensated ellipses so they render visually circular after the intentional extra vertical pitch space is applied.
