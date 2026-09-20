@@ -1,3 +1,11 @@
+### 2026-09-20 — Squad pitch geometry + transfer dropdown theme cleanup
+- Removed the separate squad-pitch corner arcs and reduced the field container rounding so the football-field markings read as a clean square/rectangular playing surface instead of mixing rounded-corner treatment with rectangular field lines.
+- Corrected the squad penalty spot/arc relationship: the penalty arc is now a true circular half-arc centered on the penalty spot, rather than a shallow oval sitting too far upward.
+- Repositioned and resized the squad goalmouth to align with the goal line and use a realistic goal-width proportion for the field.
+- Removed the season/round badge from the dedicated Finances screen and from the League Table header; the overview header keeps its season/round context.
+- Recolored the custom transfer-market dropdown trigger, arrow, menu and active/hover states from the Tactics purple palette to the Transfer Center gold palette.
+- Management dropdowns remain custom in-app controls; future sliders should follow the same non-native visual language.
+
 ### 2026-09-20 — Single-half squad pitch + custom transfer filters
 - Reworked the Squad team sheet into a single own-half pitch: the top edge represents the halfway line, the centre circle is shown only as the near half of the circle, and only the user's goal end is rendered.
 - Removed the unused opponent-half penalty area, goal, centre-half markings and top corner arcs from the Squad pitch.
