@@ -670,3 +670,9 @@ Then:
 - Rebuilt the «Последний тур» result as a full card with a label and large net amount instead of a floating standalone badge.
 - Reworked the income and expense ledger blocks to use the same two-card grid geometry as the season summary cards.
 - Added strict width/overflow constraints so the round ledger stays inside the «Последний тур» container; it stacks to one column on narrow screens.
+
+### 2026-09-20 — Finance section hierarchy and hero balance
+- Reworked «Последний тур» as a full Finance section inside the page instead of a nested dark panel, matching the «Финансы клуба» section hierarchy and heading scale.
+- Kept the round result as a prominent summary-style card aligned to one-third of the section width.
+- Balanced «Зарплаты за тур» to the same one-third width as the «Чистый результат» summary card, while the transfer budget keeps the remaining two-thirds.
+- Preserved the two detailed income/expense cards inside the Last Round section and kept mobile stacking behavior.
