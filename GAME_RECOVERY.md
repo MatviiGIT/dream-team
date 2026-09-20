@@ -1,3 +1,8 @@
+### 2026-09-20 — Corrected penalty-area width relative to the goal
+- Corrected the squad pitch penalty-area width to use the IFAB construction: 16.5 m from the inside of each goalpost, rather than 16.5 m from each touchline.
+- On the 68 m-wide reference field this gives a 40.32 m penalty-area width, making the 9.15 m-radius penalty arc proportionate to the actual field geometry.
+- Kept the penalty mark at 11 m and the penalty arc radius at 9.15 m.
+
 ### 2026-09-20 — Fixed squad pitch stretching at the SVG coordinate level
 - Identified that the stretched circles came from the SVG using `preserveAspectRatio="none"` with a 68 × 52.5 viewBox inside the intentionally lengthened desktop pitch.
 - Rebuilt the marking coordinate space as 68 × 68 and scaled the real field coordinates vertically instead of distorting the SVG viewport.
