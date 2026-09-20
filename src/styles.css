@@ -4685,3 +4685,185 @@ table th { font-size: 11px; }
     font-size: 25px;
   }
 }
+
+/* 2026-09-20 — Section color system + squad pitch correction. */
+.app-shell-overview {
+  --section-accent: #75a7ff;
+  --section-accent-strong: #4f80e8;
+  --section-glow: rgba(117,167,255,.13);
+}
+.app-shell-squad {
+  --section-accent: #55d6b4;
+  --section-accent-strong: #35b895;
+  --section-glow: rgba(85,214,180,.13);
+}
+.app-shell-tactics {
+  --section-accent: #a38bff;
+  --section-accent-strong: #8069df;
+  --section-glow: rgba(163,139,255,.13);
+}
+.app-shell-table {
+  --section-accent: #d2a761;
+  --section-accent-strong: #af7e35;
+  --section-glow: rgba(210,167,97,.13);
+}
+.app-shell-finances {
+  --section-accent: #68d6a2;
+  --section-accent-strong: #38ae7a;
+  --section-glow: rgba(104,214,162,.13);
+}
+
+.workspace-nav-item.active {
+  border-color: color-mix(in srgb, var(--section-accent) 28%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--section-accent) 16%, transparent),
+    color-mix(in srgb, var(--section-accent) 4%, transparent)
+  );
+  box-shadow: inset 3px 0 0 var(--section-accent);
+}
+.workspace-nav-item.active .workspace-nav-icon {
+  color: var(--section-accent);
+}
+.workspace-nav-icon.transfers,
+.workspace-nav-icon.contracts {
+  width: 18px;
+  height: 18px;
+  flex-basis: 18px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border-radius: 0;
+  opacity: .8;
+}
+.workspace-nav-icon.transfers::before {
+  content: '↔';
+  font-size: 15px;
+  line-height: 1;
+}
+.workspace-nav-icon.contracts::before {
+  content: '▣';
+  font-size: 13px;
+  line-height: 1;
+}
+.workspace-nav-icon.transfers::after,
+.workspace-nav-icon.contracts::after {
+  display: none;
+}
+
+.workspace-main > .content-card {
+  border-color: color-mix(in srgb, var(--section-accent) 30%, var(--line));
+  background:
+    radial-gradient(circle at 100% 0%, var(--section-glow), transparent 32%),
+    linear-gradient(145deg, color-mix(in srgb, var(--section-accent) 6%, var(--panel-raised)), var(--panel));
+}
+.app-shell-overview .workspace-main > .club-header {
+  border-color: rgba(117,167,255,.30);
+}
+.app-shell-overview .eyebrow,
+.app-shell-squad .eyebrow,
+.app-shell-transfers .eyebrow,
+.app-shell-contracts .eyebrow,
+.app-shell-tactics .eyebrow,
+.app-shell-table .eyebrow,
+.app-shell-finances .eyebrow {
+  color: color-mix(in srgb, var(--section-accent) 72%, var(--muted));
+}
+.app-shell-overview .workspace-round-badge,
+.app-shell-squad .squad-formation-pill strong,
+.app-shell-table .table-season-pill {
+  border-color: color-mix(in srgb, var(--section-accent) 26%, var(--line));
+  background: color-mix(in srgb, var(--section-accent) 8%, transparent);
+  color: color-mix(in srgb, var(--section-accent) 82%, #fff);
+}
+
+/* Full team-sheet field: keep both ends inside the available viewport. */
+.squad-pitch-wrap {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 9px;
+  overflow: hidden;
+}
+.squad-pitch {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  min-height: 0;
+  min-width: 0;
+  aspect-ratio: .72;
+  align-self: center;
+  justify-self: center;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(112,196,133,.20), transparent 54%),
+    radial-gradient(circle at 15% 80%, rgba(61,151,110,.14), transparent 37%),
+    linear-gradient(180deg, #1a5a42 0%, #124634 48%, #0e382d 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.045),
+    inset 0 20px 60px rgba(255,255,255,.025),
+    0 18px 46px rgba(0,0,0,.25);
+}
+.squad-pitch::before,
+.squad-pitch::after {
+  content: "";
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  height: 1px;
+  background: rgba(255,255,255,.08);
+  pointer-events: none;
+}
+.squad-pitch::before { top: 2.5%; }
+.squad-pitch::after { bottom: 2.5%; }
+.squad-pitch .pitch-half-line {
+  left: 6%;
+  right: 6%;
+  background: rgba(255,255,255,.22);
+}
+.squad-pitch .pitch-center-circle {
+  width: 78px;
+  height: 78px;
+  border-color: rgba(255,255,255,.20);
+}
+.squad-pitch .pitch-box {
+  border-color: rgba(255,255,255,.19);
+}
+.squad-pitch .pitch-goal {
+  width: 16%;
+  left: 42%;
+  height: 13px;
+  border-color: rgba(255,255,255,.24);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.025);
+}
+.squad-pitch-note {
+  min-height: 38px;
+}
+
+/* Finance screen receives the same section accent system. */
+.finance-transfer-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 9px;
+  margin-top: 12px;
+}
+.finance-transfer-strip > div {
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255,255,255,.02);
+}
+.finance-transfer-strip span,
+.finance-transfer-strip strong {
+  display: block;
+}
+.finance-transfer-strip span {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.finance-transfer-strip strong {
+  margin-top: 5px;
+  font-size: 15px;
+}
