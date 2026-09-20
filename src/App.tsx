@@ -1167,43 +1167,43 @@ type SquadSlot = {
 
 const squadFormationSlots: Record<Tactics['formation'], SquadSlot[]> = {
   '4-3-3': [
-    { left: 50, top: 89, role: 'keeper', label: 'ВРТ' },
-    { left: 15, top: 71, role: 'defender', label: 'ЛЗ' },
-    { left: 38, top: 71, role: 'defender', label: 'ЦЗ' },
-    { left: 62, top: 71, role: 'defender', label: 'ЦЗ' },
-    { left: 85, top: 71, role: 'defender', label: 'ПЗ' },
-    { left: 50, top: 53, role: 'midfielder', label: 'ОП' },
-    { left: 31, top: 43, role: 'midfielder', label: 'ЦП' },
-    { left: 69, top: 43, role: 'midfielder', label: 'ЦП' },
-    { left: 15, top: 21, role: 'attacker', label: 'ЛФ' },
-    { left: 50, top: 15, role: 'attacker', label: 'ЦН' },
-    { left: 85, top: 21, role: 'attacker', label: 'ПФ' },
+    { left: 50, top: 87, role: 'keeper', label: 'ВРТ' },
+    { left: 15, top: 68, role: 'defender', label: 'ЛЗ' },
+    { left: 38, top: 68, role: 'defender', label: 'ЦЗ' },
+    { left: 62, top: 68, role: 'defender', label: 'ЦЗ' },
+    { left: 85, top: 68, role: 'defender', label: 'ПЗ' },
+    { left: 50, top: 50, role: 'midfielder', label: 'ОП' },
+    { left: 31, top: 40, role: 'midfielder', label: 'ЦП' },
+    { left: 69, top: 40, role: 'midfielder', label: 'ЦП' },
+    { left: 15, top: 27, role: 'attacker', label: 'ЛФ' },
+    { left: 50, top: 19, role: 'attacker', label: 'ЦН' },
+    { left: 85, top: 27, role: 'attacker', label: 'ПФ' },
   ],
   '4-4-2': [
-    { left: 50, top: 89, role: 'keeper', label: 'ВРТ' },
-    { left: 15, top: 71, role: 'defender', label: 'ЛЗ' },
-    { left: 38, top: 71, role: 'defender', label: 'ЦЗ' },
-    { left: 62, top: 71, role: 'defender', label: 'ЦЗ' },
-    { left: 85, top: 71, role: 'defender', label: 'ПЗ' },
-    { left: 15, top: 48, role: 'midfielder', label: 'ЛП' },
-    { left: 38, top: 48, role: 'midfielder', label: 'ЦП' },
-    { left: 62, top: 48, role: 'midfielder', label: 'ЦП' },
-    { left: 85, top: 48, role: 'midfielder', label: 'ПП' },
-    { left: 38, top: 18, role: 'attacker', label: 'ЦН' },
-    { left: 62, top: 18, role: 'attacker', label: 'ЦН' },
+    { left: 50, top: 87, role: 'keeper', label: 'ВРТ' },
+    { left: 15, top: 68, role: 'defender', label: 'ЛЗ' },
+    { left: 38, top: 68, role: 'defender', label: 'ЦЗ' },
+    { left: 62, top: 68, role: 'defender', label: 'ЦЗ' },
+    { left: 85, top: 68, role: 'defender', label: 'ПЗ' },
+    { left: 15, top: 46, role: 'midfielder', label: 'ЛП' },
+    { left: 38, top: 46, role: 'midfielder', label: 'ЦП' },
+    { left: 62, top: 46, role: 'midfielder', label: 'ЦП' },
+    { left: 85, top: 46, role: 'midfielder', label: 'ПП' },
+    { left: 38, top: 20, role: 'attacker', label: 'ЦН' },
+    { left: 62, top: 20, role: 'attacker', label: 'ЦН' },
   ],
   '4-2-3-1': [
-    { left: 50, top: 89, role: 'keeper', label: 'ВРТ' },
-    { left: 15, top: 71, role: 'defender', label: 'ЛЗ' },
-    { left: 38, top: 71, role: 'defender', label: 'ЦЗ' },
-    { left: 62, top: 71, role: 'defender', label: 'ЦЗ' },
-    { left: 85, top: 71, role: 'defender', label: 'ПЗ' },
-    { left: 37, top: 53, role: 'midfielder', label: 'ОП' },
-    { left: 63, top: 53, role: 'midfielder', label: 'ОП' },
+    { left: 50, top: 87, role: 'keeper', label: 'ВРТ' },
+    { left: 15, top: 68, role: 'defender', label: 'ЛЗ' },
+    { left: 38, top: 68, role: 'defender', label: 'ЦЗ' },
+    { left: 62, top: 68, role: 'defender', label: 'ЦЗ' },
+    { left: 85, top: 68, role: 'defender', label: 'ПЗ' },
+    { left: 37, top: 50, role: 'midfielder', label: 'ОП' },
+    { left: 63, top: 50, role: 'midfielder', label: 'ОП' },
     { left: 17, top: 34, role: 'attacker', label: 'ЛФ' },
     { left: 50, top: 31, role: 'attacker', label: 'АП' },
     { left: 83, top: 34, role: 'attacker', label: 'ПФ' },
-    { left: 50, top: 14, role: 'attacker', label: 'ЦН' },
+    { left: 50, top: 18, role: 'attacker', label: 'ЦН' },
   ],
 };
 
@@ -1314,22 +1314,15 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
             <span className="pitch-center-circle" aria-hidden="true" />
             <span className="pitch-center-spot" aria-hidden="true" />
 
-            <span className="pitch-box pitch-penalty-top" aria-hidden="true" />
-            <span className="pitch-box pitch-six-top" aria-hidden="true" />
-            <span className="pitch-penalty-spot pitch-penalty-spot-top" aria-hidden="true" />
-            <span className="pitch-penalty-arc pitch-penalty-arc-top" aria-hidden="true" />
-            <span className="pitch-goal pitch-goal-top" aria-hidden="true" />
-
             <span className="pitch-box pitch-penalty-bottom" aria-hidden="true" />
             <span className="pitch-box pitch-six-bottom" aria-hidden="true" />
             <span className="pitch-penalty-spot pitch-penalty-spot-bottom" aria-hidden="true" />
             <span className="pitch-penalty-arc pitch-penalty-arc-bottom" aria-hidden="true" />
             <span className="pitch-goal pitch-goal-bottom" aria-hidden="true" />
 
-            <span className="pitch-corner pitch-corner-top-left" aria-hidden="true" />
-            <span className="pitch-corner pitch-corner-top-right" aria-hidden="true" />
             <span className="pitch-corner pitch-corner-bottom-left" aria-hidden="true" />
             <span className="pitch-corner pitch-corner-bottom-right" aria-hidden="true" />
+
 
             {slots.map((slot, index) => {
               const player = game.players[lineupIds[index]];
