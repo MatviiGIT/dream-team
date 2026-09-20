@@ -10,6 +10,7 @@ export type ContractRole = 'starter' | 'rotation' | 'prospect' | 'reserve';
 export interface PlayerContract {
   yearsRemaining: number;
   releaseClause: number;
+  role: ContractRole;
 }
 
 export interface PlayerAttributes {
