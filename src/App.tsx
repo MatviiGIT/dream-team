@@ -1759,7 +1759,6 @@ function FinanceScreen({ game }: { game: GameState }) {
           <div className="eyebrow">{ru.financesPage.eyebrow}</div>
           <h2>{ru.financesPage.title}</h2>
         </div>
-        <span className="workspace-round-badge">{ru.app.season} {game.season} · {ru.app.round} {game.currentRound}</span>
       </div>
 
       <div className="finance-hero">
