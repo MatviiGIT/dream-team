@@ -5478,3 +5478,37 @@ select optgroup {
   font-size: 15px;
   font-weight: 800;
 }
+
+
+@media (max-width: 760px) {
+  .tactics-panel {
+    padding: 24px;
+  }
+  .tactics-panel .section-title-row h2 {
+    font-size: 25px;
+  }
+}
+
+@media (max-width: 620px) {
+  .tactics-panel {
+    padding: 20px;
+  }
+  .tactics-panel .formation-block {
+    padding: 18px;
+  }
+  .tactics-panel .formation-select-button {
+    min-height: 52px;
+    font-size: 15px;
+  }
+  .tactics-panel .tactic-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .tactics-panel .tactic-choice {
+    min-height: 56px;
+  }
+  .tactics-panel .tactic-option {
+    min-height: 46px;
+    font-size: 14px;
+  }
+}
