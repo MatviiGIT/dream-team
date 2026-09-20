@@ -1622,7 +1622,6 @@ function LeagueTable({ game }: { game: GameState }) {
     <section className="card content-card content-table">
       <div className="section-title-row table-page-header">
         <div>
-          <div className="eyebrow">{ru.table.eyebrow}</div>
           <h2>{ru.tabs.table}</h2>
         </div>
       </div>
@@ -1764,15 +1763,15 @@ function FinanceScreen({ game }: { game: GameState }) {
       </div>
 
       <div className="finance-transfer-strip">
-        <div>
+        <div className="finance-money-expense">
           <span>{ru.financesPage.transferExpenses}</span>
           <strong>-{formatMoney(finance.seasonTransferExpenses)}</strong>
         </div>
-        <div>
+        <div className="finance-money-income">
           <span>{ru.financesPage.transferIncome}</span>
           <strong>+{formatMoney(finance.seasonTransferIncome)}</strong>
         </div>
-        <div>
+        <div className={finance.seasonTransferIncome - finance.seasonTransferExpenses >= 0 ? 'finance-money-net-positive' : 'finance-money-net-negative'}>
           <span>{ru.financesPage.transferNet}</span>
           <strong className={finance.seasonTransferIncome - finance.seasonTransferExpenses >= 0 ? 'positive' : 'negative'}>
             {(finance.seasonTransferIncome - finance.seasonTransferExpenses) > 0 ? '+' : ''}{formatMoney(finance.seasonTransferIncome - finance.seasonTransferExpenses)}
@@ -1781,15 +1780,15 @@ function FinanceScreen({ game }: { game: GameState }) {
       </div>
 
       <div className="finance-transfer-strip">
-        <div>
+        <div className="finance-money-expense">
           <span>{ru.financesPage.transferExpenses}</span>
           <strong>-{formatMoney(finance.seasonTransferExpenses)}</strong>
         </div>
-        <div>
+        <div className="finance-money-income">
           <span>{ru.financesPage.transferIncome}</span>
           <strong>+{formatMoney(finance.seasonTransferIncome)}</strong>
         </div>
-        <div>
+        <div className="finance-money-expense">
           <span>{ru.financesPage.contractExpenses}</span>
           <strong>-{formatMoney(finance.seasonContractExpenses)}</strong>
         </div>
