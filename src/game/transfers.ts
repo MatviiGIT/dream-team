@@ -7,7 +7,8 @@ export type TransferError =
   | 'seller-too-small'
   | 'not-owned'
   | 'cannot-sell-starter'
-  | 'squad-too-small';
+  | 'squad-too-small'
+  | 'cannot-list-starter';
 
 export interface TransferListing {
   player: Player;
@@ -31,8 +32,12 @@ export function getTransferPrice(player: Player, seller: Club, buyer: Club): num
   const ageFactor = player.age <= 22 ? 1.12 : player.age >= 30 ? 0.9 : 1;
   const potentialFactor = 1 + Math.max(0, player.potential - player.overall) * 0.01;
   const reputationFactor = 1 + Math.max(0, seller.reputation - buyer.reputation) * 0.006;
+  const roleFactor =
+    player.contract?.role === 'prospect' ? 1.08 :
+    player.contract?.role === 'rotation' ? 1.05 :
+    player.contract?.role === 'starter' ? 1.18 : 1;
   return roundTransferPrice(
-    player.value * MARKET_VALUE_SCALE * ageFactor * potentialFactor * reputationFactor,
+    player.value * MARKET_VALUE_SCALE * ageFactor * potentialFactor * reputationFactor * roleFactor,
   );
 }
 
@@ -49,7 +54,11 @@ export function getTransferMarket(game: GameState): TransferListing[] {
     .flatMap((seller) => {
       const starters = getOwnedStartingXI(seller);
       return seller.playerIds
-        .filter((playerId) => seller.playerIds.length > MIN_SQUAD_SIZE && !starters.has(playerId))
+        .filter((playerId) =>
+          seller.playerIds.length > MIN_SQUAD_SIZE &&
+          !starters.has(playerId) &&
+          game.players[playerId]?.transferListed === true,
+        )
         .map((playerId) => {
           const player = game.players[playerId];
           if (!player) return null;
@@ -87,7 +96,11 @@ export function buyPlayer(game: GameState, playerId: string):
   if (!seller) return { state: game, error: 'player-not-found' };
 
   const starters = getOwnedStartingXI(seller);
-  if (starters.has(playerId) || seller.playerIds.length <= MIN_SQUAD_SIZE) {
+  if (
+    starters.has(playerId) ||
+    seller.playerIds.length <= MIN_SQUAD_SIZE ||
+    player.transferListed !== true
+  ) {
     return { state: game, error: 'seller-too-small' };
   }
 
@@ -131,9 +144,39 @@ export function buyPlayer(game: GameState, playerId: string):
         [seller.id]: nextSeller,
         [buyer.id]: nextBuyer,
       },
+      players: {
+        ...game.players,
+        [playerId]: {
+          ...player,
+          transferListed: false,
+        },
+      },
       updatedAt: new Date().toISOString(),
     },
     price,
+  };
+}
+
+export function setTransferListing(game: GameState, playerId: string, listed: boolean):
+  { state: GameState; error?: TransferError } {
+  const club = game.clubs[game.clubId];
+  const player = game.players[playerId];
+  if (!club || !player) return { state: game, error: 'player-not-found' };
+  if (!club.playerIds.includes(playerId)) return { state: game, error: 'not-owned' };
+  if (listed && club.startingXI?.includes(playerId)) return { state: game, error: 'cannot-list-starter' };
+
+  return {
+    state: {
+      ...game,
+      players: {
+        ...game.players,
+        [playerId]: {
+          ...player,
+          transferListed: listed,
+        },
+      },
+      updatedAt: new Date().toISOString(),
+    },
   };
 }
 
