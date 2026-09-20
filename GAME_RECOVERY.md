@@ -1,3 +1,7 @@
+### 2026-09-20 — Removed obsolete table color layer
+- Removed the old orange League Table background layer from the CSS so the final neutral rounded dark surface is the only active table-card treatment.
+- The Squad pitch wrapper now has an explicit single-row layout with zero gap; the field itself, not a leftover helper gap, owns the available vertical space.
+
 ### 2026-09-20 — League table spacing and alignment correction
 - Removed the remaining horizontal/visual clutter from the league table: no club-color dots, no «Последние 5» or «Осталось N туров» helper text, and no leftover pitch gap from the deleted Squad helper strip.
 - Centered the Form column and its W/D/L indicators with a dedicated table column width.
