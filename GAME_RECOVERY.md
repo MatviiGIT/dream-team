@@ -1,3 +1,8 @@
+### 2026-09-20 — Squad pitch uses available vertical space with rounded SVG boundary
+- Changed the squad pitch sizing so the desktop pitch uses the full available height of its team-sheet column instead of being limited primarily by a fixed width/aspect-ratio box; width remains capped by the available column.
+- Rebuilt the SVG perimeter as a rounded path matching the visual corner radius, so the white field boundary follows the rounded corners instead of being cut off by the container's clipping.
+- Shortened the top halfway-line segment to the straight portion between the rounded corners.
+
 ### 2026-09-20 — Squad pitch length, corners and goal-net alignment
 - Extended the visual squad-pitch canvas from 68 × 52.5 to 68 × 56.5 proportions so the field uses more of the available vertical space while preserving the existing internal layout relationship.
 - Added moderate 14px rounded corners to the field container; the SVG marking layer remains clipped to those corners.
