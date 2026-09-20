@@ -1,3 +1,11 @@
+### 2026-09-20 — Simplified in-game navigation and squad layout
+- Removed the redundant in-game Dream Team brand block and compact club identity block from the persistent sidebar; the active screen and Overview already provide the relevant context.
+- Removed decorative navigation icons/emblem-like marks before section names and increased the section-menu typography so «РАЗДЕЛЫ» and the actual section names use a coherent hierarchy with centered labels.
+- Removed non-essential helper copy from the in-game Overview, Squad, Tactics, Transfers and Contracts surfaces to reclaim space; functional errors, statuses, empty-state messages and actions remain.
+- Removed the permanent Squad instruction strip below the pitch so the bench can share the same full-height row as the field.
+- Changed the reserve roster to hide horizontal overflow, adapt its columns to available width and keep the player list vertically scrollable.
+- Rebalanced the Squad grid so the reserve panel has enough width for its text without horizontal scrolling.
+
 ### 2026-09-20 — Corrected penalty-area width relative to the goal
 - Corrected the squad pitch penalty-area width to use the IFAB construction: 16.5 m from the inside of each goalpost, rather than 16.5 m from each touchline.
 - On the 68 m-wide reference field this gives a 40.32 m penalty-area width, making the 9.15 m-radius penalty arc proportionate to the actual field geometry.
