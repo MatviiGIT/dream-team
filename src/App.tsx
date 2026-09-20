@@ -1320,18 +1320,18 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
                 className="pitch-marking-boundary"
                 d="M1.4 0 H66.6 Q68 0 68 1.4 V51.1 Q68 52.5 66.6 52.5 H1.4 Q0 52.5 0 51.1 V1.4 Q0 0 1.4 0 Z"
               />
-              <line className="pitch-marking-halfway" x1="1.4" y1="0" x2="66.6" y2="0" />
-              <circle className="pitch-marking-center-circle" cx="34" cy="0" r="9.15" />
+              <ellipse className="pitch-marking-center-circle" cx="34" cy="0" rx="9.15" ry="8.50" />
               <circle className="pitch-marking-center-spot" cx="34" cy="0" r="0.22" />
 
               <path className="pitch-marking-penalty-area" d="M10.66 52.5 V36 H57.34 V52.5" />
               <path className="pitch-marking-goal-area" d="M23.34 52.5 V47 H44.66 V52.5" />
               <circle className="pitch-marking-penalty-spot" cx="34" cy="41.5" r="0.22" />
-              <circle
+              <ellipse
                 className="pitch-marking-penalty-arc"
                 cx="34"
                 cy="41.5"
-                r="9.15"
+                rx="9.15"
+                ry="8.50"
                 clipPath="url(#pitch-penalty-arc-clip)"
               />
 
