@@ -1,3 +1,6 @@
+### 2026-09-20 — Responsive follow-up for readable table and tactics scale
+- Kept the enlarged Tactics controls responsive on tablet/mobile widths by reducing outer padding while retaining larger labels, buttons and selectors.
+- On narrow screens the tactic controls use one column so full labels remain readable instead of being compressed into two narrow columns.
 ### 2026-09-20 — Larger readable table and tactics controls
 - Removed horizontal scrolling from the League Table; the table now uses fixed column proportions and only the table container may scroll vertically when the list becomes long.
 - Replaced abbreviated table headers («И», «В», «Н», «П», «ЗГ», «ПГ», «РЗ», «ОЧК») with full words such as «Игры», «Победы», «Ничьи», «Поражения», «Забито», «Пропущено», «Разница» and «Очки».
