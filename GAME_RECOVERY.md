@@ -633,3 +633,7 @@ Then:
 - Fixed the deeper starting-XI issue: initial lineups are built by formation role, so exactly one GK starts and the second GK stays available as a reserve.
 - Existing saved lineups with duplicate/missing goalkeepers are repaired on migration/load; ordinary formation changes are not treated as a lineup corruption and are left alone.
 - Expanded reserve-card layout remains active on non-Overview screens so player position, name, OVR, fitness and fit-status do not collide.
+
+### 2026-09-20 — League Table overview scale
+- Doubled the visual scale of the League Table's top overview cards: labels, headline values, suffixes and form indicators are now substantially larger for at-a-glance readability.
+- Increased the overview card padding and minimum height so the larger typography has enough breathing room without changing the standings table below.
