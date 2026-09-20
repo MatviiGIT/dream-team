@@ -5848,3 +5848,48 @@ select optgroup {
     padding: 18px;
   }
 }
+
+/* 2026-09-20 — Finance round summary prominence. */
+.finance-page .finance-round-header {
+  align-items: center;
+  gap: 18px;
+}
+.finance-page .finance-round-header > div {
+  min-width: 0;
+}
+.finance-page .finance-round-header h2 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.05;
+  font-weight: 950;
+}
+.finance-page .finance-round-header .finance-flow-badge {
+  flex: 0 0 auto;
+  min-width: 170px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 950;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 10px 26px rgba(0,0,0,.12);
+}
+.finance-page .finance-round-header .finance-flow-badge.positive {
+  border-color: rgba(85,214,180,.30);
+  background: linear-gradient(145deg, rgba(85,214,180,.16), rgba(85,214,180,.045));
+}
+.finance-page .finance-round-header .finance-flow-badge.negative {
+  border-color: rgba(239,113,136,.34);
+  background: linear-gradient(145deg, rgba(239,113,136,.18), rgba(239,113,136,.05));
+}
+@media (max-width: 760px) {
+  .finance-page .finance-round-header .finance-flow-badge {
+    min-width: 140px;
+    padding: 12px 16px;
+    font-size: 24px;
+  }
+  .finance-page .finance-round-header h2 {
+    font-size: 27px;
+  }
+}
