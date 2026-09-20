@@ -1,3 +1,8 @@
+### 2026-09-20 — Squad pitch border cleanup
+- Removed the duplicate CSS container border so the pitch perimeter is drawn only once by the SVG field marking.
+- Kept the halfway line as the top edge marking and changed the outer SVG boundary to draw only the two side lines plus the bottom goal line, preventing a second line from sitting inside the field.
+- Changed the penalty-area and goal-area shapes to open paths without a bottom horizontal segment, so the shared goal-line/boundary is the only line at the back of the penalty areas.
+
 ### 2026-09-20 — Rebuilt squad pitch from field coordinates
 - Replaced the squad-pitch's manually positioned CSS marking spans with a single inline SVG coordinate system sized as a 68 m × 52.5 m own-half from a 68 m × 105 m full field.
 - The pitch now uses explicit real-world field relationships for the halfway line, centre circle, penalty area (16.5 m), goal area (5.5 m), penalty mark (11 m) and penalty arc (9.15 m), avoiding visual drift caused by independent percentage positioning.
