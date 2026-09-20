@@ -1,3 +1,8 @@
+### 2026-09-20 — Corrected circular markings on stretched squad pitch
+- Removed the separate top halfway-line element because the rounded outer field boundary already provides the visible top/halfway line.
+- Changed the centre-circle and penalty-arc primitives from SVG circles to vertically compensated ellipses so they render visually circular after the intentional extra vertical pitch space is applied.
+- Kept the actual field-coordinate centres and 9.15 m horizontal radius while compensating the vertical axis for the 68 × 56.5 visual canvas.
+
 ### 2026-09-20 — Squad pitch uses available vertical space with rounded SVG boundary
 - Changed the squad pitch sizing so the desktop pitch uses the full available height of its team-sheet column instead of being limited primarily by a fixed width/aspect-ratio box; width remains capped by the available column.
 - Rebuilt the SVG perimeter as a rounded path matching the visual corner radius, so the white field boundary follows the rounded corners instead of being cut off by the container's clipping.
