@@ -1323,7 +1323,7 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
               <circle className="pitch-marking-center-circle" cx="34" cy="0" r="9.15" />
               <circle className="pitch-marking-center-spot" cx="34" cy="0" r="0.22" />
 
-              <path className="pitch-marking-penalty-area" d="M10.66 68 V46.63 H57.34 V68" />
+              <path className="pitch-marking-penalty-area" d="M13.84 68 V46.63 H54.16 V68" />
               <path className="pitch-marking-goal-area" d="M23.34 68 V60.88 H44.66 V68" />
               <circle className="pitch-marking-penalty-spot" cx="34" cy="53.74" r="0.22" />
               <circle
