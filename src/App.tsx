@@ -1316,13 +1316,13 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
                 </clipPath>
               </defs>
 
-              <rect className="pitch-marking-boundary" x="0.25" y="0.25" width="67.5" height="52" />
+              <path className="pitch-marking-boundary" d="M0 0 V52.5 H68" />
               <line className="pitch-marking-halfway" x1="0" y1="0" x2="68" y2="0" />
               <circle className="pitch-marking-center-circle" cx="34" cy="0" r="9.15" />
               <circle className="pitch-marking-center-spot" cx="34" cy="0" r="0.22" />
 
-              <rect className="pitch-marking-penalty-area" x="10.66" y="36" width="46.68" height="16.5" />
-              <rect className="pitch-marking-goal-area" x="23.34" y="47" width="21.32" height="5.5" />
+              <path className="pitch-marking-penalty-area" d="M10.66 52.5 V36 H57.34 V52.5" />
+              <path className="pitch-marking-goal-area" d="M23.34 52.5 V47 H44.66 V52.5" />
               <circle className="pitch-marking-penalty-spot" cx="34" cy="41.5" r="0.22" />
               <circle
                 className="pitch-marking-penalty-arc"
