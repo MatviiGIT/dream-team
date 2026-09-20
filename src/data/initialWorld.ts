@@ -1,4 +1,4 @@
-import type { Club, Player, Position, TableRow, Tactics } from '../domain/types';
+import type { Club, Player, Position, TableRow, Tactics, ContractRole } from '../domain/types';
 import { createClubFinance } from '../game/finance';
 
 const squadPositions = ['GK', 'GK', 'DEF', 'DEF', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'FWD', 'FWD'] as const;
@@ -28,6 +28,8 @@ const firstNames = [
   'Daniel', 'Mateo', 'Felix', 'Samir', 'David', 'Oscar', 'Emil', 'Leo', 'Adrian', 'Robin',
 ];
 
+const nationalities = ['Германия', 'Испания', 'Италия', 'Португалия', 'Нидерланды', 'Франция', 'Бельгия', 'Хорватия', 'Бразилия', 'Аргентина'];
+
 const lastNames = [
   'Meyer', 'Berg', 'Kovac', 'Silva', 'Rossi', 'Novak', 'Turner', 'Fischer', 'Costa', 'Moretti',
   'Jensen', 'Keller', 'Santos', 'Hart', 'Weber', 'Duarte', 'Lind', 'Parker', 'Varga', 'Mills',
@@ -52,6 +54,7 @@ function makePlayer(clubIndex: number, playerIndex: number, clubReputation: numb
     overall,
     potential: Math.min(95, overall + (age < 23 ? 10 : age < 27 ? 5 : 1)),
     preferredFoot: (playerIndex + clubIndex) % 3 === 0 ? 'L' : 'R',
+    nationality: nationalities[(clubIndex * 2 + playerIndex) % nationalities.length],
     value: Math.max(350_000, Math.round(overall * overall * 7_500)),
     wage: Math.max(900, Math.round(overall * 85)),
     attributes: {
@@ -155,6 +158,8 @@ export function createInitialWorld(): { clubs: Record<string, Club>; players: Re
     };
   });
 
+  ensurePlayerMarketData(clubs, players);
+
   const table = Object.keys(clubs).map((teamId) => ({
     teamId,
     played: 0,
@@ -167,6 +172,45 @@ export function createInitialWorld(): { clubs: Record<string, Club>; players: Re
   }));
 
   return { clubs, players, table };
+}
+
+function roundContractValue(value: number): number {
+  return Math.max(500_000, Math.round(value / 50_000) * 50_000);
+}
+
+function deriveContractRole(club: Club, player: Player): ContractRole {
+  if (club.startingXI?.includes(player.id)) return 'starter';
+  if (player.age <= 22 && player.potential >= player.overall + 5) return 'prospect';
+  if (player.overall >= club.reputation - 2) return 'rotation';
+  return 'reserve';
+}
+
+export function ensurePlayerMarketData(
+  clubs: Record<string, Club>,
+  players: Record<string, Player>,
+): void {
+  Object.values(clubs).forEach((club) => {
+    club.playerIds.forEach((playerId, index) => {
+      const player = players[playerId];
+      if (!player) return;
+
+      player.nationality ??= nationalities[(index + club.reputation) % nationalities.length];
+
+      if (!player.contract) {
+        player.contract = {
+          yearsRemaining: 1 + ((player.age + player.overall + index) % 4),
+          releaseClause: roundContractValue(player.value * 2.2),
+        };
+      }
+
+      if (player.transferListed === undefined) {
+        player.transferListed =
+          !club.startingXI?.includes(player.id) &&
+          index >= 11 &&
+          index % 3 === 0;
+      }
+    });
+  });
 }
 
 export function ensureSquadDepth(clubs: Record<string, Club>, players: Record<string, Player>): void {
@@ -190,6 +234,8 @@ export function ensureSquadDepth(clubs: Record<string, Club>, players: Record<st
       : club.startingXI;
     club.wages = club.playerIds.reduce((sum, playerId) => sum + (players[playerId]?.wage ?? 0), 0);
   });
+
+  ensurePlayerMarketData(clubs, players);
 }
 
 export const clubOrder = clubSeeds.map(([id]) => id);
