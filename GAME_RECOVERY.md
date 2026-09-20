@@ -664,3 +664,9 @@ Then:
 ### 2026-09-20 — Last round finance summary prominence
 - Removed the duplicate «Последний тур» eyebrow so the block has one clear title.
 - Enlarged the round net result badge substantially and kept its green/red semantic treatment, making the per-round financial outcome one of the most prominent elements in the Finance screen.
+
+### 2026-09-20 — Finance round cards aligned with summary grid
+- Removed the extra Finance page eyebrow so the main «Финансы клуба» title is the single top-level heading.
+- Rebuilt the «Последний тур» result as a full card with a label and large net amount instead of a floating standalone badge.
+- Reworked the income and expense ledger blocks to use the same two-card grid geometry as the season summary cards.
+- Added strict width/overflow constraints so the round ledger stays inside the «Последний тур» container; it stacks to one column on narrow screens.
