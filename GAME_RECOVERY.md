@@ -650,3 +650,7 @@ Then:
 ### 2026-09-20 — Unified League Table rank sizing
 - Removed the special larger rank badge for the user's club so every club uses exactly the same position-badge size and typography.
 
+### 2026-09-20 — League Table form position and equal points scale
+- Restored the user's club points value to the same 22px numeric scale used by all other clubs; there is no special smaller points treatment now.
+- Shifted only the standings-table form indicators 8px left inside the third column so the five badges use the available space more evenly.
+
