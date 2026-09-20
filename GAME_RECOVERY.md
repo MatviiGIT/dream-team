@@ -654,3 +654,9 @@ Then:
 - Restored the user's club points value to the same 22px numeric scale used by all other clubs; there is no special smaller points treatment now.
 - Shifted only the standings-table form indicators 8px left inside the third column so the five badges use the available space more evenly.
 - Cleaned obsolete 17px/19px user-club points overrides so the League Table has one authoritative 22px points size for every club.
+
+### 2026-09-20 — Finance screen readability and money-flow colors
+- Removed the redundant «ЧЕМПИОНАТ» eyebrow from the League Table header so the page title stands on its own.
+- Enlarged the Finance screen typography proportionally across the title, budget/wage cards, season summary, transfer/contract strips and round ledger, including the numeric values.
+- Added explicit semantic money-flow surfaces: income uses a green treatment, expenses use a red treatment, and net result switches between green and red according to the actual sign.
+- Kept the responsive Finance layout while reducing the mobile scale slightly so the larger desktop typography remains usable on narrow screens.
