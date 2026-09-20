@@ -1,3 +1,10 @@
+### 2026-09-20 — League table spacing and alignment correction
+- Removed the remaining horizontal/visual clutter from the league table: no club-color dots, no «Последние 5» or «Осталось N туров» helper text, and no leftover pitch gap from the deleted Squad helper strip.
+- Centered the Form column and its W/D/L indicators with a dedicated table column width.
+- Increased the League Table heading, overview cards, row typography, club names, numeric cells, ranks and form indicators; numeric table values are intentionally bold.
+- Replaced the old orange table-card surface and orange user-row tint with the neutral dark rounded surface and mint user-row emphasis used by the rest of the management UI.
+- Removed the obsolete table-club-dot styling and the unused localization entries for the deleted helper text.
+
 ### 2026-09-20 — Expanded league table and removed redundant visual elements
 - Removed the leftover 10px gap below the Squad pitch; the old gap belonged to the deleted pitch helper strip, so the field now uses the available team-sheet height directly.
 - Removed club-color dots from every league-table row and removed the «Последние 5 / Осталось N туров» helper text from the form summary.
