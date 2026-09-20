@@ -21,6 +21,7 @@ export function createClubFinance(): ClubFinance {
     seasonExpenses: 0,
     seasonTransferIncome: 0,
     seasonTransferExpenses: 0,
+    seasonContractExpenses: 0,
     lastIncome: 0,
     lastExpenses: 0,
     lastNet: 0,
@@ -29,6 +30,7 @@ export function createClubFinance(): ClubFinance {
     lastResultBonus: 0,
     lastTransferIncome: 0,
     lastTransferExpense: 0,
+    lastContractExpense: 0,
   };
 }
 
@@ -116,6 +118,7 @@ export function resetSeasonFinance(clubs: Record<string, Club>): Record<string, 
           seasonExpenses: 0,
           seasonTransferIncome: 0,
           seasonTransferExpenses: 0,
+          seasonContractExpenses: 0,
         },
       }];
     }),
