@@ -471,13 +471,11 @@ button, input, select {
   border-color: rgba(163,139,255,.19);
 }
 .content-table .content-card {
-  border-color: rgba(242,190,103,.34);
-  background:
-    radial-gradient(circle at 95% 0%, rgba(242,190,103,.12), transparent 34%),
-    linear-gradient(145deg, rgba(52,40,27,.97), rgba(24,24,29,.99));
+  border-color: color-mix(in srgb, var(--section-accent) 22%, var(--line));
+  background: linear-gradient(145deg, rgba(20,31,40,.98), rgba(12,22,30,.99));
 }
 .content-table tbody tr.your-club {
-  background: linear-gradient(90deg, rgba(242,190,103,.15), rgba(85,214,180,.04));
+  background: linear-gradient(90deg, rgba(85,214,180,.10), rgba(85,214,180,.025));
 }
 .content-table th { color: #d2ab68; }
 .content-table td { color: #d1d7dc; }
@@ -3898,13 +3896,6 @@ table th { font-size: 11px; }
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 14px;
-}
-.table-club-dot {
-  width: 10px;
-  height: 10px;
-  flex: 0 0 10px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(255,255,255,.035);
 }
 .table-form {
   display: flex;
