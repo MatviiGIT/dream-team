@@ -1309,36 +1309,35 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
       <div className="team-sheet">
         <div className="squad-pitch-wrap">
           <div className="squad-pitch">
-            <svg className="pitch-markings" viewBox="0 0 68 52.5" preserveAspectRatio="none" aria-hidden="true">
+            <svg className="pitch-markings" viewBox="0 0 68 68" preserveAspectRatio="none" aria-hidden="true">
               <defs>
                 <clipPath id="pitch-penalty-arc-clip">
-                  <rect x="0" y="0" width="68" height="36" />
+                  <rect x="0" y="0" width="68" height="46.63" />
                 </clipPath>
               </defs>
 
               <path
                 className="pitch-marking-boundary"
-                d="M1.4 0 H66.6 Q68 0 68 1.4 V51.1 Q68 52.5 66.6 52.5 H1.4 Q0 52.5 0 51.1 V1.4 Q0 0 1.4 0 Z"
+                d="M1.4 0 H66.6 Q68 0 68 1.81 V66.19 Q68 68 66.6 68 H1.4 Q0 68 0 66.19 V1.81 Q0 0 1.4 0 Z"
               />
-              <ellipse className="pitch-marking-center-circle" cx="34" cy="0" rx="9.15" ry="8.50" />
+              <circle className="pitch-marking-center-circle" cx="34" cy="0" r="9.15" />
               <circle className="pitch-marking-center-spot" cx="34" cy="0" r="0.22" />
 
-              <path className="pitch-marking-penalty-area" d="M10.66 52.5 V36 H57.34 V52.5" />
-              <path className="pitch-marking-goal-area" d="M23.34 52.5 V47 H44.66 V52.5" />
-              <circle className="pitch-marking-penalty-spot" cx="34" cy="41.5" r="0.22" />
-              <ellipse
+              <path className="pitch-marking-penalty-area" d="M10.66 68 V46.63 H57.34 V68" />
+              <path className="pitch-marking-goal-area" d="M23.34 68 V60.88 H44.66 V68" />
+              <circle className="pitch-marking-penalty-spot" cx="34" cy="53.74" r="0.22" />
+              <circle
                 className="pitch-marking-penalty-arc"
                 cx="34"
-                cy="41.5"
-                rx="9.15"
-                ry="8.50"
+                cy="53.74"
+                r="9.15"
                 clipPath="url(#pitch-penalty-arc-clip)"
               />
 
-              <path className="pitch-marking-goal-net" d="M30.34 52.5 H37.66 V51.15 H30.34 Z" />
-              <line className="pitch-marking-goal-post" x1="30.34" y1="52.5" x2="30.34" y2="51.15" />
-              <line className="pitch-marking-goal-post" x1="37.66" y1="52.5" x2="37.66" y2="51.15" />
-              <line className="pitch-marking-goal-crossbar" x1="30.34" y1="51.15" x2="37.66" y2="51.15" />
+              <path className="pitch-marking-goal-net" d="M30.34 68 H37.66 V66.25 H30.34 Z" />
+              <line className="pitch-marking-goal-post" x1="30.34" y1="68" x2="30.34" y2="66.25" />
+              <line className="pitch-marking-goal-post" x1="37.66" y1="68" x2="37.66" y2="66.25" />
+              <line className="pitch-marking-goal-crossbar" x1="30.34" y1="66.25" x2="37.66" y2="66.25" />
             </svg>
 
             {slots.map((slot, index) => {
