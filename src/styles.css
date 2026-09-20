@@ -4712,6 +4712,16 @@ table th { font-size: 11px; }
   --section-accent-strong: #38ae7a;
   --section-glow: rgba(104,214,162,.13);
 }
+.app-shell-transfers {
+  --section-accent: #f0b85a;
+  --section-accent-strong: #d89132;
+  --section-glow: rgba(240,184,90,.13);
+}
+.app-shell-contracts {
+  --section-accent: #e98f73;
+  --section-accent-strong: #cd664d;
+  --section-glow: rgba(233,143,115,.12);
+}
 
 .workspace-nav-item.active {
   border-color: color-mix(in srgb, var(--section-accent) 28%, transparent);
