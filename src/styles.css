@@ -5570,3 +5570,46 @@ select optgroup {
 .content-table .table-overview-card.form {
   gap: 11px;
 }
+
+/* 2026-09-20 — Final League Table overview scale pass. */
+.content-table .table-overview {
+  gap: 16px;
+  margin-top: 22px;
+}
+.content-table .table-overview-card {
+  min-height: 154px;
+  padding: 26px 24px;
+  border-radius: 16px;
+  gap: 12px;
+}
+.content-table .table-overview-card > span,
+.content-table .table-overview-card.form > span,
+.content-table .table-overview-card.matches > span {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: .07em;
+  line-height: 1.05;
+}
+.content-table .table-overview-card > strong {
+  font-size: 56px;
+  font-weight: 950;
+  line-height: .95;
+  font-variant-numeric: tabular-nums;
+}
+.content-table .table-overview-card > strong small {
+  font-size: 24px;
+  font-weight: 900;
+}
+.content-table .table-overview-card.form {
+  gap: 14px;
+}
+.content-table .table-overview-card .table-form {
+  gap: 10px;
+}
+.content-table .table-overview-card .table-form-dot {
+  width: 46px;
+  height: 46px;
+  border-radius: 11px;
+  font-size: 18px;
+  font-weight: 950;
+}
