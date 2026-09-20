@@ -1316,8 +1316,11 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
                 </clipPath>
               </defs>
 
-              <path className="pitch-marking-boundary" d="M0 0 V52.5 H68" />
-              <line className="pitch-marking-halfway" x1="0" y1="0" x2="68" y2="0" />
+              <path
+                className="pitch-marking-boundary"
+                d="M1.4 0 H66.6 Q68 0 68 1.4 V51.1 Q68 52.5 66.6 52.5 H1.4 Q0 52.5 0 51.1 V1.4 Q0 0 1.4 0 Z"
+              />
+              <line className="pitch-marking-halfway" x1="1.4" y1="0" x2="66.6" y2="0" />
               <circle className="pitch-marking-center-circle" cx="34" cy="0" r="9.15" />
               <circle className="pitch-marking-center-spot" cx="34" cy="0" r="0.22" />
 
