@@ -161,8 +161,6 @@ export const ru = {
     placeSuffix: '-я',
     goalDifference: 'Разница',
     form: 'Форма',
-    recentForm: 'Последние 5',
-    remaining: (count: number) => 'Осталось ' + count + ' туров',
   },
   financesPage: {
     eyebrow: 'ФИНАНСОВЫЙ ЦЕНТР',
