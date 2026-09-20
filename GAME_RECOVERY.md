@@ -1,3 +1,9 @@
+### 2026-09-20 — Squad pitch length, corners and goal-net alignment
+- Extended the visual squad-pitch canvas from 68 × 52.5 to 68 × 56.5 proportions so the field uses more of the available vertical space while preserving the existing internal layout relationship.
+- Added moderate 14px rounded corners to the field container; the SVG marking layer remains clipped to those corners.
+- Extended the goal-net path to the exact bottom goal-line coordinate (y=52.5) so no small unfilled gap remains beneath the net.
+- Kept the single-boundary approach and the open penalty-area/goal-area paths from the previous cleanup.
+
 ### 2026-09-20 — Squad pitch border cleanup
 - Removed the duplicate CSS container border so the pitch perimeter is drawn only once by the SVG field marking.
 - Kept the halfway line as the top edge marking and changed the outer SVG boundary to draw only the two side lines plus the bottom goal line, preventing a second line from sitting inside the field.
