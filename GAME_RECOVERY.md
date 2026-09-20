@@ -637,3 +637,8 @@ Then:
 ### 2026-09-20 — League Table overview scale
 - Doubled the visual scale of the League Table's top overview cards: labels, headline values, suffixes and form indicators are now substantially larger for at-a-glance readability.
 - Increased the overview card padding and minimum height so the larger typography has enough breathing room without changing the standings table below.
+
+### 2026-09-20 — League Table recent-form fit
+- Kept the enlarged League Table overview scale unchanged while narrowing only the «Последние 5 игр» card's horizontal padding and reducing its five form indicators to fit cleanly inside the card.
+- This avoids a global padding reduction that would unnecessarily change other management screens.
+
