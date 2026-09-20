@@ -5337,3 +5337,13 @@ select optgroup {
   font-size: 17px;
   font-weight: 950;
 }
+
+
+/* 2026-09-20 — Increase League Table heading scale to match the expanded workspace. */
+.content-table .table-page-header .eyebrow {
+  font-size: 12px;
+}
+.content-table .table-page-header h2 {
+  font-size: 28px;
+  line-height: 1.08;
+}
