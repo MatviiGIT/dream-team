@@ -5158,3 +5158,111 @@ select optgroup {
     aspect-ratio: 1.18 / 1;
   }
 }
+
+
+/* 2026-09-20 — Squad pitch rebuilt from real field dimensions.
+   SVG uses a 68 x 52.5 m half-pitch based on a 68 x 105 m full field.
+   The markings use the IFAB distances: 16.5 m penalty area, 5.5 m goal area,
+   11 m penalty mark and 9.15 m centre/penalty arcs. */
+.squad-pitch {
+  width: min(100%, 760px);
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 68 / 52.5;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 2px;
+  border: 1px solid rgba(85,214,180,.28);
+  background:
+    radial-gradient(circle at 50% 34%, rgba(95,167,116,.16), transparent 50%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,.018) 0%,
+      rgba(255,255,255,.018) 7.14%,
+      rgba(0,0,0,.018) 7.14%,
+      rgba(0,0,0,.018) 14.28%
+    ),
+    linear-gradient(180deg, #164d3b 0%, #0f392d 100%);
+}
+.squad-pitch::before,
+.squad-pitch::after {
+  display: none;
+}
+.pitch-markings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  overflow: visible;
+}
+.pitch-marking-boundary,
+.pitch-marking-halfway,
+.pitch-marking-center-circle,
+.pitch-marking-center-spot,
+.pitch-marking-penalty-area,
+.pitch-marking-goal-area,
+.pitch-marking-penalty-spot,
+.pitch-marking-penalty-arc,
+.pitch-marking-goal-net,
+.pitch-marking-goal-post,
+.pitch-marking-goal-crossbar {
+  vector-effect: non-scaling-stroke;
+}
+.pitch-marking-boundary {
+  fill: none;
+  stroke: rgba(255,255,255,.23);
+  stroke-width: 1.4;
+}
+.pitch-marking-halfway {
+  stroke: rgba(255,255,255,.27);
+  stroke-width: 1.5;
+}
+.pitch-marking-center-circle {
+  fill: none;
+  stroke: rgba(255,255,255,.22);
+  stroke-width: 1.25;
+}
+.pitch-marking-center-spot,
+.pitch-marking-penalty-spot {
+  fill: rgba(255,255,255,.78);
+}
+.pitch-marking-penalty-area,
+.pitch-marking-goal-area {
+  fill: none;
+  stroke: rgba(255,255,255,.23);
+  stroke-width: 1.35;
+}
+.pitch-marking-penalty-arc {
+  fill: none;
+  stroke: rgba(255,255,255,.22);
+  stroke-width: 1.25;
+}
+.pitch-marking-goal-net {
+  fill: rgba(255,255,255,.045);
+  stroke: rgba(255,255,255,.16);
+  stroke-width: .8;
+}
+.pitch-marking-goal-post,
+.pitch-marking-goal-crossbar {
+  stroke: rgba(255,255,255,.48);
+  stroke-width: 1.8;
+  stroke-linecap: square;
+}
+.pitch-marking-goal-crossbar {
+  stroke: rgba(255,255,255,.58);
+}
+
+@media (max-width: 980px) {
+  .squad-pitch {
+    width: min(100%, 720px);
+    aspect-ratio: 68 / 52.5;
+  }
+}
+@media (max-width: 620px) {
+  .squad-pitch {
+    width: 100%;
+    aspect-ratio: 68 / 52.5;
+  }
+}
