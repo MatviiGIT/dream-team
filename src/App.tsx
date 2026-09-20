@@ -1618,8 +1618,6 @@ function LeagueTable({ game }: { game: GameState }) {
   const userRow = rows.find((row) => row.teamId === game.clubId);
   const userPosition = userRow ? rows.findIndex((row) => row.teamId === game.clubId) + 1 : 0;
   const userForm = useMemo(() => getClubForm(game, game.clubId), [game]);
-  const remaining = userRow ? Math.max(0, 14 - userRow.played) : 14;
-
   return (
     <section className="card content-card content-table">
       <div className="section-title-row table-page-header">
