@@ -4536,7 +4536,7 @@ table th { font-size: 11px; }
   width: 100%;
 }
 .squad-panel .team-sheet {
-  grid-template-columns: minmax(0, 1.65fr) minmax(360px, .9fr);
+  grid-template-columns: minmax(0, 1.9fr) minmax(320px, .78fr);
 }
 .squad-pitch {
   width: min(100%, 860px);
@@ -5161,7 +5161,7 @@ select optgroup {
 
 
 /* 2026-09-20 — Squad pitch rebuilt from real field dimensions.
-   SVG uses a 68 x 52.5 m half-pitch based on a 68 x 105 m full field.
+   SVG uses field coordinates from a 68 m wide x 105 m full field; the visual canvas is intentionally lengthened for the desktop team-sheet.
    The markings use the IFAB distances: 16.5 m penalty area, 5.5 m goal area,
    11 m penalty mark and 9.15 m centre/penalty arcs. */
 .squad-pitch {
@@ -5169,7 +5169,7 @@ select optgroup {
   height: 100%;
   max-width: 100%;
   min-height: 0;
-  aspect-ratio: 68 / 56.5;
+  aspect-ratio: 68 / 68;
   margin: 0 auto;
   overflow: hidden;
   border-radius: 14px;
