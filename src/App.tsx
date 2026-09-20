@@ -1320,9 +1320,6 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
             <span className="pitch-penalty-arc pitch-penalty-arc-bottom" aria-hidden="true" />
             <span className="pitch-goal pitch-goal-bottom" aria-hidden="true" />
 
-            <span className="pitch-corner pitch-corner-bottom-left" aria-hidden="true" />
-            <span className="pitch-corner pitch-corner-bottom-right" aria-hidden="true" />
-
 
             {slots.map((slot, index) => {
               const player = game.players[lineupIds[index]];
@@ -1650,9 +1647,6 @@ function LeagueTable({ game }: { game: GameState }) {
           <div className="eyebrow">{ru.table.eyebrow}</div>
           <h2>{ru.tabs.table}</h2>
         </div>
-        <span className="table-season-pill">
-          {ru.app.season} {game.season} · {ru.app.round} {game.currentRound}
-        </span>
       </div>
 
       <div className="table-overview">
