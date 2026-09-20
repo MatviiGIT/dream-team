@@ -4787,63 +4787,226 @@ table th { font-size: 11px; }
   color: color-mix(in srgb, var(--section-accent) 82%, #fff);
 }
 
-/* Full team-sheet field: keep both ends inside the available viewport. */
+/* 2026-09-20 — Rebuilt Squad team-sheet field: realistic full-pitch geometry and connected goal areas. */
 .squad-pitch-wrap {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
-  gap: 9px;
+  gap: 10px;
   overflow: hidden;
 }
 .squad-pitch {
+  position: relative;
   width: auto;
   height: 100%;
   max-width: 100%;
-  min-height: 0;
   min-width: 0;
-  aspect-ratio: .72;
+  min-height: 0;
+  aspect-ratio: 68 / 105;
   align-self: center;
   justify-self: center;
+  overflow: hidden;
   border-radius: 22px;
+  border: 1px solid rgba(140,232,208,.30);
   background:
-    radial-gradient(circle at 50% 42%, rgba(112,196,133,.20), transparent 54%),
-    radial-gradient(circle at 15% 80%, rgba(61,151,110,.14), transparent 37%),
-    linear-gradient(180deg, #1a5a42 0%, #124634 48%, #0e382d 100%);
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,.020) 0,
+      rgba(255,255,255,.020) 8.333%,
+      rgba(0,0,0,.016) 8.333%,
+      rgba(0,0,0,.016) 16.666%
+    ),
+    radial-gradient(circle at 50% 39%, rgba(112,196,133,.22), transparent 54%),
+    radial-gradient(circle at 12% 88%, rgba(61,151,110,.12), transparent 34%),
+    radial-gradient(circle at 88% 12%, rgba(117,167,255,.06), transparent 30%),
+    linear-gradient(180deg, #1a5a42 0%, #144d3a 46%, #0f3e30 100%);
   box-shadow:
     inset 0 0 0 1px rgba(255,255,255,.045),
-    inset 0 20px 60px rgba(255,255,255,.025),
+    inset 0 18px 70px rgba(255,255,255,.025),
+    inset 0 -28px 70px rgba(0,0,0,.08),
     0 18px 46px rgba(0,0,0,.25);
 }
 .squad-pitch::before,
 .squad-pitch::after {
   content: "";
   position: absolute;
-  left: 4%;
-  right: 4%;
-  height: 1px;
-  background: rgba(255,255,255,.08);
+  left: 2.25%;
+  right: 2.25%;
+  top: 2.25%;
+  bottom: 2.25%;
+  border: 1px solid rgba(255,255,255,.17);
+  border-radius: 2px;
   pointer-events: none;
+  z-index: 1;
 }
-.squad-pitch::before { top: 2.5%; }
-.squad-pitch::after { bottom: 2.5%; }
+.squad-pitch::after {
+  left: 3.1%;
+  right: 3.1%;
+  top: 3.1%;
+  bottom: 3.1%;
+  border-color: rgba(255,255,255,.055);
+}
+.squad-pitch .pitch-outline,
+.squad-pitch .pitch-half-line,
+.squad-pitch .pitch-center-circle,
+.squad-pitch .pitch-center-spot,
+.squad-pitch .pitch-box,
+.squad-pitch .pitch-goal,
+.squad-pitch .pitch-penalty-spot,
+.squad-pitch .pitch-penalty-arc,
+.squad-pitch .pitch-corner {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+}
+.squad-pitch .pitch-outline {
+  inset: 2.25%;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 2px;
+}
 .squad-pitch .pitch-half-line {
-  left: 6%;
-  right: 6%;
+  left: 2.25%;
+  right: 2.25%;
+  top: 50%;
+  height: 1px;
   background: rgba(255,255,255,.22);
+  box-shadow: 0 1px 0 rgba(0,0,0,.07);
 }
 .squad-pitch .pitch-center-circle {
+  left: 50%;
+  top: 50%;
   width: 78px;
   height: 78px;
-  border-color: rgba(255,255,255,.20);
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255,255,255,.20);
+  border-radius: 50%;
+}
+.squad-pitch .pitch-center-spot {
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(255,255,255,.68);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.035);
 }
 .squad-pitch .pitch-box {
-  border-color: rgba(255,255,255,.19);
+  left: 22.5%;
+  width: 55%;
+  border: 1px solid rgba(255,255,255,.19);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.015);
+}
+.squad-pitch .pitch-penalty-top {
+  top: 7.5%;
+  height: 20.5%;
+  border-top: 0;
+}
+.squad-pitch .pitch-penalty-bottom {
+  bottom: 7.5%;
+  height: 20.5%;
+  border-bottom: 0;
+}
+.squad-pitch .pitch-six-top {
+  top: 7.5%;
+  left: 37%;
+  width: 26%;
+  height: 9.0%;
+  border-top: 0;
+}
+.squad-pitch .pitch-six-bottom {
+  bottom: 7.5%;
+  left: 37%;
+  width: 26%;
+  height: 9.0%;
+  border-bottom: 0;
+}
+.squad-pitch .pitch-penalty-spot {
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(255,255,255,.72);
+}
+.squad-pitch .pitch-penalty-spot-top {
+  top: 22.5%;
+}
+.squad-pitch .pitch-penalty-spot-bottom {
+  bottom: 22.5%;
+}
+.squad-pitch .pitch-penalty-arc {
+  left: 50%;
+  width: 25%;
+  height: 12%;
+  transform: translateX(-50%);
+  border: 1px solid rgba(255,255,255,.17);
+  border-radius: 50%;
+}
+.squad-pitch .pitch-penalty-arc-top {
+  top: 20.8%;
+  clip-path: inset(50% 0 0 0);
+}
+.squad-pitch .pitch-penalty-arc-bottom {
+  bottom: 20.8%;
+  clip-path: inset(0 0 50% 0);
 }
 .squad-pitch .pitch-goal {
-  width: 16%;
-  left: 42%;
-  height: 13px;
-  border-color: rgba(255,255,255,.24);
-  box-shadow: 0 0 0 2px rgba(255,255,255,.025);
+  left: 40%;
+  width: 20%;
+  height: 4.8%;
+  border: 1px solid rgba(255,255,255,.28);
+  background:
+    linear-gradient(90deg, transparent 0 8%, rgba(255,255,255,.10) 8% 9%, transparent 9% 18%, rgba(255,255,255,.10) 18% 19%, transparent 19% 29%, rgba(255,255,255,.10) 29% 30%, transparent 30% 40%, rgba(255,255,255,.10) 40% 41%, transparent 41% 52%, rgba(255,255,255,.10) 52% 53%, transparent 53% 63%, rgba(255,255,255,.10) 63% 64%, transparent 64% 74%, rgba(255,255,255,.10) 74% 75%, transparent 75% 100%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.075) 0 1px, transparent 1px 5px),
+    rgba(255,255,255,.025);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.035),
+    0 0 0 2px rgba(255,255,255,.018);
+}
+.squad-pitch .pitch-goal-top {
+  top: 2.7%;
+  border-top: 0;
+  border-radius: 0 0 3px 3px;
+}
+.squad-pitch .pitch-goal-bottom {
+  bottom: 2.7%;
+  border-bottom: 0;
+  border-radius: 3px 3px 0 0;
+}
+.squad-pitch .pitch-corner {
+  width: 18px;
+  height: 18px;
+  border-color: rgba(255,255,255,.17);
+  border-style: solid;
+  border-width: 0;
+}
+.squad-pitch .pitch-corner-top-left {
+  top: 2.25%;
+  left: 2.25%;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-radius: 0 0 100% 0;
+}
+.squad-pitch .pitch-corner-top-right {
+  top: 2.25%;
+  right: 2.25%;
+  border-left-width: 1px;
+  border-bottom-width: 1px;
+  border-radius: 0 0 0 100%;
+}
+.squad-pitch .pitch-corner-bottom-left {
+  bottom: 2.25%;
+  left: 2.25%;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-radius: 0 100% 0 0;
+}
+.squad-pitch .pitch-corner-bottom-right {
+  bottom: 2.25%;
+  right: 2.25%;
+  border-left-width: 1px;
+  border-top-width: 1px;
+  border-radius: 100% 0 0 0;
 }
 .squad-pitch-note {
   min-height: 38px;
@@ -4876,4 +5039,30 @@ table th { font-size: 11px; }
 .finance-transfer-strip strong {
   margin-top: 5px;
   font-size: 15px;
+}
+
+
+/* 2026-09-20 — Make native select popups readable in the dark UI. */
+:root { color-scheme: dark; }
+:root[data-theme="light"] { color-scheme: light; }
+select,
+select option,
+select optgroup {
+  color: var(--text);
+}
+select {
+  color-scheme: dark;
+}
+select option,
+select optgroup {
+  background: #0d1923;
+  color: #f5f7fb;
+}
+:root[data-theme="light"] select {
+  color-scheme: light;
+}
+:root[data-theme="light"] select option,
+:root[data-theme="light"] select optgroup {
+  background: #ffffff;
+  color: #17232c;
 }
