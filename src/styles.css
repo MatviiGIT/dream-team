@@ -7083,3 +7083,11 @@ select optgroup {
     padding: 14px;
   }
 }
+
+
+/* 2026-09-27 — Keep ambient background static for smoother gameplay. */
+.app-shell::before,
+.app-shell::after {
+  animation: none !important;
+  will-change: auto;
+}
