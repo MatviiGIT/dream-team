@@ -767,3 +767,11 @@ Then:
 - Squad, Transfers, Tactics, League Table and Finances now open as dedicated fullscreen in-game views with a simple «Закрыть» control returning to Overview.
 - Keep the complex, valuable systems inside those screens; simplify the game primarily by reducing navigation friction and routine management.
 - Long-term progression should emphasize a living football world: players develop, reach a peak, age, retire and are replaced by new generations across many playable clubs and seasons.
+
+
+### 2026-09-27 — Live match redesign
+- The main screen uses direct standalone menu cards alongside the calendar and other overview cards; there is no separate «Разделы» container or persistent sidebar.
+- The old post-match Match Center with xG/possession/shots/player ratings/detail panels has been removed from the active flow.
+- Matches now open as a full-screen live simulation: the match minute advances automatically, the score changes when the corresponding event minute is reached, events appear progressively, and the 2D field animates player/ball positions.
+- Match speed can be switched between 1× and 2×, and the match can be paused. Career state is committed after the live match finishes.
+- MatchResult is intentionally lightweight: teams, goals and event stream. Player match ratings/stat tables are no longer part of the core match model.
