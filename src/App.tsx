@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { ClubFinance, GameState, MatchPlayerStats, MatchResult, Player, Position, Tactics } from './domain/types';
+import type { ClubFinance, GameState, MatchResult, Player, Position, Tactics } from './domain/types';
 import { clubOrder } from './data/initialWorld';
 import { createCareer, getNextFixture, playNextRound } from './game/career';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
@@ -277,7 +277,7 @@ function App() {
         </div>
       </main>
       {matchCenter && (
-        <MatchCenter
+        <LiveMatch
           game={game}
           match={matchCenter.match}
           season={matchCenter.season}
@@ -827,22 +827,27 @@ function UpcomingCalendar({ game }: { game: GameState }) {
   );
 }
 
-function getMatchPlayerStats(
-  game: GameState,
-  match: MatchResult,
-  teamId: string,
-): MatchPlayerStats[] {
-  const club = game.clubs[teamId];
-  const ids = club?.startingXI?.length === 11 ? club.startingXI : club?.playerIds.slice(0, 11) ?? [];
-
-  return ids
-    .map((playerId) => match.playerStats?.[playerId])
-    .filter((stats): stats is MatchPlayerStats => Boolean(stats));
+function getLivePlayerSpots(team: 'home' | 'away', minute: number) {
+  const base = [
+    [50, 82], [18, 68], [38, 70], [62, 70], [82, 68],
+    [28, 50], [50, 48], [72, 50],
+    [22, 28], [50, 22], [78, 28],
+  ];
+  const direction = team === 'home' ? 1 : -1;
+  const phase = minute / 7;
+  return base.map(([left, top], index) => {
+    const drift = Math.sin(phase + index * 1.7) * 3.4 * direction;
+    const vertical = Math.cos(phase * 0.82 + index) * 2.4;
+    const adjustedLeft = team === 'home' ? left + drift : 100 - left - drift;
+    const adjustedTop = top + vertical;
+    return {
+      left: adjustedLeft,
+      top: adjustedTop,
+    };
+  });
 }
 
-type MatchDetailPanel = 'timeline' | 'stats' | 'ratings';
-
-function MatchCenter({
+function LiveMatch({
   game,
   match,
   season,
@@ -855,283 +860,201 @@ function MatchCenter({
   round: number;
   onClose: () => void;
 }) {
-  const [detailPanel, setDetailPanel] = useState<MatchDetailPanel | null>(null);
+  const [minute, setMinute] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [speed, setSpeed] = useState<1 | 2>(1);
+  const [finished, setFinished] = useState(false);
+
+  useEffect(() => {
+    if (paused || finished) return;
+
+    const timer = window.setInterval(() => {
+      setMinute((current) => {
+        if (current >= 90) {
+          setFinished(true);
+          return 90;
+        }
+        return Math.min(90, current + 1);
+      });
+    }, 350 / speed);
+
+    return () => window.clearInterval(timer);
+  }, [paused, speed, finished]);
+
+  useEffect(() => {
+    if (minute >= 90) setFinished(true);
+  }, [minute]);
+
+  const revealedEvents = match.events.filter((event) => event.minute <= minute);
+  const visibleEvents = revealedEvents.slice(-7).reverse();
+  const visibleGoals = revealedEvents.filter((event) => event.type === 'goal');
+  const homeGoals = visibleGoals.filter((event) => event.teamId === match.homeTeamId).length;
+  const awayGoals = visibleGoals.filter((event) => event.teamId === match.awayTeamId).length;
+  const latestEvent = visibleEvents[0];
+  const phase = finished
+    ? 'full-time'
+    : minute === 45
+      ? 'half-time'
+      : minute < 45
+        ? 'first-half'
+        : 'second-half';
+
   const home = game.clubs[match.homeTeamId];
   const away = game.clubs[match.awayTeamId];
-  const userGoals = match.homeTeamId === game.clubId ? match.homeGoals : match.awayGoals;
-  const opponentGoals = match.homeTeamId === game.clubId ? match.awayGoals : match.homeGoals;
-  const outcome = userGoals > opponentGoals ? 'win' : userGoals === opponentGoals ? 'draw' : 'loss';
-  const goalEvents = match.events.filter((event) => event.type === 'goal');
-  const homeGoals = goalEvents.filter((event) => event.teamId === match.homeTeamId);
-  const awayGoals = goalEvents.filter((event) => event.teamId === match.awayTeamId);
-  const homePlayerStats = getMatchPlayerStats(game, match, match.homeTeamId)
-    .sort((a, b) => b.rating - a.rating);
-  const awayPlayerStats = getMatchPlayerStats(game, match, match.awayTeamId)
-    .sort((a, b) => b.rating - a.rating);
-  const allPlayerStats = [...homePlayerStats, ...awayPlayerStats]
-    .sort((a, b) => b.rating - a.rating);
-  const playerOfMatch = allPlayerStats[0] ? game.players[allPlayerStats[0].playerId] : undefined;
-  const playerOfMatchRating = allPlayerStats[0]?.rating;
+  const homeSpots = getLivePlayerSpots('home', minute);
+  const awaySpots = getLivePlayerSpots('away', minute);
 
-  const scorerText = (event: MatchResult['events'][number]) => {
-    const player = event.playerId ? game.players[event.playerId]?.name : undefined;
-    return player ? `${player} ${event.minute}'` : `${event.minute}'`;
-  };
+  const ballEvent = latestEvent?.type === 'goal' ? latestEvent : revealedEvents[revealedEvents.length - 1];
+  const ballTeamIsHome = ballEvent?.teamId === match.homeTeamId;
+  const attackingHome = ballTeamIsHome ?? (Math.floor(minute / 5) % 2 === 0);
+  const ballBaseX = attackingHome ? 61 + Math.sin(minute / 4) * 15 : 39 + Math.sin(minute / 4) * 15;
+  const ballBaseY = 49 + Math.cos(minute / 5) * 18;
 
-  const ratingRow = (stats: MatchPlayerStats, index: number) => {
-    const player = game.players[stats.playerId];
-    if (!player) return null;
-
-    return (
-      <div className="match-player-rating-row" key={stats.playerId}>
-        <span className="match-player-rating-number">{index + 1}</span>
-        <div className="match-player-rating-main">
-          <strong>{player.name}</strong>
-          <span>{positionLabel(player.position)} · {stats.minutes}'</span>
-        </div>
-        <strong className="match-player-rating-score">{stats.rating.toFixed(1)}</strong>
-        <span className="match-player-rating-stat"><small>{ru.matchCenter.goals}</small><strong>{stats.goals}</strong></span>
-        <span className="match-player-rating-stat"><small>{ru.matchCenter.assists}</small><strong>{stats.assists}</strong></span>
-        <span className="match-player-rating-stat"><small>{ru.matchCenter.shotsShort}</small><strong>{stats.shots}</strong></span>
-      </div>
-    );
-  };
-
-  const renderDetail = () => {
-    if (detailPanel === 'timeline') {
-      return (
-        <section className="match-detail-modal" role="dialog" aria-modal="true" aria-labelledby="match-detail-title">
-          <div className="match-detail-header">
-            <div>
-              <div className="eyebrow">{ru.matchCenter.eventsLabel}</div>
-              <h3 id="match-detail-title">{ru.matchCenter.timeline}</h3>
-            </div>
-            <button className="modal-close" type="button" onClick={() => setDetailPanel(null)} aria-label={ru.common.close}>×</button>
-          </div>
-          <div className="match-detail-timeline">
-            {match.events.map((event) => (
-              <div className="match-center-event" key={event.id}>
-                <span className="minute">{event.minute}'</span>
-                <span className={`event-dot ${event.type}`}></span>
-                <span>{eventText(game, event)}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      );
-    }
-
-    if (detailPanel === 'stats') {
-      return (
-        <section className="match-detail-modal match-detail-stats-modal" role="dialog" aria-modal="true" aria-labelledby="match-detail-title">
-          <div className="match-detail-header">
-            <div>
-              <div className="eyebrow">{ru.matchCenter.stats}</div>
-              <h3 id="match-detail-title">{ru.matchCenter.statsTitle}</h3>
-            </div>
-            <button className="modal-close" type="button" onClick={() => setDetailPanel(null)} aria-label={ru.common.close}>×</button>
-          </div>
-
-          <div className="match-stat-list">
-            <div>
-              <span>{ru.matchCenter.xg}</span>
-              <strong>{match.homeXg.toFixed(2)} — {match.awayXg.toFixed(2)}</strong>
-            </div>
-            <div>
-              <span>{ru.matchCenter.possession}</span>
-              <strong>{match.homePossession}% — {match.awayPossession}%</strong>
-            </div>
-            <div>
-              <span>{ru.matchCenter.shots}</span>
-              <strong>{match.homeShots} — {match.awayShots}</strong>
-            </div>
-          </div>
-
-          <div className="match-detail-teams">
-            <div>
-              <span>{ru.matchCenter.home}</span>
-              <strong>{home?.name ?? ru.common.unknownClub}</strong>
-            </div>
-            <div>
-              <span>{ru.matchCenter.away}</span>
-              <strong>{away?.name ?? ru.common.unknownClub}</strong>
-            </div>
-          </div>
-        </section>
-      );
-    }
-
-    if (detailPanel === 'ratings') {
-      return (
-        <section className="match-detail-modal match-detail-ratings-modal" role="dialog" aria-modal="true" aria-labelledby="match-detail-title">
-          <div className="match-detail-header">
-            <div>
-              <div className="eyebrow">{ru.matchCenter.playerRatings}</div>
-              <h3 id="match-detail-title">{ru.matchCenter.playerRatingsTitle}</h3>
-            </div>
-            <div className="match-detail-header-meta">
-              <span>{ru.matchCenter.playerRatingsHint}</span>
-              <span>{ru.matchCenter.bestFirst}</span>
-              <button className="modal-close" type="button" onClick={() => setDetailPanel(null)} aria-label={ru.common.close}>×</button>
-            </div>
-          </div>
-
-          {match.playerStats ? (
-            <div className="match-player-rating-columns">
-              <div className="match-player-rating-team home">
-                <div className="match-player-rating-team-header">
-                  <strong>{home?.shortName ?? '—'}</strong>
-                  <span>{ru.matchCenter.rating} · {ru.matchCenter.goals} · {ru.matchCenter.assists} · {ru.matchCenter.shotsShort}</span>
-                </div>
-                <div className="match-player-rating-list">
-                  {homePlayerStats.map(ratingRow)}
-                </div>
-              </div>
-              <div className="match-player-rating-team away">
-                <div className="match-player-rating-team-header">
-                  <strong>{away?.shortName ?? '—'}</strong>
-                  <span>{ru.matchCenter.rating} · {ru.matchCenter.goals} · {ru.matchCenter.assists} · {ru.matchCenter.shotsShort}</span>
-                </div>
-                <div className="match-player-rating-list">
-                  {awayPlayerStats.map(ratingRow)}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="empty-state">{ru.matchCenter.playerRatingsEmpty}</div>
-          )}
-        </section>
-      );
-    }
-
-    return null;
+  const eventClass = (type: MatchResult['events'][number]['type']) => {
+    if (type === 'goal') return 'live-event goal';
+    if (type === 'chance') return 'live-event chance';
+    if (type === 'yellow') return 'live-event yellow';
+    if (type === 'injury') return 'live-event injury';
+    return 'live-event';
   };
 
   return (
-    <div className="modal-backdrop match-center-backdrop" role="presentation">
-      <section className="match-center-modal" role="dialog" aria-modal="true" aria-labelledby="match-center-title">
-        <div className="match-center-header">
-          <div>
-            <div className="eyebrow">{ru.matchCenter.eyebrow}</div>
-            <h2 id="match-center-title">{ru.matchCenter.title}</h2>
+    <div className="live-match-backdrop" role="presentation">
+      <section className="live-match-screen" role="dialog" aria-modal="true" aria-labelledby="live-match-title">
+        <header className="live-match-topbar">
+          <div className="live-match-competition">
+            <span className="eyebrow">МАТЧ · СЕЗОН {season}</span>
+            <strong id="live-match-title">Тур {round}</strong>
           </div>
-          <div className="match-center-header-meta">
-            <span>{ru.app.season} {season}</span>
-            <span>{ru.matchCenter.round} {round}</span>
-            <button className="modal-close" type="button" onClick={onClose} aria-label={ru.common.close}>×</button>
-          </div>
-        </div>
 
-        <div className="match-center-scoreboard">
-          <div className="match-center-team home">
-            <div className="match-center-badge" style={{ background: home?.color ?? '#50616d' }}>
-              {home?.shortName ?? '—'}
+          <div className="live-scoreboard">
+            <div className="live-team-name home">
+              <span className="live-team-badge" style={{ background: home?.color ?? '#50616d' }}>{home?.shortName ?? '—'}</span>
+              <strong>{home?.name ?? '—'}</strong>
             </div>
-            <strong>{home?.name ?? ru.common.unknownClub}</strong>
-            <span>{ru.matchCenter.home}</span>
-            <div className="match-center-scorers">
-              {homeGoals.length
-                ? homeGoals.map((event) => <span key={event.id}>{scorerText(event)}</span>)
-                : <span>{ru.matchCenter.noGoals}</span>}
+            <div className="live-score">
+              <strong>{homeGoals} : {awayGoals}</strong>
+              <span>{minute}'</span>
+            </div>
+            <div className="live-team-name away">
+              <strong>{away?.name ?? '—'}</strong>
+              <span className="live-team-badge" style={{ background: away?.color ?? '#50616d' }}>{away?.shortName ?? '—'}</span>
             </div>
           </div>
 
-          <div className="match-center-score-block">
-            <span className={`match-center-result ${outcome}`}>{ru.matchCenter[outcome]}</span>
-            <strong>{match.homeGoals} : {match.awayGoals}</strong>
-            <span>{ru.matchCenter.finalScore}</span>
+          <div className="live-match-actions">
+            <button className="ghost-button" type="button" onClick={() => setPaused((value) => !value)}>
+              {paused ? 'Продолжить' : 'Пауза'}
+            </button>
+            <button className="ghost-button live-close-button" type="button" onClick={onClose}>
+              {finished ? 'Закрыть' : 'Выйти'}
+            </button>
           </div>
+        </header>
 
-          <div className="match-center-team away">
-            <div className="match-center-badge" style={{ background: away?.color ?? '#50616d' }}>
-              {away?.shortName ?? '—'}
-            </div>
-            <strong>{away?.name ?? ru.common.unknownClub}</strong>
-            <span>{ru.matchCenter.away}</span>
-            <div className="match-center-scorers">
-              {awayGoals.length
-                ? awayGoals.map((event) => <span key={event.id}>{scorerText(event)}</span>)
-                : <span>{ru.matchCenter.noGoals}</span>}
-            </div>
-          </div>
-        </div>
+        <div className="live-match-main">
+          <div className="live-pitch" aria-label="Поле матча">
+            <div className="live-pitch-halfway" />
+            <div className="live-pitch-center-circle" />
+            <div className="live-pitch-center-dot" />
+            <div className="live-pitch-box live-pitch-box-top" />
+            <div className="live-pitch-box live-pitch-box-bottom" />
+            <div className="live-pitch-goal live-pitch-goal-top" />
+            <div className="live-pitch-goal live-pitch-goal-bottom" />
 
-        <div className="match-center-summary">
-          <div className="match-center-summary-stat">
-            <span>{ru.matchCenter.xg}</span>
-            <strong>{match.homeXg.toFixed(2)} — {match.awayXg.toFixed(2)}</strong>
-          </div>
-          <div className="match-center-summary-stat">
-            <span>{ru.matchCenter.possession}</span>
-            <strong>{match.homePossession}% — {match.awayPossession}%</strong>
-          </div>
-          <div className="match-center-summary-stat">
-            <span>{ru.matchCenter.shots}</span>
-            <strong>{match.homeShots} — {match.awayShots}</strong>
-          </div>
-          <div className="match-center-summary-player">
-            <div className="match-center-summary-player-icon">★</div>
-            <div>
-              <span>{ru.matchCenter.playerOfMatch}</span>
-              <strong>{playerOfMatch?.name ?? '—'}</strong>
-            </div>
-            {typeof playerOfMatchRating === 'number' && (
-              <b>{playerOfMatchRating.toFixed(1)}</b>
+            {homeSpots.map((spot, index) => (
+              <span
+                key={`home-${index}`}
+                className="live-player home"
+                style={{ left: `${spot.left}%`, top: `${spot.top}%` }}
+              />
+            ))}
+            {awaySpots.map((spot, index) => (
+              <span
+                key={`away-${index}`}
+                className="live-player away"
+                style={{ left: `${spot.left}%`, top: `${spot.top}%` }}
+              />
+            ))}
+
+            <span
+              className={`live-ball ${latestEvent?.type === 'goal' ? 'is-event' : ''}`}
+              style={{
+                left: `${Math.max(8, Math.min(92, ballBaseX))}%`,
+                top: `${Math.max(10, Math.min(90, ballBaseY))}%`,
+              }}
+            />
+
+            {latestEvent && latestEvent.type !== 'half-time' && latestEvent.type !== 'full-time' && (
+              <div className={`live-pitch-callout ${latestEvent.type}`}>
+                <strong>{latestEvent.minute}'</strong>
+                <span>{eventText(game, latestEvent)}</span>
+              </div>
             )}
+
+            {phase === 'half-time' && <div className="live-pitch-status">Перерыв</div>}
+            {phase === 'full-time' && <div className="live-pitch-status">Матч завершён</div>}
           </div>
+
+          <aside className="live-match-feed">
+            <div className="live-feed-header">
+              <div>
+                <div className="eyebrow">ХОД МАТЧА</div>
+                <h2>События</h2>
+              </div>
+              <span className="live-feed-phase">
+                {phase === 'first-half' ? '1-й тайм' : phase === 'second-half' ? '2-й тайм' : phase === 'half-time' ? 'Перерыв' : 'Финал'}
+              </span>
+            </div>
+
+            <div className="live-event-list">
+              {visibleEvents.length ? visibleEvents.map((event) => (
+                <div className={eventClass(event.type)} key={event.id}>
+                  <strong>{event.minute}'</strong>
+                  <span>{eventText(game, event)}</span>
+                </div>
+              )) : (
+                <div className="live-event-empty">Матч только начался.</div>
+              )}
+            </div>
+          </aside>
         </div>
 
-        <div className="match-center-menu-grid">
-          <button className="match-center-menu-card events-menu" type="button" onClick={() => setDetailPanel('timeline')}>
-            <span className="match-center-menu-icon">◷</span>
-            <div>
-              <div className="eyebrow">{ru.matchCenter.eventsLabel}</div>
-              <strong>{ru.matchCenter.timeline}</strong>
-              <span>{ru.matchCenter.eventCount(match.events.length)}</span>
+        <footer className="live-match-footer">
+          <div className="live-progress">
+            <div className="live-progress-track">
+              <span style={{ width: `${(minute / 90) * 100}%` }} />
             </div>
-            <span className="match-center-menu-arrow">→</span>
-          </button>
-
-          <button className="match-center-menu-card stats" type="button" onClick={() => setDetailPanel('stats')}>
-            <span className="match-center-menu-icon">↗</span>
-            <div>
-              <div className="eyebrow">{ru.matchCenter.stats}</div>
-              <strong>{ru.matchCenter.statsTitle}</strong>
-              <span>{ru.matchCenter.statsPreview(match.homePossession, match.awayPossession)}</span>
+            <div className="live-progress-labels">
+              <span>0'</span>
+              <span>{latestEvent ? eventText(game, latestEvent) : 'Начало матча'}</span>
+              <span>90'</span>
             </div>
-            <span className="match-center-menu-arrow">→</span>
-          </button>
+          </div>
 
-          <button className="match-center-menu-card ratings" type="button" onClick={() => setDetailPanel('ratings')}>
-            <span className="match-center-menu-icon">★</span>
-            <div>
-              <div className="eyebrow">{ru.matchCenter.playerRatings}</div>
-              <strong>{ru.matchCenter.playerRatingsTitle}</strong>
-              <span>{ru.matchCenter.playerRatingsPreview}</span>
-            </div>
-            <span className="match-center-menu-arrow">→</span>
-          </button>
-        </div>
-
-        <button className="primary-button full match-center-action" type="button" onClick={onClose}>
-          {ru.matchCenter.continueButton}
-        </button>
+          <div className="live-footer-controls">
+            <span className="live-speed-label">Скорость</span>
+            <button
+              className={speed === 1 ? 'live-speed active' : 'live-speed'}
+              type="button"
+              onClick={() => setSpeed(1)}
+            >
+              1×
+            </button>
+            <button
+              className={speed === 2 ? 'live-speed active' : 'live-speed'}
+              type="button"
+              onClick={() => setSpeed(2)}
+            >
+              2×
+            </button>
+          </div>
+        </footer>
       </section>
-
-      {detailPanel && (
-        <div
-          className="match-detail-backdrop"
-          role="presentation"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setDetailPanel(null);
-          }}
-        >
-          {renderDetail()}
-        </div>
-      )}
     </div>
   );
 }
+
 function EventTimeline({ game }: { game: GameState }) {
   if (!game.lastMatch) return null;
 
