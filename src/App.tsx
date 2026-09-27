@@ -795,26 +795,6 @@ function UpcomingCalendar({ game }: { game: GameState }) {
   );
 }
 
-function getLivePlayerSpots(team: 'home' | 'away', minute: number) {
-  const base = [
-    [50, 82], [18, 68], [38, 70], [62, 70], [82, 68],
-    [28, 50], [50, 48], [72, 50],
-    [22, 28], [50, 22], [78, 28],
-  ];
-  const direction = team === 'home' ? 1 : -1;
-  const phase = minute / 7;
-  return base.map(([left, top], index) => {
-    const drift = Math.sin(phase + index * 1.7) * 3.4 * direction;
-    const vertical = Math.cos(phase * 0.82 + index) * 2.4;
-    const adjustedLeft = team === 'home' ? left + drift : 100 - left - drift;
-    const adjustedTop = top + vertical;
-    return {
-      left: adjustedLeft,
-      top: adjustedTop,
-    };
-  });
-}
-
 function LiveMatch({
   game,
   match,
