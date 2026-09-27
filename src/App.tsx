@@ -24,6 +24,19 @@ const FORMATIONS: Formation[]=[
   '4-3-3','4-4-2','4-2-3-1','4-5-1','3-5-2','3-4-3','5-3-2','5-4-1','4-1-4-1','3-4-2-1'
 ];
 
+const FORMATION_ROLE_LABELS: Record<Formation,string[]> = {
+  '4-3-3':['GK','LB','CB','CB','RB','CM','DM','CM','LW','CF','RW'],
+  '4-4-2':['GK','LB','CB','CB','RB','LM','CM','CM','RM','CF','CF'],
+  '4-2-3-1':['GK','LB','CB','CB','RB','DM','DM','LW','AM','RW','CF'],
+  '4-5-1':['GK','LB','CB','CB','RB','LM','CM','DM','CM','RM','CF'],
+  '3-5-2':['GK','CB','CB','CB','LM','CM','DM','CM','RM','CF','CF'],
+  '3-4-3':['GK','CB','CB','CB','LM','CM','CM','RM','LW','CF','RW'],
+  '5-3-2':['GK','LWB','CB','CB','CB','RWB','CM','DM','CM','CF','CF'],
+  '5-4-1':['GK','LWB','CB','CB','CB','RWB','LM','CM','CM','RM','CF'],
+  '4-1-4-1':['GK','LB','CB','CB','RB','DM','LM','CM','CM','RM','CF'],
+  '3-4-2-1':['GK','CB','CB','CB','LM','CM','CM','RM','AM','AM','CF'],
+};
+
 const PITCH_LAYOUTS: Record<Formation, Array<[number,number]>>={
   '4-3-3':[[50,90],[14,68],[37,72],[63,72],[86,68],[25,47],[50,44],[75,47],[18,20],[50,13],[82,20]],
   '4-4-2':[[50,90],[14,68],[37,72],[63,72],[86,68],[14,48],[37,46],[63,46],[86,48],[38,20],[62,20]],
@@ -137,7 +150,6 @@ export default function App(){
       <div className="crest" style={{background:club.color}}>{club.shortName}</div>
       <div className="club-head"><strong>{club.name}</strong><span>{getLeague(game).name} · Year {game.season} · Week {game.week}</span></div>
       <div className="top-spacer"/>
-      <div className="status-chip"><span>MANAGER</span><b>{game.managerReputation}</b></div>
       <div className="status-chip"><span>MONEY</span><b>{money(club.budget)}</b></div>
       <div className="status-chip"><span>SQUAD</span><b>{club.playerIds.length}/18</b></div>
       <Fullscreen/>
@@ -308,8 +320,28 @@ function Squad({game,onHome,onChange,onFormation,onTactics}:{game:GameState;onHo
     <div className="formation-strip">{FORMATIONS.map(f=><button key={f} className={club.formation===f?'active':''} onClick={()=>onFormation(f)}>{f}</button>)}</div>
     <div className="squad-layout-wsc">
       <div className="pitch-wsc">
-        <div className="pitch-box-lines"/><div className="pitch-centre-circle"/><div className="pitch-goal goal-top"/><div className="pitch-goal goal-bottom"/>
-        {xi.map((id,i)=>{const player=game.players[id],xy=layout[i]??[50,50];return <button key={id} className={['player-dot-wsc',player?.position==='GK'?'gk':'',first===id?'picked':''].filter(Boolean).join(' ')} style={{left:xy[0]+'%',top:xy[1]+'%'}} onClick={()=>choose(id)}><b>{player?.overall??'?'}</b><span>{player?.name.split(' ')[0]??'Player'}</span></button>})}
+        <svg className="pitch-svg" viewBox="0 0 600 780" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <pattern id="pitch-grass" width="600" height="96" patternUnits="userSpaceOnUse">
+              <rect width="600" height="96" fill="#1b6b34"/>
+              <rect width="600" height="48" fill="#20753a"/>
+            </pattern>
+          </defs>
+          <polygon points="58,8 542,8 578,772 22,772" fill="url(#pitch-grass)"/>
+          <path d="M58 8 L542 8 L578 772 L22 772 Z" fill="none" stroke="rgba(255,255,255,.72)" stroke-width="4"/>
+          <path d="M35 390 L565 390" fill="none" stroke="rgba(255,255,255,.66)" stroke-width="3"/>
+          <circle cx="300" cy="390" r="52" fill="none" stroke="rgba(255,255,255,.66)" stroke-width="3"/>
+          <circle cx="300" cy="390" r="4" fill="rgba(255,255,255,.82)"/>
+          <path d="M112 8 L488 8 L500 180 L100 180 Z" fill="none" stroke="rgba(255,255,255,.64)" stroke-width="4"/>
+          <path d="M100 180 Q300 285 500 180" fill="none" stroke="rgba(255,255,255,.64)" stroke-width="4"/>
+          <path d="M182 8 L418 8 L422 82 L178 82 Z" fill="none" stroke="rgba(255,255,255,.64)" stroke-width="4"/>
+          <path d="M100 600 Q300 495 500 600" fill="none" stroke="rgba(255,255,255,.64)" stroke-width="4"/>
+          <path d="M100 600 L112 772 L488 772 L500 600 Z" fill="none" stroke="rgba(255,255,255,.64)" stroke-width="4"/>
+          <path d="M178 698 L182 772 L418 772 L422 698 Z" fill="none" stroke="rgba(255,255,255,.64)" stroke-width="4"/>
+          <rect x="255" y="0" width="90" height="12" fill="none" stroke="rgba(255,255,255,.82)" stroke-width="4"/>
+          <rect x="255" y="768" width="90" height="12" fill="none" stroke="rgba(255,255,255,.82)" stroke-width="4"/>
+        </svg>
+        {xi.map((id,i)=>{const player=game.players[id],xy=layout[i]??[50,50],role=FORMATION_ROLE_LABELS[club.formation][i]??player?.position??'—';return <button key={id} className={['player-dot-wsc',role==='GK'?'gk':'',first===id?'picked':''].filter(Boolean).join(' ')} style={{left:xy[0]+'%',top:xy[1]+'%'}} onClick={()=>choose(id)}><b>{player?.overall??'?'}</b><span>{role}</span><small>{player?.name.split(' ')[0]??'Player'}</small></button>})}
       </div>
       <div className="squad-side-wsc">
         <div className="player-focus-wsc">
