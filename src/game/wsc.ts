@@ -1,4 +1,4 @@
-import type { Club, Fixture, GameState, JobOffer, League, MatchEvent, MatchResult, Player, PlayerSkills, Position, TableRow } from '../domain/types';
+import type { Club, Fixture, GameState, JobOffer, League, MatchEvent, MatchResult, Player, PlayerSkills, Position, TableRow, TacticalMentality, TacticalPressure } from '../domain/types';
 
 const WEEKS = 14;
 const SQUAD = 16;
@@ -104,7 +104,7 @@ function makeWorld(){
       for(let i=0;i<8;i++){
         const id='club_'+country.slice(0,2).toLowerCase()+'_'+level+'_'+i, strength=clamp(85-ci*2-(level-1)*13-i,38,91), city=cities[country][i];
         const pids:string[]=Array.from({length:SQUAD},(_,pi)=>id+'_p_'+pi);
-        const club:Club={id,name:city+' '+suffixes[(i+ci+level)%suffixes.length],shortName:city.slice(0,3).toUpperCase(),country,leagueId,reputation:strength,budget:level===1?Math.round((2200000+strength*120000)/50000)*50000:Math.round((750000+strength*65000)/25000)*25000,wageBill:0,playerIds:pids,startingXI:[],formation:'4-3-3',color:colors[i],trophies:0};
+        const club:Club={id,name:city+' '+suffixes[(i+ci+level)%suffixes.length],shortName:city.slice(0,3).toUpperCase(),country,leagueId,reputation:strength,budget:level===1?Math.round((2200000+strength*120000)/50000)*50000:Math.round((750000+strength*65000)/25000)*25000,wageBill:0,playerIds:pids,startingXI:[],formation:'4-3-3',mentality:'NEUTRAL',pressure:'NORMAL',color:colors[i],trophies:0};
         pids.forEach((pid,pi)=>players[pid]=makePlayer(country,pid,strength,pi));
         club.wageBill=pids.reduce((s,id)=>s+players[id].wage,0); club.startingXI=defaultXI(pids,players);
         clubs[id]=club;ids.push(id);
@@ -133,10 +133,18 @@ function fixturesFor(leagues:Record<string,League>,season:number){
 }
 function strength(c:Club,players:Record<string,Player>){
   const ps=c.startingXI.map(id=>players[id]).filter(Boolean);
-  const attack=avg(ps.filter(p=>p.position==='FWD'||p.position==='MID').map(p=>(p.skills.shooting+p.skills.passing+p.skills.speed)/3));
-  const defence=avg(ps.filter(p=>p.position==='GK'||p.position==='DEF').map(p=>(p.skills.tackling+p.skills.goalkeeping+p.skills.speed)/3));
-  const power=avg(ps.map(p=>p.overall));
-  return {attack,defence,power};
+  const baseAttack=avg(ps.filter(p=>p.position==='FWD'||p.position==='MID').map(p=>(p.skills.shooting+p.skills.passing+p.skills.speed)/3));
+  const baseDefence=avg(ps.filter(p=>p.position==='GK'||p.position==='DEF').map(p=>(p.skills.tackling+p.skills.goalkeeping+p.skills.speed)/3));
+  const basePower=avg(ps.map(p=>p.overall));
+  const mentality=c.mentality??'NEUTRAL',pressure=c.pressure??'NORMAL';
+  const attackFactor=mentality==='ATTACKING'?1.08:mentality==='DEFENSIVE'?.93:1;
+  const defenceFactor=mentality==='DEFENSIVE'?1.08:mentality==='ATTACKING'?.94:1;
+  const pressureFactor=pressure==='HIGH'?1.025:pressure==='LOW'?.985:1;
+  return {
+    attack:baseAttack*attackFactor*pressureFactor,
+    defence:baseDefence*defenceFactor*pressureFactor,
+    power:basePower*(pressure==='HIGH'?.995:pressure==='LOW'?1.005:1)
+  };
 }
 function pick(c:Club,players:Record<string,Player>,kind:'g'|'a',r:()=>number){
   const ps=c.startingXI.map(id=>players[id]).filter((p):p is Player=>Boolean(p)&&p.position!=='GK'); if(!ps.length)return;
@@ -225,7 +233,7 @@ export function simulateNextWeek(s:GameState){
   n.fixtures.filter(f=>f.round===n.week&&!f.played).forEach((f,i)=>{
     const result=simulateMatch(n.clubs[f.homeTeamId],n.clubs[f.awayTeamId],n.players,hash(n.season+':'+n.week+':'+i+':'+f.id));
     f.played=true;f.result=result;results.push(result);n.tables[f.leagueId]=applyResult(n.tables[f.leagueId],result);
-    [f.homeTeamId,f.awayTeamId].forEach(id=>{const c=n.clubs[id],gf=result.homeTeamId===id?result.homeGoals:result.awayGoals,ga=result.homeTeamId===id?result.awayGoals:result.homeGoals; c.budget=Math.max(0,c.budget+(gf>ga?70000:gf===ga?30000:10000)+(id===result.homeTeamId?25000:10000)-c.wageBill);c.playerIds.forEach(pid=>{const p=n.players[pid];if(!p)return;const started=c.startingXI.includes(pid);p.fitness=clamp(p.fitness+(started?-9:3),30,100);if(started)p.careerAppearances++;p.careerGoals+=result.events.filter(e=>e.playerId===pid).length;p.careerAssists+=result.events.filter(e=>e.assistPlayerId===pid).length;});});
+    [f.homeTeamId,f.awayTeamId].forEach(id=>{const c=n.clubs[id],gf=result.homeTeamId===id?result.homeGoals:result.awayGoals,ga=result.homeTeamId===id?result.awayGoals:result.homeGoals; c.budget=Math.max(0,c.budget+(gf>ga?70000:gf===ga?30000:10000)+(id===result.homeTeamId?25000:10000)-c.wageBill);c.playerIds.forEach(pid=>{const p=n.players[pid];if(!p)return;const started=c.startingXI.includes(pid);const fatigue= c.pressure==='HIGH'?11:c.pressure==='LOW'?7:9;p.fitness=clamp(p.fitness+(started?-fatigue:3),30,100);if(started)p.careerAppearances++;p.careerGoals+=result.events.filter(e=>e.playerId===pid).length;p.careerAssists+=result.events.filter(e=>e.assistPlayerId===pid).length;});});
   });
   aiTransfers(n);n.lastWeekResults=results;n.lastMatch=results.find(x=>x.homeTeamId===n.clubId||x.awayTeamId===n.clubId);n.week++;if(n.week>WEEKS)endSeason(n);n.updatedAt=new Date().toISOString();return n;
 }
@@ -243,6 +251,19 @@ export function sellPlayer(s:GameState,id:string){
 export function updateFormation(s:GameState,formation:Club['formation']){
   const n=structuredClone(s) as GameState;n.clubs[n.clubId].formation=formation;n.clubs[n.clubId].startingXI=defaultXI(n.clubs[n.clubId].playerIds,n.players,n.clubs[n.clubId].formation);return {...n,updatedAt:new Date().toISOString()};
 }
-export function swapStartingPlayers(s:GameState,a:string,b:string){const n=structuredClone(s) as GameState,xi=n.clubs[n.clubId].startingXI,i=xi.indexOf(a),j=xi.indexOf(b);if(i>=0&&j>=0)[xi[i],xi[j]]=[xi[j],xi[i]];return {...n,updatedAt:new Date().toISOString()};}
+export function swapStartingPlayers(s:GameState,a:string,b:string){
+  const n=structuredClone(s) as GameState,club=n.clubs[n.clubId],xi=club.startingXI;
+  const i=xi.indexOf(a),j=xi.indexOf(b);
+  if(i>=0&&j>=0)[xi[i],xi[j]]=[xi[j],xi[i]];
+  else if(i>=0&&club.playerIds.includes(b))xi[i]=b;
+  else if(j>=0&&club.playerIds.includes(a))xi[j]=a;
+  return {...n,updatedAt:new Date().toISOString()};
+}
+export function updateTactics(s:GameState,mentality:TacticalMentality,pressure:TacticalPressure){
+  const n=structuredClone(s) as GameState;
+  const club=n.clubs[n.clubId];
+  club.mentality=mentality;club.pressure=pressure;
+  return {...n,updatedAt:new Date().toISOString()};
+}
 export function takeJob(s:GameState,clubId:string){if(!s.jobOffers.some(o=>o.clubId===clubId))throw new Error('Предложение недоступно');const n=structuredClone(s) as GameState;n.clubId=clubId;n.jobOffers=[];n.updatedAt=new Date().toISOString();return n;}
 export function leaders(s:GameState,mode:'goals'|'assists'){return Object.values(s.players).filter(p=>p.careerAppearances>0).sort((a,b)=>(mode==='goals'?b.goals-a.goals:b.assists-a.assists)||b.overall-a.overall).slice(0,12);}
