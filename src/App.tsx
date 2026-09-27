@@ -130,8 +130,8 @@ function App() {
 
   useEffect(() => {
     if (!game) return;
-    saveGame(game);
-    setCareers(loadCareers());
+    const saveTimer = window.setTimeout(() => saveGame(game), 120);
+    return () => window.clearTimeout(saveTimer);
   }, [game]);
 
   const startCareer = () => {
@@ -254,6 +254,7 @@ function App() {
                     setMatchCenter({ match: nextGame.lastMatch, season: matchSeason, round: matchRound });
                   }
                 }}
+                onNavigate={setTab}
               />
             )}
             {tab === 'squad' && (
@@ -586,12 +587,14 @@ function Overview({
   row,
   nextFixture,
   onPlay,
+  onNavigate,
 }: {
   game: GameState;
   position: number;
   row?: GameState['table'][number];
   nextFixture?: ReturnType<typeof getNextFixture>;
   onPlay: () => void;
+  onNavigate: (nextTab: Tab) => void;
 }) {
   const club = game.clubs[game.clubId];
   const lastMatch = game.lastMatch;
@@ -599,8 +602,46 @@ function Overview({
   const opponent = opponentId ? game.clubs[opponentId] : undefined;
   const home = nextFixture?.homeTeamId === game.clubId;
 
+  const mentalityLabels: Record<typeof club.tactic.mentality, string> = {
+    'Very Defensive': ru.tactics.options.veryDefensive,
+    Defensive: ru.tactics.options.defensive,
+    Balanced: ru.tactics.options.balanced,
+    Attacking: ru.tactics.options.attacking,
+    'Very Attacking': ru.tactics.options.veryAttacking,
+  };
+
+  const overviewSections: Array<{ tab: Exclude<Tab, 'overview'>; title: string; value: string; meta: string }> = [
+    { tab: 'squad', title: ru.tabs.squad, value: String(club.playerIds.length), meta: 'игроков' },
+    { tab: 'transfers', title: ru.tabs.transfers, value: formatMoney(club.budget), meta: 'бюджет' },
+    {
+      tab: 'contracts',
+      title: ru.tabs.contracts,
+      value: String(club.playerIds.filter((id) => game.players[id]?.contract).length),
+      meta: 'контрактов',
+    },
+    { tab: 'tactics', title: ru.tabs.tactics, value: club.tactic.formation, meta: mentalityLabels[club.tactic.mentality] },
+    { tab: 'table', title: ru.tabs.table, value: position + ru.table.placeSuffix, meta: (row?.points ?? 0) + ' очков' },
+    { tab: 'finances', title: ru.tabs.finances, value: formatMoney(club.budget), meta: 'зарплаты ' + formatMoney(club.wages) },
+  ];
+
   return (
-    <div className="dashboard-grid">
+    <div className="overview-screen">
+      <section className="overview-section-nav" aria-label="Разделы игры">
+        {overviewSections.map((item) => (
+          <button
+            key={item.tab}
+            className="overview-section-link"
+            type="button"
+            onClick={() => onNavigate(item.tab)}
+          >
+            <span className="overview-section-link-title">{item.title}</span>
+            <strong>{item.value}</strong>
+            <small>{item.meta}</small>
+          </button>
+        ))}
+      </section>
+
+      <div className="dashboard-grid">
             <section className="card next-match">
         <div className="section-title-row next-match-header">
           <div>
