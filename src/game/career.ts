@@ -89,9 +89,8 @@ function updatePlayerAfterMatch(
 
   const clubGoals = result.homeTeamId === club.id ? result.homeGoals : result.awayGoals;
   const opponentGoals = result.homeTeamId === club.id ? result.awayGoals : result.homeGoals;
-  const stats = result.playerStats?.[player.id];
-  const goals = stats?.goals ?? result.events.filter((event) => event.type === 'goal' && event.playerId === player.id).length;
-  const assists = stats?.assists ?? result.events.filter((event) => event.type === 'goal' && event.assistPlayerId === player.id).length;
+  const goals = result.events.filter((event) => event.type === 'goal' && event.playerId === player.id).length;
+  const assists = result.events.filter((event) => event.type === 'goal' && event.assistPlayerId === player.id).length;
   const resultForm = clubGoals > opponentGoals ? 4 : clubGoals === opponentGoals ? 1 : -3;
   const scorerForm = goals > 0 ? Math.min(5, goals * 2) : 0;
   const creatorForm = assists > 0 ? Math.min(3, assists) : 0;
