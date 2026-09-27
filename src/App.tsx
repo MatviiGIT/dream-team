@@ -1359,13 +1359,12 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
                   onClick={() => {
                     if (selectedSlot !== null && selectedSlot !== index) {
                       swapSlots(selectedSlot, index);
-                    } else if (selected) {
-                      setSelectedSlot(null);
                     } else {
-                      setProfilePlayerId(player.id);
+                      setSelectedSlot(selected ? null : index);
                     }
                   }}
-                  title={player.name + ' · ' + slot.label}
+                  onDoubleClick={() => setProfilePlayerId(player.id)}
+                  title={player.name + ' · ' + slot.label + ' · двойной клик — профиль'}
                   onContextMenu={(event) => {
                     event.preventDefault();
                     setProfilePlayerId(player.id);
