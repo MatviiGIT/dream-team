@@ -649,7 +649,7 @@ function UpcomingCalendar({ game }: { game: GameState }) {
     .filter((fixture) => fixture.round <= 14 && !fixture.played && (fixture.homeTeamId === game.clubId || fixture.awayTeamId === game.clubId))
     .sort((a, b) => a.round - b.round);
 
-  const preview = fixtures.slice(0, 2);
+  const preview = fixtures.slice(0, 5);
 
   const calendarModal = calendarOpen ? (
     <div
