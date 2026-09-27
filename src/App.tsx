@@ -1,1920 +1,281 @@
 import { useEffect, useMemo, useState } from 'react';
-import { createPortal } from 'react-dom';
-import type { ClubFinance, GameState, MatchResult, Player, Position, Tactics } from './domain/types';
-import { clubOrder } from './data/initialWorld';
-import { createCareer, getNextFixture, playNextRound } from './game/career';
+import type { GameState, Player, Club, Formation } from './domain/types';
+import {
+  buyPlayer,
+  createCareer,
+  getCurrentFixture,
+  getLeague,
+  getMarketPlayers,
+  getPosition,
+  isTransferWindow,
+  leaders,
+  simulateNextWeek,
+  sellPlayer,
+  swapStartingPlayers,
+  takeJob,
+  updateFormation,
+} from './game/wsc';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
-import { ru } from './i18n/ru';
-import { TransferMarket } from './components/TransferMarket';
 
-const tabs = ['squad', 'transfers', 'table', 'finances'] as const;
-type Tab = 'overview' | (typeof tabs)[number];
-type Theme = 'aurora' | 'midnight' | 'light';
+type Screen='home'|'squad'|'transfers'|'competition'|'trophies';
 
-const clubLabels: Record<string, string> = {
-  northbridge: 'Northbridge FC',
-  eastford: 'Eastford United',
-  redharbor: 'Red Harbor',
-  kingsport: 'Kingsport Athletic',
-  rivergate: 'Rivergate City',
-  oakvale: 'Oakvale Rovers',
-  southbank: 'Southbank FC',
-  lakeside: 'Lakeside Albion',
-};
-
-function FullscreenButton({ compact = false }: { compact?: boolean }) {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
-  useEffect(() => {
-    const sync = () => setIsFullscreen(Boolean(document.fullscreenElement));
-    document.addEventListener('fullscreenchange', sync);
-    sync();
-    return () => document.removeEventListener('fullscreenchange', sync);
-  }, []);
-
-  const toggle = async () => {
-    try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen();
-      } else {
-        await document.documentElement.requestFullscreen();
-      }
-    } catch {
-      // The browser can deny fullscreen; keep the button harmless.
-    }
-  };
-
-  return (
-    <button
-      className={compact ? 'ghost-button fullscreen-button fullscreen-button-compact' : 'ghost-button fullscreen-button'}
-      onClick={toggle}
-      aria-pressed={isFullscreen}
-      aria-label={isFullscreen ? ru.app.exitFullscreen : ru.app.fullscreen}
-      title={isFullscreen ? ru.app.exitFullscreen : ru.app.fullscreen}
-    >
-      <span aria-hidden="true">⛶</span>
-      {!compact && (isFullscreen ? ru.app.exitFullscreen : ru.app.fullscreen)}
-    </button>
-  );
+function money(v:number){
+  const n=Math.round(v);
+  if(Math.abs(n)>=1_000_000)return '€'+(n/1_000_000).toFixed(n%1_000_000===0?0:1)+'M';
+  if(Math.abs(n)>=1000)return '€'+Math.round(n/1000)+'K';
+  return '€'+n;
+}
+function resultText(x:{homeTeamId:string;awayTeamId:string;homeGoals:number;awayGoals:number},clubs:Record<string,Club>){
+  return (clubs[x.homeTeamId]?.shortName??'---')+' '+x.homeGoals+':'+x.awayGoals+' '+(clubs[x.awayTeamId]?.shortName??'---');
+}
+function Fullscreen(){
+  const [on,setOn]=useState(false);
+  useEffect(()=>{const f=()=>setOn(Boolean(document.fullscreenElement));document.addEventListener('fullscreenchange',f);return()=>document.removeEventListener('fullscreenchange',f)},[]);
+  return <button className="icon-btn" onClick={()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()} title="Fullscreen">{on?'⤢':'⛶'}</button>;
 }
 
-function formatDate(value: string): string {
-  return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value));
-}
+export default function App(){
+  const [careers,setCareers]=useState<StoredCareer[]>(()=>loadCareers());
+  const [game,setGame]=useState<GameState|null>(null);
+  const [screen,setScreen]=useState<Screen>('home');
+  const [showCareers,setShowCareers]=useState(false);
+  const [creating,setCreating]=useState(false);
+  const [manager,setManager]=useState('');
+  const [country,setCountry]=useState('Germany');
+  const [leagueLevel,setLeagueLevel]=useState<1|2>(1);
+  const [selectedClub,setSelectedClub]=useState('');
+  const [menu,setMenu]=useState(false);
+  const [settings,setSettings]=useState(false);
+  const [pending,setPending]=useState<GameState|null>(null);
+  const [minute,setMinute]=useState(0);
+  const [error,setError]=useState('');
+  const [deleteId,setDeleteId]=useState<string|null>(null);
 
-function formatDateTime(value: string): string {
-  return new Intl.DateTimeFormat('ru-RU', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(value));
-}
+  const worldPreview=useMemo(()=> {
+    if(!creating) return [];
+    const temp=createCareer('Preview','club_ge_1_0');
+    return Object.values(temp.clubs).filter(c=>c.country===country && Number(c.leagueId.slice(-1))===leagueLevel).sort((a,b)=>b.reputation-a.reputation);
+  },[creating,country,leagueLevel]);
 
-function formatMoney(value: number): string {
-  if (value >= 1_000_000) return `€${(value / 1_000_000).toFixed(1)} млн`;
-  return `€${Math.round(value / 1000)} тыс.`;
-}
-
-function positionLabel(position: string): string {
-  return ({ GK: ru.positions.gk, DEF: ru.positions.def, MID: ru.positions.mid, FWD: ru.positions.fwd })[position] ?? position;
-}
-
-function eventText(game: GameState, event: NonNullable<GameState['lastMatch']>['events'][number]): string {
-  const team = game.clubs[event.teamId]?.name ?? ru.common.unknownClub;
-  const player = event.playerId ? game.players[event.playerId]?.name : undefined;
-  const assist = event.assistPlayerId ? game.players[event.assistPlayerId]?.name : undefined;
-
-  switch (event.type) {
-    case 'goal':
-      if (!player) return `Гол «${team}»!`;
-      return assist
-        ? `${player} забивает за «${team}» (пас: ${assist}).`
-        : `${player} забивает за «${team}»!`;
-    case 'chance':
-      return `«${team}» создаёт опасный момент.`;
-    case 'half-time':
-      return ru.events.halfTime;
-    case 'full-time':
-      return ru.events.fullTime;
-    case 'yellow':
-      return player ? `${player} получает жёлтую карточку.` : ru.events.yellow;
-    case 'injury':
-      return player ? `${player} получает травму.` : ru.events.injury;
-    case 'substitution':
-      return ru.events.substitution;
-    default:
-      return event.description;
-  }
-}
-
-function App() {
-  const [game, setGame] = useState<GameState | null>(null);
-  const [careers, setCareers] = useState<StoredCareer[]>(() => loadCareers());
-  const [tab, setTab] = useState<Tab>('overview');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [matchCenter, setMatchCenter] = useState<{
-    match: MatchResult;
-    season: number;
-    round: number;
-    nextGame: GameState;
-  } | null>(null);
-  const [managerName, setManagerName] = useState('');
-  const [selectedClub, setSelectedClub] = useState<string>(clubOrder[5]);
-  const [nameError, setNameError] = useState('');
-  const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('dream-team:theme');
-    return saved === 'midnight' || saved === 'light' ? saved : 'aurora';
-  });
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem('dream-team:theme', theme);
-  }, [theme]);
-
-  useEffect(() => {
-    if (!game) return;
-    const saveTimer = window.setTimeout(() => saveGame(game), 120);
-    return () => window.clearTimeout(saveTimer);
-  }, [game]);
-
-  const startCareer = () => {
-    const name = managerName.trim();
-    if (!name) {
-      setNameError(ru.career.requiredName);
-      return;
-    }
-
-    setNameError('');
-    const next = createCareer(name, selectedClub);
-    saveGame(next);
-    setCareers(loadCareers());
-    setGame(next);
-    setTab('overview');
-    setMatchCenter(null);
-    setManagerName('');
-  };
-
-  const openCareer = (career: StoredCareer) => {
-    setGame(career.state);
-    setTab('overview');
-    setMatchCenter(null);
-  };
-
-  const removeCareer = (careerId: string) => {
-    const career = careers.find((item) => item.id === careerId);
-    if (!career) return;
-
-    deleteCareer(careerId);
-    setCareers(loadCareers());
-
-    if (game?.careerId === careerId) setGame(null);
-  };
-
-  const leaveToCareerMenu = () => {
-    if (game) saveGame(game);
-    setCareers(loadCareers());
-    setGame(null);
-    setMatchCenter(null);
-    setTab('overview');
-  };
-
-  if (!game) {
-    return (
-      <StartScreen
-        careers={careers}
-        managerName={managerName}
-        selectedClub={selectedClub}
-        nameError={nameError}
-        setManagerName={(value) => {
-          setManagerName(value);
-          if (nameError) setNameError('');
-        }}
-        setSelectedClub={setSelectedClub}
-        onStart={startCareer}
-        onOpen={openCareer}
-        onDelete={removeCareer}
-        theme={theme}
-        onThemeChange={setTheme}
-      />
-    );
-  }
-
-  const club = game.clubs[game.clubId];
-  const nextFixture = getNextFixture(game);
-  const tableRow = game.table.find((row) => row.teamId === game.clubId);
-  const position = Math.max(1, game.table.findIndex((row) => row.teamId === game.clubId) + 1);
-
-  return (
-    <div className={`wsc-app-shell wsc-app-${tab}`}>
-      <header className="wsc-app-header">
-        <button
-          className="wsc-header-menu"
-          type="button"
-          onClick={() => setMenuOpen(true)}
-          aria-label="Игровое меню"
-        >
-          <span />
-          <span />
-          <span />
-        </button>
-
-        <div className="wsc-header-club">
-          <div className="wsc-header-crest" style={{ background: club.color }}>{club.shortName}</div>
-          <div className="wsc-header-club-copy">
-            <strong>{club.name}</strong>
-            <span>{ru.app.season} {game.season} · {ru.app.round} {game.currentRound}</span>
-          </div>
-        </div>
-
-        <div className="wsc-header-spacer" />
-
-        <button className="wsc-header-icon" type="button" onClick={leaveToCareerMenu} aria-label={ru.app.careers}>
-          ↩
-        </button>
-        <FullscreenButton compact />
-      </header>
-
-      <main className="wsc-app-content">
-        {tab === 'overview' && (
-          <Overview
-            game={game}
-            position={position}
-            row={tableRow}
-            nextFixture={nextFixture}
-            onOpenSection={(section) => setTab(section)}
-            onPlay={() => {
-              const matchSeason = game.season;
-              const matchRound = game.currentRound;
-              const nextGame = playNextRound(game);
-              if (nextGame.lastMatch) {
-                setMatchCenter({
-                  match: nextGame.lastMatch,
-                  season: matchSeason,
-                  round: matchRound,
-                  nextGame,
-                });
-              }
-            }}
-          />
-        )}
-
-        {tab !== 'overview' && (
-          <section className={`wsc-section wsc-section-${tab}`}>
-            <div className="wsc-section-topline">
-              <button
-                className="wsc-back-button"
-                type="button"
-                onClick={() => setTab('overview')}
-              >
-                ‹
-              </button>
-              <div>
-                <span>КЛУБ</span>
-                <h1>{ru.tabs[tab]}</h1>
-              </div>
-            </div>
-
-            <div className="wsc-section-body">
-              {tab === 'squad' && <Squad game={game} onChange={(nextGame) => setGame(nextGame)} />}
-              {tab === 'transfers' && <TransferMarket game={game} onChange={(nextGame) => setGame(nextGame)} />}
-              {tab === 'table' && <LeagueTable game={game} />}
-              {tab === 'finances' && <FinanceScreen game={game} />}
-            </div>
-          </section>
-        )}
-      </main>
-
-      {menuOpen && (
-        <ClubMenu
-          game={game}
-          tab={tab}
-          onNavigate={(nextTab) => {
-            setTab(nextTab);
-            setMenuOpen(false);
-          }}
-          onClose={() => setMenuOpen(false)}
-          onLeave={leaveToCareerMenu}
-          theme={theme}
-          onThemeChange={setTheme}
-        />
-      )}
-
-      {matchCenter && (
-        <LiveMatch
-          game={game}
-          match={matchCenter.match}
-          season={matchCenter.season}
-          round={matchCenter.round}
-          onClose={() => {
-            setGame(matchCenter.nextGame);
-            setMatchCenter(null);
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-function StartScreen(props: {
-  careers: StoredCareer[];
-  managerName: string;
-  selectedClub: string;
-  nameError: string;
-  setManagerName: (value: string) => void;
-  setSelectedClub: (value: string) => void;
-  onStart: () => void;
-  onOpen: (career: StoredCareer) => void;
-  onDelete: (careerId: string) => void;
-  theme: Theme;
-  onThemeChange: (theme: Theme) => void;
-}) {
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<StoredCareer | null>(null);
-  const [careerPickerOpen, setCareerPickerOpen] = useState(false);
-  const [newCareerOpen, setNewCareerOpen] = useState(false);
-
-  const enterPlay = () => {
-    if (props.careers.length) setCareerPickerOpen(true);
-    else setNewCareerOpen(true);
-  };
-
-  return (
-    <div className="wsc-start-screen">
-      <div className="wsc-start-stage">
-        <header className="wsc-brand-bar">
-          <div className="wsc-brand-lockup">
-            <button className="wsc-start-menu-button" type="button" aria-label="Игровое меню">☰</button>
-            <div className="wsc-brand-wordmark">DREAM <span>TEAM</span></div>
-            <div className="wsc-brand-ball">●</div>
-          </div>
-          <div className="wsc-start-actions">
-            <button className="wsc-round-button" type="button" onClick={() => setSettingsOpen(true)} aria-label={ru.settings.openButton}>⚙</button>
-            <FullscreenButton compact />
-          </div>
-        </header>
-
-        <main className="wsc-main-menu-screen">
-          <div className="wsc-main-menu-brand">
-            <span>BROWSER FOOTBALL MANAGEMENT</span>
-            <h1>DREAM<br /><em>TEAM</em></h1>
-            <p>Управляй клубом, меняй состав и проходи сезон за сезоном.</p>
-          </div>
-
-          <div className="wsc-main-menu-actions">
-            <button className="wsc-menu-play" type="button" onClick={enterPlay}>
-              <span>▶</span>
-              ИГРАТЬ
-            </button>
-
-            <div className="wsc-main-menu-grid">
-              <button className="wsc-menu-panel" type="button" onClick={() => setCareerPickerOpen(true)}>
-                <span className="wsc-menu-icon">▣</span>
-                <div><strong>КАРЬЕРА</strong><small>{props.careers.length ? props.careers.length + ' сохранений' : 'Новая карьера'}</small></div>
-              </button>
-              <button className="wsc-menu-panel" type="button" onClick={() => setSettingsOpen(true)}>
-                <span className="wsc-menu-icon">⚙</span>
-                <div><strong>НАСТРОЙКИ</strong><small>Экран и оформление</small></div>
-              </button>
-            </div>
-          </div>
-
-          <footer className="wsc-main-menu-footer">
-            <span>DREAM TEAM</span><span>·</span><span>FOOTBALL WORLD</span>
-          </footer>
-        </main>
-
-        {careerPickerOpen && (
-          <div className="wsc-career-picker-backdrop" role="presentation" onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setCareerPickerOpen(false);
-          }}>
-            <section className="wsc-career-picker" role="dialog" aria-modal="true" aria-labelledby="career-picker-title">
-              <header>
-                <div><span>CAREER</span><h2 id="career-picker-title">ВЫБЕРИ КАРЬЕРУ</h2></div>
-                <button type="button" onClick={() => setCareerPickerOpen(false)} aria-label={ru.common.close}>×</button>
-              </header>
-              <div className="wsc-career-picker-list">
-                {props.careers.length ? props.careers.map((career, index) => (
-                  <article className="wsc-career-picker-row" key={career.id}>
-                    <span className="wsc-career-picker-index">{index + 1}</span>
-                    <span className="wsc-career-picker-crest" style={{ background: career.state.clubs[career.state.clubId]?.color ?? '#273064' }}>{career.state.clubs[career.state.clubId]?.shortName ?? 'DT'}</span>
-                    <div className="wsc-career-picker-copy">
-                      <strong>{career.clubName}</strong>
-                      <span>{career.managerName}</span>
-                      <small>Сезон {career.state.season} · Тур {career.state.currentRound}</small>
-                    </div>
-                    <button className="wsc-career-picker-play" type="button" onClick={() => { props.onOpen(career); setCareerPickerOpen(false); }}>▶</button>
-                    <button className="wsc-career-picker-delete" type="button" onClick={() => setDeleteTarget(career)} aria-label={ru.career.delete}>×</button>
-                  </article>
-                )) : (
-                  <div className="wsc-career-picker-empty"><strong>НЕТ СОХРАНЕНИЙ</strong><span>Создай первую карьеру.</span></div>
-                )}
-              </div>
-              <footer>
-                <button className="wsc-picker-secondary" type="button" onClick={() => setNewCareerOpen(true)}>＋ НОВАЯ КАРЬЕРА</button>
-                <button className="wsc-picker-secondary" type="button" onClick={() => setCareerPickerOpen(false)}>НАЗАД</button>
-              </footer>
-            </section>
-          </div>
-        )}
-
-        {newCareerOpen && (
-          <div className="wsc-career-picker-backdrop" role="presentation" onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setNewCareerOpen(false);
-          }}>
-            <section className="wsc-new-career-panel" role="dialog" aria-modal="true" aria-labelledby="new-career-title">
-              <div className="wsc-panel-title">
-                <div><span>НОВАЯ КАРЬЕРА</span><h2 id="new-career-title">НАЧНИ СВОЮ КАРЬЕРУ</h2></div>
-                <button className="wsc-panel-close" type="button" onClick={() => setNewCareerOpen(false)} aria-label={ru.common.close}>×</button>
-              </div>
-              <div className="wsc-form">
-                <label>ИМЯ ТРЕНЕРА<input value={props.managerName} onChange={(event) => props.setManagerName(event.target.value)} placeholder={ru.career.namePlaceholder} maxLength={30} autoComplete="off" aria-invalid={Boolean(props.nameError)} />{props.nameError && <small className="form-error">{props.nameError}</small>}</label>
-                <label>СТАРТОВЫЙ КЛУБ<select value={props.selectedClub} onChange={(event) => props.setSelectedClub(event.target.value)}>{clubOrder.map((id) => <option key={id} value={id}>{clubLabels[id]}</option>)}</select></label>
-                <button className="wsc-main-button primary" type="button" onClick={() => { props.onStart(); setNewCareerOpen(false); setCareerPickerOpen(false); }}><span className="wsc-button-icon">▶</span>НАЧАТЬ КАРЬЕРУ</button>
-              </div>
-            </section>
-          </div>
-        )}
-
-        {deleteTarget && (
-          <div className="wsc-career-picker-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setDeleteTarget(null); }}>
-            <section className="wsc-confirm-panel" role="dialog" aria-modal="true" aria-labelledby="delete-career-title">
-              <div className="wsc-panel-title"><div><span>ПОДТВЕРЖДЕНИЕ</span><h2 id="delete-career-title">УДАЛИТЬ СОХРАНЕНИЕ?</h2></div><button className="wsc-panel-close" type="button" onClick={() => setDeleteTarget(null)} aria-label={ru.common.close}>×</button></div>
-              <p>Удалить карьеру тренера «{deleteTarget.managerName}»?</p>
-              <div className="wsc-confirm-actions">
-                <button className="wsc-main-button ghost" type="button" onClick={() => setDeleteTarget(null)}>ОТМЕНА</button>
-                <button className="wsc-main-button danger" type="button" onClick={() => { props.onDelete(deleteTarget.id); setDeleteTarget(null); }}>УДАЛИТЬ</button>
-              </div>
-            </section>
-          </div>
-        )}
-
-        {settingsOpen && <SettingsModal theme={props.theme} onThemeChange={props.onThemeChange} onClose={() => setSettingsOpen(false)} />}
-      </div>
-    </div>
-  );
-}
-
-function ClubMenu({
-  game, tab, onNavigate, onClose, onLeave, theme, onThemeChange,
-}: {
-  game: GameState; tab: Tab; onNavigate: (nextTab: Tab) => void; onClose: () => void; onLeave: () => void; theme: Theme; onThemeChange: (theme: Theme) => void;
-}) {
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  return (
-    <>
-      <div className="wsc-game-menu-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-        <aside className="wsc-game-menu" role="dialog" aria-modal="true" aria-label="Игровое меню">
-          <header><div><span>MENU</span><strong>{game.clubs[game.clubId]?.name ?? 'DREAM TEAM'}</strong></div><button type="button" onClick={onClose} aria-label={ru.common.close}>×</button></header>
-          <div className="wsc-game-menu-list">
-            <button type="button" onClick={() => onNavigate('overview')}><span>⌂</span><strong>ГЛАВНЫЙ ЭКРАН</strong><b>›</b></button>
-            <button type="button" onClick={() => onNavigate('squad')}><span>●</span><strong>СОСТАВ</strong><b>›</b></button>
-            <button type="button" onClick={() => onNavigate('transfers')}><span>↔</span><strong>ТРАНСФЕРЫ</strong><b>›</b></button>
-            <button type="button" onClick={() => onNavigate('table')}><span>▤</span><strong>СОРЕВНОВАНИЕ</strong><b>›</b></button>
-            <button type="button" onClick={() => onNavigate('finances')}><span>€</span><strong>ФИНАНСЫ</strong><b>›</b></button>
-            <button type="button" onClick={() => setSettingsOpen(true)}><span>⚙</span><strong>НАСТРОЙКИ</strong><b>›</b></button>
-          </div>
-          <footer><button type="button" onClick={() => document.documentElement.requestFullscreen().catch(() => undefined)}>⛶ ПОЛНЫЙ ЭКРАН</button><button type="button" onClick={onLeave}>↩ КАРЬЕРЫ</button></footer>
-        </aside>
-      </div>
-      {settingsOpen && <SettingsModal theme={theme} onThemeChange={onThemeChange} onClose={() => setSettingsOpen(false)} />}
-    </>
-  );
-}
-function SettingsModal({
-  theme,
-  onThemeChange,
-  onClose,
-}: {
-  theme: Theme;
-  onThemeChange: (theme: Theme) => void;
-  onClose: () => void;
-}) {
-  return (
-    <div className="modal-backdrop settings-backdrop" role="presentation" onMouseDown={(event) => {
-      if (event.target === event.currentTarget) onClose();
-    }}>
-      <section className="modal-window settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-        <div className="modal-header">
-          <div>
-            <div className="eyebrow">{ru.settings.eyebrow}</div>
-            <h2 id="settings-title">{ru.settings.title}</h2>
-          </div>
-          <button className="modal-close" type="button" onClick={onClose} aria-label={ru.common.close}>×</button>
-        </div>
-
-        <div className="settings-modal-body">
-          <div className="settings-modal-group">
-            <span className="settings-label">{ru.settings.language}</span>
-            <div className="settings-options language-options">
-              <button className="setting-option active" type="button">
-                <strong>{ru.settings.russian}</strong>
-                <span>{ru.settings.available}</span>
-              </button>
-              <button className="setting-option disabled" type="button" disabled>
-                <strong>{ru.settings.english}</strong>
-                <span>{ru.settings.comingSoon}</span>
-              </button>
-              <button className="setting-option disabled" type="button" disabled>
-                <strong>{ru.settings.german}</strong>
-                <span>{ru.settings.comingSoon}</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="settings-modal-group">
-            <span className="settings-label">{ru.settings.theme}</span>
-            <div className="settings-options theme-options">
-              {([
-                ['aurora', ru.settings.aurora],
-                ['midnight', ru.settings.midnight],
-                ['light', ru.settings.light],
-              ] as const).map(([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  className={theme === value ? 'setting-option theme-option active' : 'setting-option theme-option'}
-                  onClick={() => onThemeChange(value)}
-                >
-                  <span className={`theme-swatch theme-${value}`} />
-                  <strong>{label}</strong>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="settings-footnote">{ru.settings.note}</div>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function Overview({
-  game,
-  position,
-  row,
-  nextFixture,
-  onOpenSection,
-  onPlay,
-}: {
-  game: GameState;
-  position: number;
-  row?: GameState['table'][number];
-  nextFixture?: ReturnType<typeof getNextFixture>;
-  onOpenSection: (section: Exclude<Tab, 'overview'>) => void;
-  onPlay: () => void;
-}) {
-  const club = game.clubs[game.clubId];
-  const lastMatch = game.lastMatch;
-  const opponentId = nextFixture ? (nextFixture.homeTeamId === game.clubId ? nextFixture.awayTeamId : nextFixture.homeTeamId) : undefined;
-  const opponent = opponentId ? game.clubs[opponentId] : undefined;
-  const home = nextFixture?.homeTeamId === game.clubId;
-  const roster = club.playerIds.map((id) => game.players[id]).filter(Boolean);
-  const avgFor = (position: Position) => {
-    const players = roster.filter((player) => player.position === position);
-    return players.length ? Math.round(players.reduce((sum, player) => sum + player.overall, 0) / players.length) : 0;
-  };
-  const squadEnergy = roster.length ? Math.round(roster.reduce((sum, player) => sum + player.fitness, 0) / roster.length) : 0;
-  const teamRating = Math.round((avgFor('DEF') + avgFor('MID') + avgFor('FWD')) / 3);
-  const difficulty = opponent ? Math.max(1, Math.min(5, Math.round((opponent.reputation - club.reputation + 100) / 40))) : 1;
-
-  return (
-    <div className="wsc-home-screen">
-      <div className="wsc-week-strip">
-        <span>YEAR {game.season} · WEEK {game.currentRound}</span>
-        <span>{position} · {row?.points ?? 0} PTS</span>
-      </div>
-
-      <div className="wsc-home-board">
-        <section className="wsc-board-card wsc-next-match-card">
-          <div className="wsc-board-title">
-            <div><span>NEXT MATCH</span><strong>{nextFixture ? 'GAME ' + game.currentRound : ru.overview.seasonComplete}</strong></div>
-            <b>{nextFixture ? (home ? '(H)' : '(A)') : ''}</b>
-          </div>
-          {opponent ? (
-            <>
-              <button className="wsc-next-match-link" type="button" onClick={onPlay}>
-                <div className="wsc-next-match-left">
-                  <strong>{opponent.name}</strong>
-                  <span>{home ? 'HOME' : 'AWAY'}</span>
-                  <em>{ru.liveMatch.eyebrow}</em>
-                  <div className="wsc-next-match-ratings">
-                    <span>DEF: {avgFor('DEF')}</span><span>MID: {avgFor('MID')}</span><span>ATT: {avgFor('FWD')}</span>
-                  </div>
-                  <div className="wsc-difficulty">
-                    {[1, 2, 3, 4, 5].map((star) => <i key={star} className={star <= difficulty ? 'filled' : ''}>★</i>)}
-                  </div>
-                </div>
-                <div className="wsc-next-match-opponent"><div className="wsc-big-crest" style={{ background: opponent.color }}>{opponent.shortName}</div></div>
-              </button>
-              <button className="wsc-green-action wsc-next-play-button" type="button" onClick={onPlay}>▶ PLAY</button>
-            </>
-          ) : <div className="wsc-empty-panel">{ru.overview.noMatch}</div>}
-        </section>
-
-        <section className="wsc-board-card wsc-team-management-card">
-          <button type="button" onClick={() => onOpenSection('squad')}>
-            <div className="wsc-board-title"><div><span>TEAM MANAGEMENT</span><strong>{club.tactic.formation} · ENERGY {squadEnergy}%</strong></div><b>›</b></div>
-            <div className="wsc-team-management-body">
-              <div className="wsc-chalkboard"><div className="wsc-chalk-line midfield" /><div className="wsc-chalk-circle" /><div className="wsc-chalk-arrow a" /><div className="wsc-chalk-arrow b" /><div className="wsc-chalk-x x1" /><div className="wsc-chalk-x x2" /><div className="wsc-chalk-x x3" /></div>
-              <div className="wsc-team-management-copy">
-                <strong>{club.tactic.formation}</strong><span>{club.name}</span>
-                <div><b>DEF {avgFor('DEF')}</b><b>MID {avgFor('MID')}</b><b>ATT {avgFor('FWD')}</b></div>
-                <div className="wsc-stars">{[1,2,3,4,5].map((star) => <i key={star} className={star <= Math.max(1, Math.min(5, Math.round(teamRating / 20))) ? 'filled' : ''}>★</i>)}</div>
-              </div>
-            </div>
-          </button>
-        </section>
-
-        <section className="wsc-board-card wsc-schedule-board">
-          <div className="wsc-board-title"><div><span>SCHEDULE</span><strong>UPCOMING FIXTURES</strong></div><button type="button" onClick={() => document.querySelector<HTMLButtonElement>('.calendar-preview')?.click()}>›</button></div>
-          <UpcomingCalendar game={game} />
-        </section>
-
-        <section className="wsc-transfer-board">
-          <button className="wsc-board-card wsc-transfer-card" type="button" onClick={() => onOpenSection('transfers')}><span>TRANSFERS</span><strong>BUY</strong><b>↪</b><small>FIND PLAYERS</small></button>
-          <button className="wsc-board-card wsc-transfer-card" type="button" onClick={() => onOpenSection('transfers')}><span>TRANSFERS</span><strong>SELL</strong><b>↪</b><small>MANAGE SQUAD</small></button>
-          <button className="wsc-board-card wsc-transfer-card wsc-competition-mini" type="button" onClick={() => onOpenSection('table')}><span>COMPETITION</span><strong>TABLE</strong><b>›</b><small>{position} PLACE · {row?.points ?? 0} PTS</small></button>
-          {lastMatch && <button className="wsc-board-card wsc-transfer-card wsc-result-mini" type="button" onClick={() => onOpenSection('table')}><span>LAST RESULT</span><strong>{game.clubs[lastMatch.homeTeamId]?.shortName} {lastMatch.homeGoals}:{lastMatch.awayGoals} {game.clubs[lastMatch.awayTeamId]?.shortName}</strong><small>VIEW COMPETITION</small></button>}
-        </section>
-      </div>
-    </div>
-  );
-}
-function UpcomingCalendar({ game }: { game: GameState }) {
-  const [calendarOpen, setCalendarOpen] = useState(false);
-  const fixtures = game.fixtures
-    .filter((fixture) => fixture.round <= 14 && !fixture.played && (fixture.homeTeamId === game.clubId || fixture.awayTeamId === game.clubId))
-    .sort((a, b) => a.round - b.round);
-
-  const preview = fixtures.slice(0, 5);
-
-  const calendarModal = calendarOpen ? (
-    <div
-      className="modal-backdrop calendar-modal-backdrop"
-      role="presentation"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) setCalendarOpen(false);
-      }}
-    >
-      <section className="modal-window calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-title">
-        <div className="modal-header">
-          <div>
-            <div className="eyebrow">{ru.overview.calendarPanel}</div>
-            <h2 id="calendar-title">{ru.overview.calendarTitle}</h2>
-          </div>
-          <button className="modal-close" onClick={() => setCalendarOpen(false)} aria-label={ru.common.close}>×</button>
-        </div>
-
-        <div className="full-calendar-list">
-          {fixtures.map((fixture) => {
-            const isHome = fixture.homeTeamId === game.clubId;
-            const opponentId = isHome ? fixture.awayTeamId : fixture.homeTeamId;
-            const opponent = game.clubs[opponentId];
-
-            return (
-              <div className="full-calendar-row" key={fixture.id}>
-                <div className="full-calendar-round">
-                  <span>{ru.overview.matchday}</span>
-                  <strong>{fixture.round}</strong>
-                </div>
-                <div className="full-calendar-main">
-                  <strong>{opponent?.name ?? ru.common.unknownClub}</strong>
-                  <span>{isHome ? ru.overview.home : ru.overview.away}</span>
-                </div>
-                <div className="full-calendar-badge" style={{ background: opponent?.color ?? '#50616d' }}>
-                  {opponent?.shortName ?? '—'}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {!fixtures.length && <div className="modal-empty">{ru.overview.calendarEmpty}</div>}
-        <button className="secondary-button full modal-action" onClick={() => setCalendarOpen(false)}>
-          {ru.common.close}
-        </button>
-      </section>
-    </div>
-  ) : null;
-
-  return (
-    <>
-      <button className="card calendar-card calendar-preview" onClick={() => setCalendarOpen(true)}>
-        <div className="section-title-row">
-          <div>
-            <div className="eyebrow">{ru.overview.calendarPanel}</div>
-            <h2>{ru.overview.calendarTitle}</h2>
-          </div>
-          <span className="future-tag">{ru.overview.openButton}</span>
-        </div>
-
-        <div className="calendar-preview-list">
-          {preview.map((fixture) => {
-            const home = fixture.homeTeamId === game.clubId;
-            const opponentId = home ? fixture.awayTeamId : fixture.homeTeamId;
-            const opponent = game.clubs[opponentId];
-
-            return (
-              <div className="calendar-row compact" key={fixture.id}>
-                <span className="calendar-round">{fixture.round}</span>
-                <span className="calendar-venue">{home ? ru.overview.homeShort : ru.overview.awayShort}</span>
-                <span className="calendar-opponent">{opponent?.name ?? ru.common.unknownClub}</span>
-                <span className="calendar-badge" style={{ background: opponent?.color ?? '#50616d' }}>
-                  {opponent?.shortName ?? '—'}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="calendar-footer">
-          <span>{fixtures.length ? ru.overview.calendarCount(fixtures.length) : ru.overview.calendarEmpty}</span>
-          <span>→</span>
-        </div>
-      </button>
-
-      {calendarModal && createPortal(calendarModal, document.body)}
-    </>
-  );
-}
-
-function LiveMatch({
-  game,
-  match,
-  season,
-  round,
-  onClose,
-}: {
-  game: GameState;
-  match: MatchResult;
-  season: number;
-  round: number;
-  onClose: () => void;
-}) {
-  const [minute, setMinute] = useState(0);
-  const [finished, setFinished] = useState(false);
-
-  useEffect(() => {
-    if (finished) return;
-
-    const timer = window.setInterval(() => {
-      setMinute((current) => {
-        if (current >= 90) {
-          setFinished(true);
-          return 90;
+  useEffect(()=>{
+    if(!pending) return;
+    const timer=window.setInterval(()=>{
+      setMinute(m=>{
+        const next=Math.min(90,m+1);
+        if(next>=90){
+          window.setTimeout(()=>{
+            setGame(pending);
+            saveGame(pending);
+            setCareers(loadCareers());
+            setPending(null);
+            setMinute(0);
+          },450);
         }
-        return current + 1;
+        return next;
       });
-    }, 650);
+    },65);
+    return()=>window.clearInterval(timer);
+  },[pending]);
 
-    return () => window.clearInterval(timer);
-  }, [finished]);
-
-  useEffect(() => {
-    if (minute >= 90) setFinished(true);
-  }, [minute]);
-
-  const revealedEvents = match.events.filter((event) => event.minute <= minute);
-  const matchEvents = revealedEvents.filter((event) => event.type !== 'half-time' && event.type !== 'full-time');
-  const recentEvents = matchEvents.slice(-8).reverse();
-  const latestEvent = matchEvents[matchEvents.length - 1];
-
-  const visibleGoals = revealedEvents.filter((event) => event.type === 'goal');
-  const homeGoals = visibleGoals.filter((event) => event.teamId === match.homeTeamId).length;
-  const awayGoals = visibleGoals.filter((event) => event.teamId === match.awayTeamId).length;
-
-  const home = game.clubs[match.homeTeamId];
-  const away = game.clubs[match.awayTeamId];
-  const homeTeamName = home?.name ?? '—';
-  const awayTeamName = away?.name ?? '—';
-
-  const currentPhase = finished
-    ? ru.liveMatch.fullTime
-    : minute < 45
-      ? ru.liveMatch.firstHalf
-      : minute === 45
-        ? ru.liveMatch.halfTime
-        : ru.liveMatch.secondHalf;
-
-  const eventClass = (type: MatchResult['events'][number]['type']) => {
-    if (type === 'goal') return 'live-event goal';
-    if (type === 'chance') return 'live-event chance';
-    if (type === 'yellow') return 'live-event yellow';
-    if (type === 'injury') return 'live-event injury';
-    if (type === 'substitution') return 'live-event substitution';
-    return 'live-event';
+  const createNew=()=>{
+    try{
+      const chosen=selectedClub||worldPreview[0]?.id;
+      if(!chosen)throw new Error('Выберите клуб');
+      const next=createCareer(manager||'Manager',chosen);
+      saveGame(next);setCareers(loadCareers());setGame(next);setScreen('home');setShowCareers(false);setCreating(false);setMenu(false);setError('');
+    }catch(e){setError(e instanceof Error?e.message:'Ошибка')}
   };
-
-  const eventIcon = (type: MatchResult['events'][number]['type']) => {
-    if (type === 'goal') return '⚽';
-    if (type === 'yellow') return '🟨';
-    if (type === 'injury') return '✚';
-    if (type === 'substitution') return '↕';
-    if (type === 'chance') return '◉';
-    return '•';
+  const openCareer=(c:StoredCareer)=>{setGame(c.state);setScreen('home');setShowCareers(false);setCreating(false);setMenu(false);setError('')};
+  const removeCareer=(id:string)=>{deleteCareer(id);setCareers(loadCareers());setDeleteId(null)};
+  const advance=()=>{
+    if(!game)return;
+    try{
+      const next=simulateNextWeek(game);
+      setPending(next);setMinute(0);setError('');
+    }catch(e){setError(e instanceof Error?e.message:'Не удалось симулировать тур') }
   };
+  const mutate=(fn:(s:GameState)=>GameState)=>{if(!game)return;try{const next=fn(game);setGame(next);saveGame(next);setCareers(loadCareers());setError('')}catch(e){setError(e instanceof Error?e.message:'Операция недоступна')}};
 
-  return (
-    <div className="live-match-backdrop" role="presentation">
-      <section className="live-match-screen" role="dialog" aria-modal="true" aria-labelledby="live-match-title">
-        <header className="live-match-topbar">
-          <div className="live-match-competition">
-            <div className="eyebrow">{ru.liveMatch.eyebrow}</div>
-            <strong>{ru.liveMatch.season} {season} · {ru.liveMatch.round} {round}</strong>
-          </div>
-          <div className="live-match-status-pill">
-            <span className={finished ? 'status-dot finished' : 'status-dot'} />
-            {currentPhase}
-          </div>
-          {finished ? (
-            <button className="ghost-button live-close-button" type="button" onClick={onClose}>
-              {ru.liveMatch.close}
-            </button>
-          ) : (
-            <div className="live-auto-label">АВТОМАТИЧЕСКИЙ МАТЧ</div>
-          )}
-        </header>
-
-        <main className="live-match-content">
-          <section className="live-score-card">
-            <div className="live-score-card-heading">
-              <span>МАТЧ</span>
-              <strong>{minute}'</strong>
-            </div>
-
-            <div className="live-score-teams">
-              <div className="live-score-team">
-                <div
-                  className="live-team-badge large"
-                  style={{ background: home?.color ?? '#50616d' }}
-                >
-                  {home?.shortName ?? '—'}
-                </div>
-                <strong>{homeTeamName}</strong>
-                <span>{ru.liveMatch.home}</span>
-              </div>
-
-              <div className="live-score-main">
-                <strong>{homeGoals} : {awayGoals}</strong>
-                <span>{finished ? ru.liveMatch.fullTime : currentPhase}</span>
-              </div>
-
-              <div className="live-score-team away">
-                <div
-                  className="live-team-badge large"
-                  style={{ background: away?.color ?? '#50616d' }}
-                >
-                  {away?.shortName ?? '—'}
-                </div>
-                <strong>{awayTeamName}</strong>
-                <span>{ru.liveMatch.away}</span>
-              </div>
-            </div>
-
-            <div className="live-match-progress">
-              <span style={{ width: `${(minute / 90) * 100}%` }} />
-            </div>
-          </section>
-
-          <section className="live-match-grid">
-            <article className="live-match-card live-current-card">
-              <div className="live-card-header">
-                <div>
-                  <div className="eyebrow">{ru.liveMatch.matchEvents}</div>
-                  <h2>Последнее событие</h2>
-                </div>
-                <span className="live-minute-chip">{latestEvent ? `${latestEvent.minute}'` : "0'"}</span>
-              </div>
-
-              <div className={latestEvent ? `live-current-event ${latestEvent.type}` : 'live-current-event empty'}>
-                <div className="live-current-event-icon">
-                  {latestEvent ? eventIcon(latestEvent.type) : '⚽'}
-                </div>
-                <div>
-                  <strong>{latestEvent ? eventText(game, latestEvent) : ru.liveMatch.started}</strong>
-                  <span>
-                    {latestEvent
-                      ? latestEvent.description
-                      : ru.liveMatch.kickOff}
-                  </span>
-                </div>
-              </div>
-
-              <div className="live-score-mini">
-                <span>{homeTeamName}</span>
-                <strong>{homeGoals} : {awayGoals}</strong>
-                <span>{awayTeamName}</span>
-              </div>
-            </article>
-
-            <article className="live-match-card live-timeline-card">
-              <div className="live-card-header">
-                <div>
-                  <div className="eyebrow">{ru.liveMatch.matchFlow}</div>
-                  <h2>Хронология</h2>
-                </div>
-                <span className="live-total-events">{matchEvents.length}</span>
-              </div>
-
-              <div className="live-timeline-list">
-                {recentEvents.length ? recentEvents.map((event) => {
-                  const isHome = event.teamId === match.homeTeamId;
-                  return (
-                    <div className={`live-timeline-row ${isHome ? 'home' : 'away'}`} key={event.id}>
-                      <span className="live-timeline-minute">{event.minute}'</span>
-                      <span className={eventClass(event.type)}>{eventIcon(event.type)}</span>
-                      <div className="live-timeline-copy">
-                        <strong>{eventText(game, event)}</strong>
-                        <span>{event.description}</span>
-                      </div>
-                      <span className="live-timeline-team">{isHome ? home?.shortName : away?.shortName}</span>
-                    </div>
-                  );
-                }) : (
-                  <div className="live-timeline-empty">{ru.liveMatch.started}</div>
-                )}
-              </div>
-            </article>
-
-            <article className="live-match-card live-breakdown-card">
-              <div className="live-card-header">
-                <div>
-                  <div className="eyebrow">ХОД ИГРЫ</div>
-                  <h2>Матч по минутам</h2>
-                </div>
-              </div>
-
-              <div className="live-minute-blocks">
-                <div className={`live-half-block ${minute < 45 ? 'active' : ''}`}>
-                  <span>1</span>
-                  <strong>1-й тайм</strong>
-                  <small>0' — 45'</small>
-                </div>
-                <div className={`live-half-block ${minute >= 45 && minute < 90 ? 'active' : ''}`}>
-                  <span>2</span>
-                  <strong>2-й тайм</strong>
-                  <small>45' — 90'</small>
-                </div>
-              </div>
-
-              <div className="live-key-events">
-                <div><span>Голы</span><strong>{visibleGoals.length}</strong></div>
-                <div><span>События</span><strong>{matchEvents.length}</strong></div>
-                <div><span>Минута</span><strong>{minute}'</strong></div>
-              </div>
-            </article>
-          </section>
-        </main>
-
-        <footer className="live-match-footer">
-          <div className="live-footer-left">
-            <span className="live-auto-dot" />
-            <span>{finished ? ru.liveMatch.fullTime : 'Результат появляется автоматически по минутам'}</span>
-          </div>
-          <div className="live-footer-right">
-            <span>0'</span>
-            <div className="live-footer-track"><span style={{ width: `${(minute / 90) * 100}%` }} /></div>
-            <span>90'</span>
-          </div>
-        </footer>
-      </section>
-    </div>
-  );
-}
-
-function EventTimeline({ game }: { game: GameState }) {
-  if (!game.lastMatch) return null;
-
-  return (
-    <div className="timeline">
-      {game.lastMatch.events.slice(-12).map((event) => (
-        <div className="timeline-item" key={event.id}>
-          <span className="minute">{event.minute}'</span>
-          <span className={`event-dot ${event.type}`} />
-          <span>{eventText(game, event)}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-type SquadPitchRole = 'keeper' | 'defender' | 'midfielder' | 'attacker';
-
-type SquadSlot = {
-  left: number;
-  top: number;
-  role: SquadPitchRole;
-  label: string;
-};
-
-const squadFormationSlots: Record<Tactics['formation'], SquadSlot[]> = {
-  '4-3-3': [
-    { left: 50, top: 87, role: 'keeper', label: 'ВРТ' },
-    { left: 15, top: 68, role: 'defender', label: 'ЛЗ' },
-    { left: 38, top: 68, role: 'defender', label: 'ЦЗ' },
-    { left: 62, top: 68, role: 'defender', label: 'ЦЗ' },
-    { left: 85, top: 68, role: 'defender', label: 'ПЗ' },
-    { left: 50, top: 50, role: 'midfielder', label: 'ОП' },
-    { left: 31, top: 40, role: 'midfielder', label: 'ЦП' },
-    { left: 69, top: 40, role: 'midfielder', label: 'ЦП' },
-    { left: 15, top: 27, role: 'attacker', label: 'ЛФ' },
-    { left: 50, top: 19, role: 'attacker', label: 'ЦН' },
-    { left: 85, top: 27, role: 'attacker', label: 'ПФ' },
-  ],
-  '4-4-2': [
-    { left: 50, top: 87, role: 'keeper', label: 'ВРТ' },
-    { left: 15, top: 68, role: 'defender', label: 'ЛЗ' },
-    { left: 38, top: 68, role: 'defender', label: 'ЦЗ' },
-    { left: 62, top: 68, role: 'defender', label: 'ЦЗ' },
-    { left: 85, top: 68, role: 'defender', label: 'ПЗ' },
-    { left: 15, top: 46, role: 'midfielder', label: 'ЛП' },
-    { left: 38, top: 46, role: 'midfielder', label: 'ЦП' },
-    { left: 62, top: 46, role: 'midfielder', label: 'ЦП' },
-    { left: 85, top: 46, role: 'midfielder', label: 'ПП' },
-    { left: 38, top: 20, role: 'attacker', label: 'ЦН' },
-    { left: 62, top: 20, role: 'attacker', label: 'ЦН' },
-  ],
-  '4-2-3-1': [
-    { left: 50, top: 87, role: 'keeper', label: 'ВРТ' },
-    { left: 15, top: 68, role: 'defender', label: 'ЛЗ' },
-    { left: 38, top: 68, role: 'defender', label: 'ЦЗ' },
-    { left: 62, top: 68, role: 'defender', label: 'ЦЗ' },
-    { left: 85, top: 68, role: 'defender', label: 'ПЗ' },
-    { left: 37, top: 50, role: 'midfielder', label: 'ОП' },
-    { left: 63, top: 50, role: 'midfielder', label: 'ОП' },
-    { left: 17, top: 34, role: 'attacker', label: 'ЛФ' },
-    { left: 50, top: 31, role: 'attacker', label: 'АП' },
-    { left: 83, top: 34, role: 'attacker', label: 'ПФ' },
-    { left: 50, top: 18, role: 'attacker', label: 'ЦН' },
-  ],
-};
-
-function expectedPositionForRole(role: SquadPitchRole): Position {
-  switch (role) {
-    case 'keeper': return 'GK';
-    case 'defender': return 'DEF';
-    case 'midfielder': return 'MID';
-    case 'attacker': return 'FWD';
+  if(!game){
+    return <StartScreen
+      careers={careers} showCareers={showCareers} creating={creating}
+      manager={manager} country={country} leagueLevel={leagueLevel} selectedClub={selectedClub}
+      preview={worldPreview} deleteId={deleteId} error={error} settings={settings}
+      setShowCareers={setShowCareers} setCreating={setCreating} setManager={setManager}
+      setCountry={setCountry} setLeagueLevel={setLeagueLevel} setSelectedClub={setSelectedClub}
+      setDeleteId={setDeleteId} createNew={createNew} openCareer={openCareer} removeCareer={removeCareer}
+      setSettings={setSettings} setError={setError}
+    />;
   }
+
+  if(pending){
+    return <LiveMatch state={pending} minute={minute} onClose={()=>{setGame(pending);saveGame(pending);setCareers(loadCareers());setPending(null);setMinute(0)}} />;
+  }
+
+  return <div className="app">
+    <header className="topbar">
+      <button className="hamburger" onClick={()=>setMenu(true)}><i/><i/><i/></button>
+      <div className="crest" style={{background:game.clubs[game.clubId].color}}>{game.clubs[game.clubId].shortName}</div>
+      <div className="club-head"><strong>{game.clubs[game.clubId].name}</strong><span>{getLeague(game).name} · Season {game.season} · Week {game.week}</span></div>
+      <div className="top-spacer"/>
+      <div className="stat"><span>REPUTATION</span><b>{game.managerReputation}</b></div>
+      <div className="stat"><span>MONEY</span><b>{money(game.clubs[game.clubId].budget)}</b></div>
+      <Fullscreen/>
+    </header>
+
+    {error&&<div className="toast">{error}<button onClick={()=>setError('')}>×</button></div>}
+
+    <main className="content">
+      {screen==='home'&&<Home game={game} onScreen={setScreen} onPlay={advance}/>}
+      {screen==='squad'&&<Squad game={game} onChange={next=>mutate(s=>swapStartingPlayers(s,next[0],next[1]))} onFormation={f=>mutate(s=>updateFormation(s,f))}/>}
+      {screen==='transfers'&&<Transfers game={game} onBuy={id=>mutate(s=>buyPlayer(s,id))} onSell={id=>mutate(s=>sellPlayer(s,id))}/>}
+      {screen==='competition'&&<Competition game={game}/>}
+      {screen==='trophies'&&<Trophies game={game}/>}
+    </main>
+
+    {menu&&<SideMenu game={game} screen={screen} setScreen={setScreen} close={()=>setMenu(false)} onCareer={()=>{setGame(null);setMenu(false);setShowCareers(true)}}/>}
+    {game.jobOffers.length>0&&screen==='home'&&<JobOffers game={game} onTake={id=>mutate(s=>takeJob(s,id))}/>}
+  </div>;
 }
 
-function replacementFit(player: Player, slot: SquadSlot): 'good' | 'adaptable' | 'poor' {
-  const expected = expectedPositionForRole(slot.role);
-  if (player.position === expected) return 'good';
-
-  const adaptable =
-    (player.position === 'DEF' && expected === 'MID') ||
-    (player.position === 'MID' && expected === 'DEF') ||
-    (player.position === 'MID' && expected === 'FWD') ||
-    (player.position === 'FWD' && expected === 'MID');
-
-  return adaptable ? 'adaptable' : 'poor';
-}
-
-function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameState) => void }) {
-  const club = game.clubs[game.clubId];
-  const [profilePlayerId, setProfilePlayerId] = useState<string | null>(null);
-  const roster = club.playerIds.map((id) => game.players[id]).filter(Boolean);
-  const initialXI = club.startingXI?.length === 11 ? club.startingXI : club.playerIds.slice(0, 11);
-  const [lineupIds, setLineupIds] = useState<string[]>(initialXI);
-  const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
-  const [openTactic, setOpenTactic] = useState<TacticSettingKey | null>(null);
-
-  useEffect(() => {
-    const next = club.startingXI?.length === 11 ? club.startingXI : club.playerIds.slice(0, 11);
-    setLineupIds(next);
-    setSelectedSlot(null);
-  }, [game.clubId, club.startingXI, club.playerIds]);
-
-  const slots = squadFormationSlots[club.tactic.formation];
-  const substitutes = roster.filter((player) => !lineupIds.includes(player.id));
-  const selectedPlayer = selectedSlot === null ? undefined : game.players[lineupIds[selectedSlot]];
-  const selectedSlotData = selectedSlot === null ? undefined : slots[selectedSlot];
-
-  const commitLineup = (nextLineup: string[]) => {
-    setLineupIds(nextLineup);
-    onChange({
-      ...game,
-      clubs: {
-        ...game.clubs,
-        [club.id]: {
-          ...club,
-          startingXI: nextLineup,
-        },
-      },
-    });
-  };
-
-  const swapSlots = (first: number, second: number) => {
-    if (first === second) {
-      setSelectedSlot(null);
-      return;
-    }
-    const next = [...lineupIds];
-    [next[first], next[second]] = [next[second], next[first]];
-    commitLineup(next);
-    setSelectedSlot(null);
-  };
-
-  const handleRosterClick = (playerId: string) => {
-    if (selectedSlot === null) return;
-
-    const rosterIndex = lineupIds.indexOf(playerId);
-    if (rosterIndex >= 0) {
-      swapSlots(selectedSlot, rosterIndex);
-      return;
-    }
-
-    const next = [...lineupIds];
-    next[selectedSlot] = playerId;
-    commitLineup(next);
-    setSelectedSlot(null);
-  };
-
-  const fitLabel = (fit: ReturnType<typeof replacementFit>) => {
-    if (fit === 'good') return ru.squad.fitGood;
-    if (fit === 'adaptable') return ru.squad.fitAdaptable;
-    return ru.squad.fitPoor;
-  };
-
-  return (
-    <section className="card content-card squad-panel">
-      <div className="section-title-row">
-        <div>
-          <h2>{ru.tabs.squad}</h2>
-          <span className="wsc-screen-caption">{club.name} · {game.managerName}</span>
-        </div>
-        <div className="squad-formation-pill">
-          <strong>{club.tactic.formation}</strong>
-        </div>
+function StartScreen(p:{
+  careers:StoredCareer[];showCareers:boolean;creating:boolean;manager:string;country:string;leagueLevel:1|2;selectedClub:string;
+  preview:Club[];deleteId:string|null;error:string;settings:boolean;
+  setShowCareers:(v:boolean)=>void;setCreating:(v:boolean)=>void;setManager:(v:string)=>void;setCountry:(v:string)=>void;
+  setLeagueLevel:(v:1|2)=>void;setSelectedClub:(v:string)=>void;setDeleteId:(v:string|null)=>void;
+  createNew:()=>void;openCareer:(c:StoredCareer)=>void;removeCareer:(id:string)=>void;setSettings:(v:boolean)=>void;setError:(v:string)=>void;
+}){
+  return <div className="start">
+    <div className="start-top"><strong>DREAM TEAM</strong><span>WORLD CAREER</span><div/><Fullscreen/></div>
+    <section className="start-center">
+      <div className="start-logo">DT</div>
+      <h1>FOOTBALL<br/><em>CAREER</em></h1>
+      <button className="play-btn" onClick={()=>p.setShowCareers(true)}>▶ PLAY</button>
+      <div className="start-grid">
+        <button onClick={()=>p.setShowCareers(true)}>▣<strong>CAREERS</strong><small>LOAD / CREATE</small></button>
+        <button onClick={()=>p.setSettings(true)}>⚙<strong>SETTINGS</strong><small>GAME OPTIONS</small></button>
       </div>
-
-      <div className="squad-tactics-bar">
-        <div className="squad-tactics-caption">
-          <span>СХЕМА И ТАКТИКА</span>
-          <strong>{club.tactic.formation}</strong>
-        </div>
-        <div className="squad-formation-buttons">
-          {(['4-3-3', '4-4-2', '4-2-3-1'] as Tactics['formation'][]).map((formation) => (
-            <button
-              key={formation}
-              type="button"
-              className={club.tactic.formation === formation ? 'active' : ''}
-              onClick={() => onChange({
-                ...game,
-                clubs: { ...game.clubs, [club.id]: { ...club, tactic: { ...club.tactic, formation } } },
-              })}
-            >
-              {formation}
-            </button>
-          ))}
-        </div>
-        <div className="squad-tactic-choices">
-          {([
-            {
-              key: 'mentality' as TacticSettingKey,
-              label: ru.tactics.mentality,
-              options: [
-                { value: 'Very Defensive', label: ru.tactics.options.veryDefensive },
-                { value: 'Defensive', label: ru.tactics.options.defensive },
-                { value: 'Balanced', label: ru.tactics.options.balanced },
-                { value: 'Attacking', label: ru.tactics.options.attacking },
-                { value: 'Very Attacking', label: ru.tactics.options.veryAttacking },
-              ],
-            },
-            {
-              key: 'tempo' as TacticSettingKey,
-              label: ru.tactics.tempo,
-              options: [
-                { value: 'Slow', label: ru.tactics.options.slow },
-                { value: 'Normal', label: ru.tactics.options.normal },
-                { value: 'Fast', label: ru.tactics.options.fast },
-              ],
-            },
-            {
-              key: 'pressing' as TacticSettingKey,
-              label: ru.tactics.pressing,
-              options: [
-                { value: 'Low', label: ru.tactics.options.low },
-                { value: 'Medium', label: ru.tactics.options.medium },
-                { value: 'High', label: ru.tactics.options.high },
-              ],
-            },
-            {
-              key: 'defensiveLine' as TacticSettingKey,
-              label: ru.tactics.defensiveLine,
-              options: [
-                { value: 'Low', label: ru.tactics.options.low },
-                { value: 'Normal', label: ru.tactics.options.normal },
-                { value: 'High', label: ru.tactics.options.high },
-              ],
-            },
-            {
-              key: 'width' as TacticSettingKey,
-              label: ru.tactics.width,
-              options: [
-                { value: 'Narrow', label: ru.tactics.options.narrow },
-                { value: 'Balanced', label: ru.tactics.options.balanced },
-                { value: 'Wide', label: ru.tactics.options.wide },
-              ],
-            },
-          ]).map((field) => (
-            <TacticChoice
-              key={field.key}
-              label={field.label}
-              value={club.tactic[field.key]}
-              options={field.options}
-              open={openTactic === field.key}
-              onToggle={() => setOpenTactic(openTactic === field.key ? null : field.key)}
-              onChange={(value) => {
-                onChange({
-                  ...game,
-                  clubs: { ...game.clubs, [club.id]: { ...club, tactic: { ...club.tactic, [field.key]: value } as Tactics } },
-                });
-                setOpenTactic(null);
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="team-sheet">
-        <div className="squad-pitch-wrap">
-          <div className="squad-pitch">
-            <svg className="pitch-markings" viewBox="0 0 68 68" preserveAspectRatio="none" aria-hidden="true">
-              <defs>
-                <clipPath id="pitch-penalty-arc-clip">
-                  <rect x="0" y="0" width="68" height="46.63" />
-                </clipPath>
-              </defs>
-
-              <path
-                className="pitch-marking-boundary"
-                d="M1.4 0 H66.6 Q68 0 68 1.81 V66.19 Q68 68 66.6 68 H1.4 Q0 68 0 66.19 V1.81 Q0 0 1.4 0 Z"
-              />
-              <circle className="pitch-marking-center-circle" cx="34" cy="0" r="9.15" />
-              <circle className="pitch-marking-center-spot" cx="34" cy="0" r="0.22" />
-
-              <path className="pitch-marking-penalty-area" d="M13.84 68 V46.63 H54.16 V68" />
-              <path className="pitch-marking-goal-area" d="M23.34 68 V60.88 H44.66 V68" />
-              <circle className="pitch-marking-penalty-spot" cx="34" cy="53.74" r="0.22" />
-              <circle
-                className="pitch-marking-penalty-arc"
-                cx="34"
-                cy="53.74"
-                r="9.15"
-                clipPath="url(#pitch-penalty-arc-clip)"
-              />
-
-              <path className="pitch-marking-goal-net" d="M30.34 68 H37.66 V66.25 H30.34 Z" />
-              <line className="pitch-marking-goal-post" x1="30.34" y1="68" x2="30.34" y2="66.25" />
-              <line className="pitch-marking-goal-post" x1="37.66" y1="68" x2="37.66" y2="66.25" />
-              <line className="pitch-marking-goal-crossbar" x1="30.34" y1="66.25" x2="37.66" y2="66.25" />
-            </svg>
-
-            {slots.map((slot, index) => {
-              const player = game.players[lineupIds[index]];
-              if (!player) return null;
-              const selected = selectedSlot === index;
-              const target = selectedSlot !== null && !selected;
-              const markerClass = [
-                'squad-player-marker',
-                selected ? 'selected' : '',
-                target ? 'swap-target' : '',
-              ].filter(Boolean).join(' ');
-
-              return (
-                <button
-                  key={slot.label + '-' + index + '-' + player.id}
-                  type="button"
-                  className={markerClass}
-                  style={{ left: slot.left + '%', top: slot.top + '%' }}
-                  onClick={() => {
-                    if (selectedSlot !== null && selectedSlot !== index) {
-                      swapSlots(selectedSlot, index);
-                    } else {
-                      setSelectedSlot(selected ? null : index);
-                    }
-                  }}
-                  onDoubleClick={() => setProfilePlayerId(player.id)}
-                  title={player.name + ' · ' + slot.label + ' · двойной клик — профиль'}
-                  onContextMenu={(event) => {
-                    event.preventDefault();
-                    setProfilePlayerId(player.id);
-                  }}
-                >
-                  <span className="squad-player-rating">{player.overall}</span>
-                  <strong>{player.name.split(' ')[0]}</strong>
-                  <small>{slot.label}</small>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <aside className={selectedSlot === null ? 'squad-roster' : 'squad-roster has-selection'}>
-          <div className="squad-roster-header">
-            <div>
-              <strong>{ru.squad.substitutes} · {substitutes.length}</strong>
-            </div>
-          </div>
-
-          {selectedPlayer && selectedSlotData && (
-            <div className="squad-selection-card">
-              <div>
-                <span className="eyebrow">{ru.squad.replacing}</span>
-                <strong>{selectedPlayer.name}</strong>
-                <small>{positionLabel(selectedPlayer.position)} · {ru.squad.toPosition} {selectedSlotData.label}</small>
-              </div>
-              <button type="button" className="secondary-button" onClick={() => setSelectedSlot(null)}>
-                {ru.squad.cancelSelection}
-              </button>
-            </div>
-          )}
-
-          <div className="squad-roster-list">
-            {substitutes.map((player) => {
-              const fit = selectedSlotData ? replacementFit(player, selectedSlotData) : null;
-              const fitClass = fit ? fit : 'idle';
-              const fitText = fit ? fitLabel(fit) : ru.squad.selectFirst;
-
-              return (
-                <button
-                  key={player.id}
-                  type="button"
-                  className={'squad-roster-card reserve ' + fitClass}
-                  onClick={() => handleRosterClick(player.id)}
-                  disabled={selectedSlot === null}
-                >
-                  <span className="squad-roster-avatar">{player.name.slice(0, 1).toUpperCase()}</span>
-                  <span className="squad-roster-main">
-                    <strong>{player.name}</strong>
-                    <small>{positionLabel(player.position)} · {player.preferredFoot === 'L' ? ru.squad.leftFoot : ru.squad.rightFoot}</small>
-                  </span>
-                  <span className="squad-roster-stat">
-                    <small>OVR</small>
-                    <strong>{player.overall}</strong>
-                  </span>
-                  <span className={'squad-roster-stat squad-fitness squad-fitness-' + (player.fitness >= 75 ? 'high' : player.fitness >= 50 ? 'medium' : 'low')}>
-                    <small>{ru.squad.fitness}</small>
-                    <strong>{player.fitness}</strong>
-                  </span>
-                  <span className={'squad-roster-fit ' + fitClass}>{fitText}</span>
-                </button>
-              );
-            })}
-          </div>
-        </aside>
-      </div>
-
-      {profilePlayerId && game.players[profilePlayerId] && (
-        <PlayerProfile
-          player={game.players[profilePlayerId]}
-          club={club}
-          onClose={() => setProfilePlayerId(null)}
-        />
-      )}
+      <small className="start-note">A standalone football career simulation built from scratch.</small>
     </section>
-  );
+
+    {p.error&&<div className="start-error">{p.error}</div>}
+    {p.settings&&<Modal title="SETTINGS" onClose={()=>p.setSettings(false)}>
+      <div className="simple-settings"><span>GAME MODE</span><strong>CAREER SIMULATION</strong><span>MATCH MODE</span><strong>AUTOMATIC KEY MOMENTS</strong></div>
+    </Modal>}
+
+    {p.showCareers&&<div className="overlay"><div className="career-window">
+      <header><div><small>CAREER</small><h2>{p.creating?'NEW CAREER':'SELECT CAREER'}</h2></div><button onClick={()=>{p.setShowCareers(false);p.setCreating(false)}}>×</button></header>
+      {!p.creating ? <div className="career-body">
+        <div className="career-list">
+          {p.careers.length?p.careers.map((c,i)=><div className="career-row" key={c.id}>
+            <span className="slot">{i+1}</span><div className="tiny-crest">DT</div>
+            <div className="career-copy"><strong>{c.clubName}</strong><span>{c.managerName} · Season {c.state.season}</span><small>{c.state.week>1?'In progress':'New career'}</small></div>
+            <button className="small-green" onClick={()=>p.openCareer(c)}>▶</button><button className="small-gray" onClick={()=>p.setDeleteId(c.id)}>×</button>
+          </div>):<div className="empty">No saved careers</div>}
+        </div>
+        <footer><button className="primary" onClick={()=>p.setCreating(true)}>+ NEW CAREER</button></footer>
+      </div> : <div className="new-career">
+        <label>MANAGER NAME<input value={p.manager} onChange={e=>p.setManager(e.target.value)} placeholder="Manager"/></label>
+        <div className="filters"><label>COUNTRY<select value={p.country} onChange={e=>{p.setCountry(e.target.value);p.setSelectedClub('')}}>{['England','Spain','Germany','Italy','France'].map(c=><option key={c}>{c}</option>)}</select></label>
+        <label>DIVISION<select value={p.leagueLevel} onChange={e=>{p.setLeagueLevel(Number(e.target.value) as 1|2);p.setSelectedClub('')}}><option value={1}>Premier</option><option value={2}>Championship</option></select></label></div>
+        <div className="club-picker">{p.preview.map(c=><button key={c.id} className={p.selectedClub===c.id?'selected':''} onClick={()=>p.setSelectedClub(c.id)}>
+          <span className="club-dot" style={{background:c.color}}>{c.shortName}</span><strong>{c.name}</strong><small>OVR {Math.round(c.reputation)}</small>
+        </button>)}</div>
+        <footer><button className="secondary" onClick={()=>p.setCreating(false)}>BACK</button><button className="primary" onClick={p.createNew}>START CAREER</button></footer>
+      </div>}
+    </div></div>}
+
+    {p.deleteId&&<Confirm title="DELETE CAREER?" text="The saved career will be removed from this browser." onNo={()=>p.setDeleteId(null)} onYes={()=>p.removeCareer(p.deleteId!)}/>}
+  </div>;
 }
 
-function PlayerProfile({ player, club, onClose }: { player: Player; club: GameState['clubs'][string]; onClose: () => void }) {
-  return (
-    <div className="wsc-player-profile-backdrop" role="presentation" onMouseDown={(event) => {
-      if (event.target === event.currentTarget) onClose();
-    }}>
-      <section className="wsc-player-profile" role="dialog" aria-modal="true" aria-labelledby="player-profile-title">
-        <header>
-          <div>
-            <span>ИГРОК</span>
-            <h2 id="player-profile-title">{player.name}</h2>
-            <small>{club.name} · {positionLabel(player.position)} · {player.age} лет</small>
-          </div>
-          <button type="button" onClick={onClose} aria-label={ru.common.close}>×</button>
-        </header>
+function Home({game,onScreen,onPlay}:{game:GameState;onScreen:(x:Screen)=>void;onPlay:()=>void}){
+  const club=game.clubs[game.clubId], league=getLeague(game), fixture=getCurrentFixture(game), position=getPosition(game);
+  const opp=fixture?game.clubs[fixture.homeTeamId===club.id?fixture.awayTeamId:fixture.homeTeamId]:undefined;
+  const roster=club.playerIds.map(id=>game.players[id]).filter(Boolean);
+  const avg=Math.round(roster.reduce((s,p)=>s+p.overall,0)/Math.max(1,roster.length));
+  const recent=game.lastWeekResults.slice(-5).reverse();
+  return <div className="home-board">
+    <div className="weekbar"><span>SEASON {game.season} · WEEK {game.week}</span><span>{position} PLACE · {game.tables[league.id]?.find(r=>r.teamId===club.id)?.points??0} PTS</span></div>
+    <div className="board-grid">
+      <section className="panel next">
+        <div className="panel-title"><div><span>NEXT MATCH</span><strong>{opp?league.name:'SEASON COMPLETE'}</strong></div><b>›</b></div>
+        {opp?<><button className="match-card" onClick={onPlay}><div><strong>{opp.name}</strong><span>{fixture?.homeTeamId===club.id?'HOME':'AWAY'} · ROUND {game.week}</span><div className="stars">★★★★★</div></div><div className="opponent" style={{background:opp.color}}>{opp.shortName}</div></button><button className="play-green" onClick={onPlay}>▶ PLAY MATCH</button></>:<div className="empty">No scheduled match.</div>}
+      </section>
 
-        <div className="wsc-profile-grid">
-          <div className="wsc-profile-overall">
-            <small>ОБЩИЙ РЕЙТИНГ</small>
-            <strong>{player.overall}</strong>
-            <span>ПОТЕНЦИАЛ {player.potential}</span>
-          </div>
-          <div className="wsc-profile-lines">
-            <div><span>Форма</span><strong>{player.form > 0 ? '+' : ''}{player.form}</strong></div>
-            <div><span>Мораль</span><strong>{player.morale}</strong></div>
-            <div><span>Фитнес</span><strong>{player.fitness}%</strong></div>
-            <div><span>Матчи</span><strong>{player.appearances}</strong></div>
-            <div><span>Голы</span><strong>{player.goals}</strong></div>
-            <div><span>Ассисты</span><strong>{player.assists}</strong></div>
-          </div>
-        </div>
+      <section className="panel team">
+        <div className="panel-title"><div><span>TEAM MANAGEMENT</span><strong>{club.formation} · SQUAD {roster.length}</strong></div><button onClick={()=>onScreen('squad')}>›</button></div>
+        <button className="team-summary" onClick={()=>onScreen('squad')}>
+          <div className="mini-pitch"><i/><i/><i/><i/><i/><i/></div>
+          <div><strong>TEAM OVR {avg}</strong><span>{club.name}</span><p>ENERGY {Math.round(roster.reduce((s,p)=>s+p.fitness,0)/Math.max(1,roster.length))}%</p></div>
+        </button>
+      </section>
 
-        <div className="wsc-profile-attributes">
-          {[
-            ['Скорость', player.attributes.pace],
-            ['Удар', player.attributes.shooting],
-            ['Пас', player.attributes.passing],
-            ['Техника', player.attributes.technique],
-            ['Дриблинг', player.attributes.dribbling],
-            ['Защита', player.attributes.defending],
-            ['Физика', player.attributes.physical],
-            ['Выносливость', player.attributes.stamina],
-          ].map(([label, value]) => (
-            <div key={label as string}>
-              <span>{label}</span>
-              <div><i style={{ width: Math.max(5, Number(value)) + '%' }} /></div>
-              <strong>{value}</strong>
-            </div>
-          ))}
-        </div>
+      <section className="panel schedule"><div className="panel-title"><div><span>SCHEDULE</span><strong>UPCOMING FIXTURES</strong></div><button onClick={()=>onScreen('competition')}>›</button></div>
+        <div className="schedule-list">{game.fixtures.filter(f=>!f.played&&f.round>=game.week).slice(0,6).map(f=>{const o=game.clubs[f.homeTeamId===club.id?f.awayTeamId:f.homeTeamId];return <div className="schedule-row" key={f.id}><b>W{f.round}</b><span>{f.homeTeamId===club.id?'H':'A'}</span><strong>{o.name}</strong><small>{f.homeTeamId===club.id?'HOME':'AWAY'}</small></div>})}</div>
+      </section>
 
-        <footer>
-          <span>{player.preferredFoot === 'L' ? 'Левая нога' : 'Правая нога'}</span>
-          <span>{player.nationality ?? 'Без страны'}</span>
-          <span>{formatMoney(player.value)}</span>
-          <span>{formatMoney(player.wage)} / тур</span>
-        </footer>
+      <section className="market-mini">
+        <button className="panel mini-buy" onClick={()=>onScreen('transfers')}><span>TRANSFERS</span><strong>BUY</strong><small>{isTransferWindow(game)?'WINDOW OPEN':'NEXT WINDOW W'+[...new Set([1,2,8,9])].find(x=>x>game.week)||'—'}</small></button>
+        <button className="panel mini-buy" onClick={()=>onScreen('transfers')}><span>TRANSFERS</span><strong>SELL</strong><small>{club.playerIds.length} PLAYERS</small></button>
+        <button className="panel mini-bottom" onClick={()=>onScreen('competition')}><span>COMPETITION</span><strong>TABLE</strong><small>{league.name}</small></button>
+        <button className="panel mini-bottom" onClick={()=>onScreen('trophies')}><span>CAREER</span><strong>HONOURS</strong><small>{club.trophies} TROPHIES</small></button>
       </section>
     </div>
-  );
+    {recent.length>0&&<div className="results-strip">{recent.map((r,i)=><span key={i}>{resultText(r,game.clubs)}</span>)}</div>}
+  </div>;
 }
 
-type TacticSettingKey = Exclude<keyof Tactics, 'formation'>;
-
-type TacticOption = {
-  value: string;
-  label: string;
-};
-
-function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tactics) => void }) {
-  const tactic = game.clubs[game.clubId].tactic;
-  const [openField, setOpenField] = useState<TacticSettingKey | null>(null);
-
-  const formations: Tactics['formation'][] = ['4-3-3', '4-4-2', '4-2-3-1'];
-  const fields: Array<{
-    label: string;
-    key: TacticSettingKey;
-    options: TacticOption[];
-  }> = [
-    {
-      label: ru.tactics.mentality,
-      key: 'mentality',
-      options: [
-        { value: 'Very Defensive', label: ru.tactics.options.veryDefensive },
-        { value: 'Defensive', label: ru.tactics.options.defensive },
-        { value: 'Balanced', label: ru.tactics.options.balanced },
-        { value: 'Attacking', label: ru.tactics.options.attacking },
-        { value: 'Very Attacking', label: ru.tactics.options.veryAttacking },
-      ],
-    },
-    {
-      label: ru.tactics.tempo,
-      key: 'tempo',
-      options: [
-        { value: 'Slow', label: ru.tactics.options.slow },
-        { value: 'Normal', label: ru.tactics.options.normal },
-        { value: 'Fast', label: ru.tactics.options.fast },
-      ],
-    },
-    {
-      label: ru.tactics.pressing,
-      key: 'pressing',
-      options: [
-        { value: 'Low', label: ru.tactics.options.low },
-        { value: 'Medium', label: ru.tactics.options.medium },
-        { value: 'High', label: ru.tactics.options.high },
-      ],
-    },
-    {
-      label: ru.tactics.defensiveLine,
-      key: 'defensiveLine',
-      options: [
-        { value: 'Low', label: ru.tactics.options.low },
-        { value: 'Normal', label: ru.tactics.options.normal },
-        { value: 'High', label: ru.tactics.options.high },
-      ],
-    },
-    {
-      label: ru.tactics.width,
-      key: 'width',
-      options: [
-        { value: 'Narrow', label: ru.tactics.options.narrow },
-        { value: 'Balanced', label: ru.tactics.options.balanced },
-        { value: 'Wide', label: ru.tactics.options.wide },
-      ],
-    },
-  ];
-
-  const updateField = (key: TacticSettingKey, value: string) => {
-    onChange({ ...tactic, [key]: value } as Tactics);
-    setOpenField(null);
-  };
-
-  return (
-    <section className="card content-card tactics-panel">
-      <div className="section-title-row">
-        <div><h2>{ru.tabs.tactics}</h2></div>
-      </div>
-
-      <div className="formation-block compact-formation-selector">
-        <div className="formation-heading">
-          <div>
-            <span>{ru.tactics.formation}</span>
-          </div>
-          <strong>{tactic.formation}</strong>
-        </div>
-
-        <div className="formation-selector-buttons">
-          {formations.map((formation) => (
-            <button
-              key={formation}
-              type="button"
-              className={tactic.formation === formation ? 'formation-select-button active' : 'formation-select-button'}
-              onClick={() => onChange({ ...tactic, formation })}
-            >
-              {formation}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="tactic-grid">
-        {fields.map((field) => (
-          <TacticChoice
-            key={field.key}
-            label={field.label}
-            value={tactic[field.key]}
-            options={field.options}
-            open={openField === field.key}
-            onToggle={() => setOpenField(openField === field.key ? null : field.key)}
-            onChange={(value) => updateField(field.key, value)}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function TacticChoice({
-  label,
-  value,
-  options,
-  open,
-  onToggle,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  options: TacticOption[];
-  open: boolean;
-  onToggle: () => void;
-  onChange: (value: string) => void;
-}) {
-  const selected = options.find((option) => option.value === value);
-
-  return (
-    <div className={open ? 'tactic-field open' : 'tactic-field'}>
-      <span>{label}</span>
-      <button
-        className={open ? 'tactic-choice open' : 'tactic-choice'}
-        type="button"
-        aria-expanded={open}
-        onClick={onToggle}
-      >
-        <strong>{selected?.label ?? value}</strong>
-        <span className="tactic-choice-arrow" aria-hidden="true" />
-      </button>
-
-      {open && (
-        <div className="tactic-menu" role="listbox">
-          {options.map((option) => (
-            <button
-              key={option.value}
-              className={option.value === value ? 'tactic-option active' : 'tactic-option'}
-              type="button"
-              role="option"
-              aria-selected={option.value === value}
-              onClick={() => onChange(option.value)}
-            >
-              <span>{option.label}</span>
-              {option.value === value && <strong aria-hidden="true">✓</strong>}
-            </button>
-          ))}
-        </div>
-      )}
+function Squad({game,onChange,onFormation}:{game:GameState;onChange:(pair:[string,string])=>void;onFormation:(f:Formation)=>void}){
+  const club=game.clubs[game.clubId], [first,setFirst]=useState('');
+  const players=club.playerIds.map(id=>game.players[id]).filter(Boolean);
+  const xi=club.startingXI;
+  const choose=(id:string)=>{if(!first)setFirst(id);else{onChange([first,id]);setFirst('')}};
+  return <section className="page"><div className="page-head"><div><span>SQUAD</span><h2>{club.name}</h2></div><div className="formation"><span>FORMATION</span>{(['4-3-3','4-4-2','4-2-3-1'] as Formation[]).map(f=><button className={club.formation===f?'active':''} key={f} onClick={()=>onFormation(f)}>{f}</button>)}</div></div>
+    <div className="squad-layout">
+      <div className="pitch"><div className="pitch-lines"/>{xi.map((id,i)=>{const p=game.players[id];return <button className={first===id?'player-dot picked':'player-dot'} key={id} onClick={()=>choose(id)}><b>{p?.overall??'?'}</b><span>{p?.name.split(' ')[0]}</span></button>})}</div>
+      <div className="roster-table"><div className="roster-head"><span>PLAYER</span><b>SPD</b><b>PAS</b><b>SHO</b><b>TCK</b><b>GK</b><b>OVR</b></div>{players.map(p=><div className={xi.includes(p.id)?'roster-row starter':'roster-row'} key={p.id} onClick={()=>choose(p.id)}><div><strong>{p.name}</strong><small>{p.position} · {p.age} · {p.nationality}</small></div><b>{p.skills.speed}</b><b>{p.skills.passing}</b><b>{p.skills.shooting}</b><b>{p.skills.tackling}</b><b>{p.skills.goalkeeping}</b><b className="ovr">{p.overall}</b></div>)}</div>
     </div>
-  );
+    <p className="hint">{first?'Select another player to swap positions.':'Click two players to swap their starting positions.'}</p>
+  </section>;
 }
 
-type TableFormResult = 'W' | 'D' | 'L';
-
-function getClubForm(game: GameState, teamId: string): TableFormResult[] {
-  return game.fixtures
-    .filter((fixture) =>
-      fixture.played &&
-      fixture.result &&
-      (fixture.homeTeamId === teamId || fixture.awayTeamId === teamId)
-    )
-    .sort((a, b) => b.round - a.round)
-    .slice(0, 5)
-    .map((fixture) => {
-      const result = fixture.result!;
-      const goalsFor = fixture.homeTeamId === teamId ? result.homeGoals : result.awayGoals;
-      const goalsAgainst = fixture.homeTeamId === teamId ? result.awayGoals : result.homeGoals;
-      return goalsFor > goalsAgainst ? 'W' : goalsFor === goalsAgainst ? 'D' : 'L';
-    });
+function Transfers({game,onBuy,onSell}:{game:GameState;onBuy:(id:string)=>void;onSell:(id:string)=>void}){
+  const [tab,setTab]=useState<'buy'|'sell'>('buy'), [q,setQ]=useState('');
+  const market=getMarketPlayers(game),club=game.clubs[game.clubId];
+  const list=tab==='buy'?market.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())):club.playerIds.map(id=>game.players[id]).filter(Boolean);
+  return <section className="page"><div className="page-head"><div><span>TRANSFERS</span><h2>{isTransferWindow(game)?'TRANSFER WINDOW OPEN':'MARKET CLOSED'}</h2></div><div className="transfer-tabs"><button className={tab==='buy'?'active':''} onClick={()=>setTab('buy')}>BUY</button><button className={tab==='sell'?'active':''} onClick={()=>setTab('sell')}>SELL</button></div></div>
+    <div className="transfer-bar"><span>FUNDS {money(club.budget)}</span><span>SQUAD {club.playerIds.length}/18</span>{tab==='buy'&&<input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search player"/></div>
+    <div className="transfer-list">{list.map(p=><div className="transfer-row" key={p.id}><div className="transfer-player"><strong>{p.name}</strong><span>{p.position} · {p.age} · {p.nationality}</span></div><b>{p.overall}</b><span>{money(p.marketValue)}</span><span>{money(p.wage)}/week</span><button className={tab==='buy'?'action green':'action gray'} onClick={()=>tab==='buy'?onBuy(p.id):onSell(p.id)}>{tab==='buy'?'BUY':'SELL'}</button></div>)}{!list.length&&<div className="empty">No players available.</div>}</div>
+  </section>;
 }
 
-function TableForm({ results }: { results: TableFormResult[] }) {
-  return (
-    <div className="table-form" aria-label={ru.table.form}>
-      {[...results].reverse().map((result, index) => (
-        <span key={result + '-' + index} className={'table-form-dot ' + result}>
-          {result}
-        </span>
-      ))}
-      {!results.length && <span className="table-form-empty">—</span>}
-    </div>
-  );
+function Competition({game}:{game:GameState}){
+  const [tab,setTab]=useState<'table'|'goals'|'assists'>('table'), l=getLeague(game),rows=game.tables[l.id]??[], top=leaders(game,tab==='assists'?'assists':'goals');
+  return <section className="page"><div className="page-head"><div><span>COMPETITION</span><h2>{l.name}</h2></div><div className="transfer-tabs">{(['table','goals','assists'] as const).map(t=><button className={tab===t?'active':''} key={t} onClick={()=>setTab(t)}>{t==='table'?'TABLE':t==='goals'?'SCORERS':'ASSISTS'}</button>)}</div></div>
+  {tab==='table'?<div className="league-table"><div className="table-head"><span>#</span><span>CLUB</span><span>P</span><span>W</span><span>D</span><span>L</span><span>GF</span><span>GA</span><span>GD</span><span>PTS</span></div>{rows.map((r,i)=>{const c=game.clubs[r.teamId];return <div className={r.teamId===game.clubId?'table-row yours':'table-row'} key={r.teamId}><b>{i+1}</b><strong>{c.name}</strong><span>{r.played}</span><span>{r.wins}</span><span>{r.draws}</span><span>{r.losses}</span><span>{r.goalsFor}</span><span>{r.goalsAgainst}</span><span>{r.goalsFor-r.goalsAgainst}</span><b>{r.points}</b></div>})}</div>
+  :<div className="leader-list">{top.map((p,i)=>{const c=Object.values(game.clubs).find(x=>x.playerIds.includes(p.id));return <div className="leader-row" key={p.id}><span>{i+1}</span><div><strong>{p.name}</strong><small>{c?.shortName??'—'} · {p.position} · {p.age}</small></div><b>{tab==='goals'?p.goals:p.assists}</b></div>})}</div>}</section>;
 }
 
-function LeagueTable({ game }: { game: GameState }) {
-  const [view, setView] = useState<'table' | 'scorers' | 'assists'>('table');
-  const rows = useMemo(() => [...game.table], [game.table]);
-  const userRow = rows.find((row) => row.teamId === game.clubId);
-  const userPosition = userRow ? rows.findIndex((row) => row.teamId === game.clubId) + 1 : 0;
-  const userForm = useMemo(() => getClubForm(game, game.clubId), [game]);
-
-  const leaders = useMemo(
-    () => Object.values(game.players)
-      .filter((player) => game.clubs[game.clubId]?.playerIds.includes(player.id) || player.appearances > 0)
-      .sort((a, b) => (view === 'scorers' ? b.goals - a.goals : b.assists - a.assists) || b.overall - a.overall)
-      .slice(0, 12),
-    [game, view],
-  );
-
-  return (
-    <section className="card content-card content-table">
-      <div className="section-title-row table-page-header">
-        <div>
-          <h2>СОРЕВНОВАНИЕ</h2>
-          <span className="wsc-screen-caption">Сезон {game.season} · Тур {Math.min(game.currentRound, 14)} / 14</span>
-        </div>
-        <div className="wsc-competition-tabs">
-          <button type="button" className={view === 'table' ? 'active' : ''} onClick={() => setView('table')}>ТАБЛИЦА</button>
-          <button type="button" className={view === 'scorers' ? 'active' : ''} onClick={() => setView('scorers')}>БОМБАРДИРЫ</button>
-          <button type="button" className={view === 'assists' ? 'active' : ''} onClick={() => setView('assists')}>АССИСТЫ</button>
-        </div>
-      </div>
-
-      {view === 'table' ? (
-        <>
-          <div className="table-overview">
-            <div className="table-overview-card position">
-              <span>{ru.table.position}</span>
-              <strong>{userPosition || '—'}<small>{userPosition ? ru.table.placeSuffix : ''}</small></strong>
-            </div>
-            <div className="table-overview-card points">
-              <span>{ru.table.points}</span>
-              <strong>{userRow?.points ?? 0}</strong>
-            </div>
-            <div className="table-overview-card matches">
-              <span>{ru.table.played}</span>
-              <strong>{userRow?.played ?? 0}<small>/ 14</small></strong>
-            </div>
-            <div className="table-overview-card goal-difference">
-              <span>{ru.table.goalDifference}</span>
-              <strong>{(userRow ? userRow.goalsFor - userRow.goalsAgainst : 0) > 0 ? '+' : ''}{userRow ? userRow.goalsFor - userRow.goalsAgainst : 0}</strong>
-            </div>
-            <div className="table-overview-card form">
-              <span>{ru.table.form}</span>
-              <TableForm results={userForm} />
-            </div>
-          </div>
-
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>{ru.table.club}</th>
-                  <th>{ru.table.form}</th>
-                  <th>{ru.table.played}</th>
-                  <th>{ru.table.wins}</th>
-                  <th>{ru.table.draws}</th>
-                  <th>{ru.table.losses}</th>
-                  <th>{ru.table.goalsFor}</th>
-                  <th>{ru.table.goalsAgainst}</th>
-                  <th>{ru.table.goalDifference}</th>
-                  <th>{ru.table.points}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, index) => {
-                  const rowClub = game.clubs[row.teamId];
-                  const form = getClubForm(game, row.teamId);
-                  const goalDifference = row.goalsFor - row.goalsAgainst;
-                  return (
-                    <tr className={row.teamId === game.clubId ? 'your-club' : ''} key={row.teamId}>
-                      <td><span className={index === 0 ? 'table-rank top' : index < 4 ? 'table-rank upper' : 'table-rank'}>{index + 1}</span></td>
-                      <td><div className="table-club-cell"><strong>{rowClub.name}</strong></div></td>
-                      <td><TableForm results={form} /></td>
-                      <td>{row.played}</td>
-                      <td>{row.wins}</td>
-                      <td>{row.draws}</td>
-                      <td>{row.losses}</td>
-                      <td>{row.goalsFor}</td>
-                      <td>{row.goalsAgainst}</td>
-                      <td className={goalDifference > 0 ? 'goal-positive' : goalDifference < 0 ? 'goal-negative' : ''}>{goalDifference > 0 ? '+' : ''}{goalDifference}</td>
-                      <td><strong>{row.points}</strong></td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </>
-      ) : (
-        <div className="wsc-leaders-screen">
-          <div className="wsc-leaders-head">
-            <div>
-              <strong>{view === 'scorers' ? 'Лучшие бомбардиры' : 'Лучшие ассистенты'}</strong>
-              <span>Игроки с наибольшим количеством результативных действий в текущей карьере</span>
-            </div>
-          </div>
-          <div className="wsc-leaders-list">
-            {leaders.length ? leaders.map((player, index) => {
-              const stat = view === 'scorers' ? player.goals : player.assists;
-              const playerClub = Object.values(game.clubs).find((club) => club.playerIds.includes(player.id));
-              return (
-                <div className="wsc-leader-row" key={player.id}>
-                  <span className="wsc-leader-rank">{index + 1}</span>
-                  <div className="wsc-leader-avatar">{player.name.slice(0, 1)}</div>
-                  <div className="wsc-leader-player">
-                    <strong>{player.name}</strong>
-                    <span>{playerClub?.shortName ?? '—'} · {positionLabel(player.position)} · {player.age}</span>
-                  </div>
-                  <span className="wsc-leader-ovr">{player.overall}</span>
-                  <strong className="wsc-leader-stat">{stat}</strong>
-                </div>
-              );
-            }) : <div className="modal-empty">Статистика появится после сыгранных матчей.</div>}
-          </div>
-        </div>
-      )}
-    </section>
-  );
+function Trophies({game}:{game:GameState}){
+  const club=game.clubs[game.clubId];
+  return <section className="page"><div className="page-head"><div><span>CAREER</span><h2>HONOURS & HISTORY</h2></div></div><div className="honours"><div className="honour-box"><strong>{club.trophies}</strong><span>LEAGUE TROPHIES</span></div><div className="honour-box"><strong>{game.history.length}</strong><span>SEASONS COMPLETED</span></div><div className="honour-box"><strong>{game.managerReputation}</strong><span>MANAGER REP</span></div></div><div className="history">{game.history.length?game.history.slice().reverse().map(h=><div key={h.season}><b>SEASON {h.season}</b><span>{h.clubName}</span><small>{h.leagueName} · {h.position} PLACE</small></div>):<div className="empty">Your career history will appear here.</div>}</div></section>;
 }
 
-function FinanceScreen({ game }: { game: GameState }) {
-  const club = game.clubs[game.clubId];
-  const finance: ClubFinance = club.finance ?? {
-    seasonIncome: 0,
-    seasonExpenses: 0,
-    seasonTransferIncome: 0,
-    seasonTransferExpenses: 0,
-    seasonContractExpenses: 0,
-    lastIncome: 0,
-    lastExpenses: 0,
-    lastNet: 0,
-    lastMatchdayIncome: 0,
-    lastBroadcastIncome: 0,
-    lastResultBonus: 0,
-    lastTransferIncome: 0,
-    lastTransferExpense: 0,
-    lastContractExpense: 0,
-  };
-  const net = finance.lastNet;
-  const hasActivity = finance.lastIncome > 0 || finance.lastExpenses > 0;
-  const totalIncome = finance.seasonIncome + finance.seasonTransferIncome;
-  const totalExpenses = finance.seasonExpenses + finance.seasonTransferExpenses + finance.seasonContractExpenses;
-  const seasonBalance = totalIncome - totalExpenses;
-
-  return (
-    <section className="card content-card finance-page">
-      <div className="section-title-row">
-        <div>
-          <h2>{ru.financesPage.title}</h2>
-        </div>
-      </div>
-
-      <div className="finance-hero">
-        <div>
-          <span>{ru.financesPage.budget}</span>
-          <strong>{formatMoney(club.budget)}</strong>
-        </div>
-        <div className="finance-hero-wages">
-          <span>{ru.financesPage.wages}</span>
-          <strong>{formatMoney(club.wages)}</strong>
-        </div>
-      </div>
-
-      <div className="finance-season-grid">
-        <section className="finance-season-card income">
-          <div className="finance-season-card-header">
-            <div>
-              <span>{ru.financesPage.income}</span>
-              <strong>{formatMoney(totalIncome)}</strong>
-            </div>
-          </div>
-          <div className="finance-season-rows">
-            <div>
-              <span>{ru.financesPage.income}</span>
-              <strong>+{formatMoney(finance.seasonIncome)}</strong>
-            </div>
-            <div>
-              <span>{ru.financesPage.transferIncome}</span>
-              <strong>+{formatMoney(finance.seasonTransferIncome)}</strong>
-            </div>
-          </div>
-        </section>
-
-        <section className="finance-season-card expenses">
-          <div className="finance-season-card-header">
-            <div>
-              <span>{ru.financesPage.expenses}</span>
-              <strong>{formatMoney(totalExpenses)}</strong>
-            </div>
-          </div>
-          <div className="finance-season-rows">
-            <div>
-              <span>{ru.financesPage.wages}</span>
-              <strong>-{formatMoney(finance.seasonExpenses)}</strong>
-            </div>
-            <div>
-              <span>{ru.financesPage.transferExpenses}</span>
-              <strong>-{formatMoney(finance.seasonTransferExpenses)}</strong>
-            </div>
-            <div>
-              <span>{ru.financesPage.contractExpenses}</span>
-              <strong>-{formatMoney(finance.seasonContractExpenses)}</strong>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <div className={seasonBalance >= 0 ? 'finance-season-balance positive' : 'finance-season-balance negative'}>
-        <div>
-          <span>{ru.financesPage.seasonBalance}</span>
-          <strong>{seasonBalance >= 0 ? '+' : ''}{formatMoney(seasonBalance)}</strong>
-        </div>
-      </div>
-
-      <div className="finance-round-card finance-section">
-        <div className="section-title-row finance-round-header">
-          <div>
-            <h2>{ru.financesPage.lastRound}</h2>
-          </div>
-        </div>
-
-        {hasActivity ? (
-          <div className="finance-ledger finance-ledger-round">
-            <section className="finance-ledger-section finance-ledger-card income">
-              <div className="finance-ledger-total">
-                <div>
-                  <span>{ru.financesPage.incomeLabel}</span>
-                  <strong>+{formatMoney(finance.lastIncome)}</strong>
-                </div>
-              </div>
-              <div className="finance-ledger-rows">
-                <div><span>{ru.financesPage.matchdayIncome}</span><strong>+{formatMoney(finance.lastMatchdayIncome)}</strong></div>
-                <div><span>{ru.financesPage.broadcastIncome}</span><strong>+{formatMoney(finance.lastBroadcastIncome)}</strong></div>
-                <div><span>{ru.financesPage.resultBonus}</span><strong>+{formatMoney(finance.lastResultBonus)}</strong></div>
-              </div>
-            </section>
-
-            <section className="finance-ledger-section finance-ledger-card expenses">
-              <div className="finance-ledger-total">
-                <div>
-                  <span>{ru.financesPage.expenseLabel}</span>
-                  <strong>-{formatMoney(finance.lastExpenses)}</strong>
-                </div>
-              </div>
-              <div className="finance-ledger-rows">
-                <div><span>{ru.financesPage.wageExpense}</span><strong>-{formatMoney(finance.lastExpenses)}</strong></div>
-              </div>
-            </section>
-
-            <section className={net >= 0 ? 'finance-ledger-section finance-ledger-card result positive' : 'finance-ledger-section finance-ledger-card result negative'}>
-              <div className="finance-ledger-result-inner">
-                <span>{ru.financesPage.roundResult}</span>
-                <strong>{net >= 0 ? '+' : ''}{formatMoney(net)}</strong>
-              </div>
-            </section>
-          </div>
-        ) : (
-          <div className="finance-empty">{ru.financesPage.noActivity}</div>
-        )}
-      </div>
-    </section>
-  );
+function LiveMatch({state,minute,onClose}:{state:GameState;minute:number;onClose:()=>void}){
+  const result=state.lastMatch;if(!result)return null;
+  const home=state.clubs[result.homeTeamId],away=state.clubs[result.awayTeamId],visible=result.events.filter(e=>e.type==='goal'&&e.minute<=minute);
+  const shownHome=visible.filter(e=>e.teamId===home.id).length,shownAway=visible.filter(e=>e.teamId===away.id).length;
+  return <div className="live-screen"><header><span>LIVE MATCH</span><strong>SEASON {state.season} · ROUND {Math.max(1,state.week-1)}</strong></header><main><div className="score"><div><span>{home.name}</span><b>{shownHome}</b></div><em>90'</em><div><span>{away.name}</span><b>{shownAway}</b></div></div><div className="live-progress"><i style={{width:(minute/90*100)+'%'}}/></div><div className="live-minute">{minute}'</div><div className="events">{result.events.filter(e=>e.type==='goal'&&e.minute<=minute).map((e,i)=><div key={i}><b>{e.minute}'</b><span>⚽ {e.teamId===home.id?home.shortName:away.shortName} · {state.players[e.playerId??'']?.name??'Goal'}</span></div>)}</div>{minute>=90&&<button className="primary close-live" onClick={onClose}>CONTINUE</button>}</main></div>;
 }
 
-function Stat({ label, value, suffix = '' }: { label: string; value: string; suffix?: string }) {
-  return <div className="big-stat"><span>{label}</span><strong>{value}<small>{suffix}</small></strong></div>;
+function SideMenu({game,screen,setScreen,close,onCareer}:{game:GameState;screen:Screen;setScreen:(s:Screen)=>void;close:()=>void;onCareer:()=>void}){
+  const item=(s:Screen,label:string,icon:string)=><button className={screen===s?'active':''} onClick={()=>{setScreen(s);close()}}><i>{icon}</i><strong>{label}</strong><b>›</b></button>;
+  return <div className="side-backdrop" onClick={close}><aside className="side-menu" onClick={e=>e.stopPropagation()}><header><div><span>CAREER</span><strong>{game.clubs[game.clubId].shortName}</strong></div><button onClick={close}>×</button></header><nav>{item('home','MAIN SCREEN','⌂')}{item('squad','SQUAD','♟')}{item('transfers','TRANSFERS','↗')}{item('competition','COMPETITION','▤')}{item('trophies','HONOURS','★')}</nav><footer><button onClick={onCareer}>CAREER SELECTION</button></footer></aside></div>;
 }
+function JobOffers({game,onTake}:{game:GameState;onTake:(id:string)=>void}){
+  return <div className="job-overlay"><div className="job-window"><header><span>CAREER</span><h2>JOB OFFERS</h2><p>Your manager reputation opened new opportunities.</p></header>{game.jobOffers.map(o=>{const c=game.clubs[o.clubId];return <button className="job-row" key={o.clubId} onClick={()=>onTake(o.clubId)}><span className="club-dot" style={{background:c.color}}>{c.shortName}</span><div><strong>{c.name}</strong><small>{getLeague({...game,clubId:c.id}).name}</small><em>{o.reason}</em></div><b>›</b></button>})}</div></div>;
+}
+function Modal({title,onClose,children}:{title:string;onClose:()=>void;children:React.ReactNode}){return <div className="overlay"><div className="modal"><header><h2>{title}</h2><button onClick={onClose}>×</button></header>{children}</div></div>}
+function Confirm({title,text,onNo,onYes}:{title:string;text:string;onNo:()=>void;onYes:()=>void}){return <Modal title={title} onClose={onNo}><p className="confirm-text">{text}</p><div className="confirm-actions"><button className="secondary" onClick={onNo}>CANCEL</button><button className="danger" onClick={onYes}>DELETE</button></div></Modal>}
 
-export default App;
