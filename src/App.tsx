@@ -201,7 +201,7 @@ function App() {
   const position = Math.max(1, game.table.findIndex((row) => row.teamId === game.clubId) + 1);
 
   return (
-    <div className={`app-shell-${tab}`}>
+    <div className={`app-shell app-shell-${tab}`}>
       <header className="game-topbar">
         <div className="game-club-identity">
           <div className="game-club-mark" style={{ background: club.color }}>{club.shortName}</div>
