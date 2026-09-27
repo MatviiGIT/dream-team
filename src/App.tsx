@@ -318,7 +318,7 @@ function Squad({game,onHome,onChange,onFormation,onTactics}:{game:GameState;onHo
         </div>
         <div className="bench-wsc">
           <div className="bench-title"><span>SUBSTITUTES</span><b>{bench.length}</b></div>
-          <div className="bench-grid-wsc">{bench.slice(0,8).map(p=><button key={p.id} className={first===p.id?'bench-player-wsc picked':''||'bench-player-wsc'} onClick={()=>choose(p.id)}><b>{p.overall}</b><span>{p.name.split(' ')[0]}</span><small>{p.position}</small></button>)}</div>
+          <div className="bench-grid-wsc">{bench.slice(0,8).map(p=><button key={p.id} className={first===p.id?'bench-player-wsc picked':'bench-player-wsc'} onClick={()=>choose(p.id)}><b>{p.overall}</b><span>{p.name.split(' ')[0]}</span><small>{p.position}</small></button>)}</div>
         </div>
         <div className="roster-table-wsc">
           <div className="roster-head-wsc"><span>PLAYER</span><b>SPD</b><b>PASS</b><b>SHOT</b><b>TCKL</b><b>GK</b><b>OVR</b></div>
