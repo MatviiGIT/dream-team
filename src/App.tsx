@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { GameState, Player, Club, Formation } from './domain/types';
 import {
   buyPlayer,
@@ -276,6 +276,6 @@ function SideMenu({game,screen,setScreen,close,onCareer}:{game:GameState;screen:
 function JobOffers({game,onTake}:{game:GameState;onTake:(id:string)=>void}){
   return <div className="job-overlay"><div className="job-window"><header><span>CAREER</span><h2>JOB OFFERS</h2><p>Your manager reputation opened new opportunities.</p></header>{game.jobOffers.map(o=>{const c=game.clubs[o.clubId];return <button className="job-row" key={o.clubId} onClick={()=>onTake(o.clubId)}><span className="club-dot" style={{background:c.color}}>{c.shortName}</span><div><strong>{c.name}</strong><small>{getLeague({...game,clubId:c.id}).name}</small><em>{o.reason}</em></div><b>›</b></button>})}</div></div>;
 }
-function Modal({title,onClose,children}:{title:string;onClose:()=>void;children:React.ReactNode}){return <div className="overlay"><div className="modal"><header><h2>{title}</h2><button onClick={onClose}>×</button></header>{children}</div></div>}
+function Modal({title,onClose,children}:{title:string;onClose:()=>void;children:ReactNode}){return <div className="overlay"><div className="modal"><header><h2>{title}</h2><button onClick={onClose}>×</button></header>{children}</div></div>}
 function Confirm({title,text,onNo,onYes}:{title:string;text:string;onNo:()=>void;onYes:()=>void}){return <Modal title={title} onClose={onNo}><p className="confirm-text">{text}</p><div className="confirm-actions"><button className="secondary" onClick={onNo}>CANCEL</button><button className="danger" onClick={onYes}>DELETE</button></div></Modal>}
 
