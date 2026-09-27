@@ -59,23 +59,21 @@ export default function App(){
 
   useEffect(()=>{
     if(!pending) return;
-    const timer=window.setInterval(()=>{
-      setMinute(m=>{
-        const next=Math.min(90,m+1);
-        if(next>=90){
-          window.setTimeout(()=>{
-            setGame(pending);
-            saveGame(pending);
-            setCareers(loadCareers());
-            setPending(null);
-            setMinute(0);
-          },450);
-        }
-        return next;
-      });
-    },65);
+    const timer=window.setInterval(()=>setMinute(m=>Math.min(90,m+1)),65);
     return()=>window.clearInterval(timer);
   },[pending]);
+
+  useEffect(()=>{
+    if(!pending || minute<90) return;
+    const timer=window.setTimeout(()=>{
+      setGame(pending);
+      saveGame(pending);
+      setCareers(loadCareers());
+      setPending(null);
+      setMinute(0);
+    },450);
+    return()=>window.clearTimeout(timer);
+  },[pending,minute]);
 
   const createNew=()=>{
     try{
