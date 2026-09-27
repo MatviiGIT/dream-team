@@ -157,3 +157,13 @@
     min-height: 82px;
   }
 }
+
+
+/* 2026-09-27 — Contracts header cleanup. */
+.contracts-header {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.contracts-header h2 {
+  margin-top: 0;
+}
