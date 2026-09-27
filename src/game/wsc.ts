@@ -4,13 +4,20 @@ const WEEKS = 14;
 const SQUAD = 16;
 const WINDOWS = new Set([1, 2, 8, 9]);
 
-const countries = ['England', 'Spain', 'Germany', 'Italy', 'France'];
+const countries = ['England','Spain','Germany','Italy','France','Netherlands','Portugal','Belgium','Turkey','Austria','Scotland','Denmark'];
 const cities: Record<string, string[]> = {
   England: ['London','Manchester','Liverpool','Leeds','Bristol','Sheffield','Brighton','Birmingham'],
   Spain: ['Madrid','Barcelona','Valencia','Seville','Bilbao','Vigo','Malaga','Zaragoza'],
   Germany: ['Berlin','Munich','Hamburg','Cologne','Frankfurt','Stuttgart','Leipzig','Bremen'],
   Italy: ['Rome','Milan','Turin','Naples','Florence','Bologna','Genoa','Palermo'],
   France: ['Paris','Lyon','Marseille','Lille','Nice','Toulouse','Nantes','Bordeaux'],
+  Netherlands: ['Amsterdam','Rotterdam','Eindhoven','Utrecht','Groningen','Arnhem','Tilburg','Alkmaar'],
+  Portugal: ['Lisbon','Porto','Braga','Coimbra','Faro','Aveiro','Guimaraes','Setubal'],
+  Belgium: ['Brussels','Antwerp','Bruges','Ghent','Liege','Charleroi','Genk','Leuven'],
+  Turkey: ['Istanbul','Ankara','Izmir','Bursa','Antalya','Adana','Konya','Trabzon'],
+  Austria: ['Vienna','Graz','Linz','Salzburg','Innsbruck','Klagenfurt','Wels','St.Polten'],
+  Scotland: ['Glasgow','Edinburgh','Aberdeen','Dundee','Paisley','Perth','Dunfermline','Inverness'],
+  Denmark: ['Copenhagen','Aarhus','Odense','Aalborg','Esbjerg','Randers','Vejle','Horsens'],
 };
 const suffixes = ['Athletic','United','City','Rovers','Sporting','Wanderers','FC','Town'];
 const colors = ['#e05268','#3c73d9','#e0ad45','#40aa78','#8b68d5','#319e9e','#e36c32','#596995'];
