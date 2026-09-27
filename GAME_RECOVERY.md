@@ -689,3 +689,12 @@ Then:
 - Added round totals directly to the income/expense cards so the important numbers are visible without a large separate header block.
 - Increased readable typography across all in-game sections and added overflow-safe rules for headings, rows, buttons and long values; list-based screens keep their own scroll regions.
 - Kept the Overview expanded to the reclaimed two-zone layout and increased its key information scale without changing simulation or save logic.
+
+
+### 2026-09-27 — Finance visual cleanup + Transfer filter fit
+- Removed decorative income/expense +/− badges from Finance; semantic green/red cards remain unchanged.
+- Removed the fixed minimum height from the compact round cards so all line items stay inside their card background.
+- Added bottom breathing room to the Finance page so the final round cards no longer sit against the viewport floor.
+- Widened the Transfer Market potential column and added ellipsis protection so «Потенциал» cannot overlap the player price.
+- Increased Transfer filter labels, choices, chips, inputs and dropdown options for clearer readability.
+- Presentation-only changes; game calculations and save data are unchanged.
