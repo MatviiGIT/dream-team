@@ -726,3 +726,10 @@ Then:
 - Reduced Overview card corner padding and the gaps between dashboard cards for the fullscreen layout.
 - Set «Позиция / Матчи / Победы / Очки» to the same 14px secondary-text scale used by the Overview's other secondary metadata.
 - Kept the previously corrected pitch SVG clipping unchanged.
+
+
+### 2026-09-27 — Performance pass + Overview section navigator
+- Reduced unnecessary synchronous save work after every game-state update: saves are now coalesced with a short 120ms debounce, and the duplicate in-game careers reload was removed.
+- Disabled the two continuously animated fullscreen ambient background layers; the static gradients remain, avoiding constant large-surface transform animation during normal gameplay.
+- Added a compact six-item «Разделы» navigator to Overview for Squad, Transfers, Contracts, Tactics, Table and Finance.
+- Each Overview section item is clickable and switches directly to the selected game section.
