@@ -85,3 +85,75 @@
   .contract-actions,.contract-metric { grid-column:1/-1; }
   .contract-actions { display:grid; grid-template-columns:1fr 1fr; }
 }
+
+/* 2026-09-27 — Global contracts readability pass. */
+.contracts-panel {
+  overflow: hidden;
+}
+.contracts-header h2 {
+  font-size: 32px;
+  line-height: 1.05;
+}
+.contracts-header p {
+  font-size: 15px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.contracts-budget {
+  min-width: 0;
+}
+.contracts-budget span {
+  font-size: 12px;
+}
+.contracts-budget strong {
+  font-size: 21px;
+}
+.contract-summary-grid > div {
+  min-width: 0;
+  padding: 17px 18px;
+}
+.contract-summary-grid span {
+  font-size: 12px;
+}
+.contract-summary-grid strong {
+  font-size: 25px;
+}
+.contract-role-filter {
+  min-height: 38px;
+  font-size: 13px;
+}
+.contract-player-row {
+  min-height: 76px;
+  padding: 11px 13px;
+  gap: 11px;
+}
+.contract-player-name strong {
+  font-size: 16px;
+}
+.contract-player-name span {
+  font-size: 9px;
+}
+.contract-player-main>span {
+  font-size: 12px;
+}
+.contract-metric small {
+  font-size: 10px;
+}
+.contract-metric strong {
+  font-size: 15px;
+}
+.contract-actions button {
+  min-height: 42px;
+  font-size: 13px;
+}
+.contract-empty strong {
+  font-size: 16px;
+}
+.contract-empty span {
+  font-size: 14px;
+}
+@media (max-width: 760px) {
+  .contract-player-row {
+    min-height: 82px;
+  }
+}
