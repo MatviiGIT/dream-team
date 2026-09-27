@@ -673,11 +673,6 @@ function Overview({
             </div>
           ) : <div className="empty-state">{ru.overview.firstMatch}</div>}
 
-          {lastMatch && (
-            <div className="mini-stats">
-              <span>{ru.overview.shots} {lastMatch.homeShots} — {lastMatch.awayShots}</span>
-            </div>
-          )}
         </section>
       </div>
 
