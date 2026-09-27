@@ -896,3 +896,100 @@
 
 /* Future management control standard: range sliders should use the same in-app,
    non-native visual language as these dropdowns rather than browser-default controls. */
+
+/* 2026-09-27 — Global transfer readability pass. */
+.transfers-panel {
+  overflow: hidden;
+}
+.transfers-header h2 {
+  font-size: 32px;
+  line-height: 1.05;
+}
+.transfers-header p {
+  font-size: 15px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.transfers-budget {
+  min-width: 0;
+  padding: 18px 20px;
+}
+.transfers-budget span {
+  font-size: 13px;
+}
+.transfers-budget strong {
+  font-size: 30px;
+}
+.transfers-budget small {
+  font-size: 13px;
+}
+.transfer-search span,
+.transfer-filter-group>span,
+.transfer-filter-field>span,
+.transfer-filter-range>span {
+  font-size: 12px;
+}
+.transfer-search input {
+  height: 48px;
+  font-size: 14px;
+}
+.transfer-filter-trigger {
+  min-height: 48px;
+  font-size: 14px;
+}
+.transfer-filter-chip {
+  min-height: 38px;
+  font-size: 13px;
+}
+.transfer-market-meta>div strong {
+  font-size: 18px;
+}
+.transfer-market-meta>div span {
+  font-size: 13px;
+}
+.transfer-player-card {
+  min-height: 78px;
+  padding: 11px 13px;
+  gap: 11px;
+}
+.transfer-player-name-line strong {
+  font-size: 17px;
+}
+.transfer-player-main>span {
+  font-size: 13px;
+}
+.transfer-player-role small,
+.transfer-player-stat small {
+  font-size: 10px;
+}
+.transfer-player-role strong {
+  font-size: 15px;
+}
+.transfer-player-stat strong {
+  font-size: 19px;
+}
+.transfer-player-finance strong {
+  font-size: 17px;
+}
+.transfer-player-finance span {
+  font-size: 12px;
+}
+.transfer-buy-button {
+  min-height: 42px;
+  font-size: 14px;
+}
+.transfer-empty strong {
+  font-size: 17px;
+}
+.transfer-empty span {
+  font-size: 14px;
+  line-height: 1.45;
+}
+@media (max-width: 760px) {
+  .transfer-player-card {
+    min-height: 82px;
+  }
+  .transfer-player-name-line strong {
+    font-size: 16px;
+  }
+}
