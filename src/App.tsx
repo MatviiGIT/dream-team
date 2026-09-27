@@ -7,8 +7,9 @@ import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storag
 import { ru } from './i18n/ru';
 import { TransferMarket } from './components/TransferMarket';
 import { Contracts } from './components/Contracts';
+import { Training } from './components/Training';
 
-const tabs = ['overview', 'squad', 'transfers', 'contracts', 'tactics', 'table', 'finances'] as const;
+const tabs = ['overview', 'squad', 'transfers', 'contracts', 'training', 'tactics', 'table', 'finances'] as const;
 type Tab = (typeof tabs)[number];
 type Theme = 'aurora' | 'midnight' | 'light';
 
@@ -270,6 +271,12 @@ function App() {
             )}
             {tab === 'contracts' && (
               <Contracts
+                game={game}
+                onChange={(nextGame) => setGame(nextGame)}
+              />
+            )}
+            {tab === 'training' && (
+              <Training
                 game={game}
                 onChange={(nextGame) => setGame(nextGame)}
               />
