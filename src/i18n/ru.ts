@@ -69,6 +69,8 @@ export const ru = {
     eyebrow: 'МАТЧ',
     season: 'СЕЗОН',
     round: 'Тур',
+    home: 'Хозяева',
+    away: 'Гости',
     firstHalf: '1-й тайм',
     secondHalf: '2-й тайм',
     halfTime: 'Перерыв',
