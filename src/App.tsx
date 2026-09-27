@@ -174,7 +174,7 @@ function StartScreen(p:{
         <footer><button className="primary" onClick={()=>p.setCreating(true)}>+ NEW CAREER</button></footer>
       </div> : <div className="new-career">
         <label>MANAGER NAME<input value={p.manager} onChange={e=>p.setManager(e.target.value)} placeholder="Manager"/></label>
-        <div className="filters"><label>COUNTRY<select value={p.country} onChange={e=>{p.setCountry(e.target.value);p.setSelectedClub('')}}>{['England','Spain','Germany','Italy','France'].map(c=><option key={c}>{c}</option>)}</select></label>
+        <div className="filters"><label>COUNTRY<select value={p.country} onChange={e=>{p.setCountry(e.target.value);p.setSelectedClub('')}}>{['England','Spain','Germany','Italy','France','Netherlands','Portugal','Belgium','Turkey','Austria','Scotland','Denmark'].map(c=><option key={c}>{c}</option>)}</select></label>
         <label>DIVISION<select value={p.leagueLevel} onChange={e=>{p.setLeagueLevel(Number(e.target.value) as 1|2);p.setSelectedClub('')}}><option value={1}>Premier</option><option value={2}>Championship</option></select></label></div>
         <div className="club-picker">{p.preview.map(c=><button key={c.id} className={p.selectedClub===c.id?'selected':''} onClick={()=>p.setSelectedClub(c.id)}>
           <span className="club-dot" style={{background:c.color}}>{c.shortName}</span><strong>{c.name}</strong><small>OVR {Math.round(c.reputation)}</small>
