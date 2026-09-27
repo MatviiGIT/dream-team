@@ -72,9 +72,28 @@ function applyResult(rows:TableRow[],x:MatchResult){
     return {...row,played:row.played+1,wins:row.wins+(win?1:0),draws:row.draws+(draw?1:0),losses:row.losses+(win||draw?0:1),goalsFor:row.goalsFor+gf,goalsAgainst:row.goalsAgainst+ga,points:row.points+(win?3:draw?1:0)};
   }));
 }
-function defaultXI(ids:string[],players:Record<string,Player>){
-  const wanted:Position[]=['GK','DEF','DEF','DEF','DEF','MID','MID','MID','FWD','FWD','FWD'], left=new Set(ids),out:string[]=[];
-  for(const p of wanted){ const id=ids.filter(x=>left.has(x)&&players[x]?.position===p).sort((a,b)=>players[b].overall-players[a].overall)[0]??ids.filter(x=>left.has(x)).sort((a,b)=>players[b].overall-players[a].overall)[0]; if(id){out.push(id);left.delete(id);} }
+function formationRoles(formation:Club['formation']):Position[]{
+  const map:Record<Club['formation'],Position[]> = {
+    '4-3-3':['GK','DEF','DEF','DEF','DEF','MID','MID','MID','FWD','FWD','FWD'],
+    '4-4-2':['GK','DEF','DEF','DEF','DEF','MID','MID','MID','MID','FWD','FWD'],
+    '4-2-3-1':['GK','DEF','DEF','DEF','DEF','MID','MID','MID','MID','MID','FWD'],
+    '4-5-1':['GK','DEF','DEF','DEF','DEF','MID','MID','MID','MID','MID','FWD'],
+    '3-5-2':['GK','DEF','DEF','DEF','MID','MID','MID','MID','MID','FWD','FWD'],
+    '3-4-3':['GK','DEF','DEF','DEF','MID','MID','MID','MID','FWD','FWD','FWD'],
+    '5-3-2':['GK','DEF','DEF','DEF','DEF','DEF','MID','MID','MID','FWD','FWD'],
+    '5-4-1':['GK','DEF','DEF','DEF','DEF','DEF','MID','MID','MID','MID','FWD'],
+    '4-1-4-1':['GK','DEF','DEF','DEF','DEF','MID','MID','MID','MID','MID','FWD'],
+    '3-4-2-1':['GK','DEF','DEF','DEF','MID','MID','MID','MID','MID','MID','FWD'],
+  };
+  return map[formation];
+}
+function defaultXI(ids:string[],players:Record<string,Player>,formation:Club['formation']='4-3-3'){
+  const wanted=formationRoles(formation), left=new Set(ids),out:string[]=[];
+  for(const p of wanted){
+    const id=ids.filter(x=>left.has(x)&&players[x]?.position===p).sort((a,b)=>players[b].overall-players[a].overall)[0]
+      ??ids.filter(x=>left.has(x)).sort((a,b)=>players[b].overall-players[a].overall)[0];
+    if(id){out.push(id);left.delete(id);}
+  }
   return out;
 }
 function makeWorld(){
@@ -185,7 +204,7 @@ function endSeason(s:GameState){
       s.players[id]={id,name:firstNames[(s.season+n)%firstNames.length]+' '+lastNames[(s.season*2+n*3)%lastNames.length],age:int(r,17,20),position:pos,nationality:c.country,skills:publicSkills(q),overall:o,potential:clamp(o+int(r,10,20),o,97),marketValue:Math.max(100000,o*o*6000),wage:Math.max(400,o*12),fitness:100,morale:int(r,68,90),goals:0,assists:0,appearances:0,careerGoals:0,careerAssists:0,careerAppearances:0,transferListed:false};
       c.playerIds.push(id);n++;
     }
-    c.startingXI=defaultXI(c.playerIds,s.players);c.wageBill=c.playerIds.reduce((sum,id)=>sum+s.players[id].wage,0);
+    c.startingXI=defaultXI(c.playerIds,s.players,c.formation);c.wageBill=c.playerIds.reduce((sum,id)=>sum+s.players[id].wage,0);
   });
   Object.values(s.leagues).forEach(l=>s.tables[l.id]=emptyTable(l.clubIds));
   s.managerReputation=clamp(s.managerReputation+(pos<=2?7:pos<=4?3:pos>=7?-3:0),1,100);
@@ -222,7 +241,7 @@ export function sellPlayer(s:GameState,id:string){
   c.playerIds=c.playerIds.filter(x=>x!==id);c.budget+=p.marketValue;delete n.players[id];c.wageBill=c.playerIds.reduce((sum,x)=>sum+n.players[x].wage,0);return {...n,updatedAt:new Date().toISOString()};
 }
 export function updateFormation(s:GameState,formation:Club['formation']){
-  const n=structuredClone(s) as GameState;n.clubs[n.clubId].formation=formation;n.clubs[n.clubId].startingXI=defaultXI(n.clubs[n.clubId].playerIds,n.players);return {...n,updatedAt:new Date().toISOString()};
+  const n=structuredClone(s) as GameState;n.clubs[n.clubId].formation=formation;n.clubs[n.clubId].startingXI=defaultXI(n.clubs[n.clubId].playerIds,n.players,n.clubs[n.clubId].formation);return {...n,updatedAt:new Date().toISOString()};
 }
 export function swapStartingPlayers(s:GameState,a:string,b:string){const n=structuredClone(s) as GameState,xi=n.clubs[n.clubId].startingXI,i=xi.indexOf(a),j=xi.indexOf(b);if(i>=0&&j>=0)[xi[i],xi[j]]=[xi[j],xi[i]];return {...n,updatedAt:new Date().toISOString()};}
 export function takeJob(s:GameState,clubId:string){if(!s.jobOffers.some(o=>o.clubId===clubId))throw new Error('Предложение недоступно');const n=structuredClone(s) as GameState;n.clubId=clubId;n.jobOffers=[];n.updatedAt=new Date().toISOString();return n;}
