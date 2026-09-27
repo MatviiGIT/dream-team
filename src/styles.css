@@ -7083,3 +7083,107 @@ select optgroup {
     padding: 14px;
   }
 }
+
+
+/* 2026-09-27 — Performance + Overview section navigator. */
+.app-shell::before,
+.app-shell::after {
+  animation: none !important;
+  will-change: auto;
+}
+
+.overview-screen {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.overview-section-nav {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.overview-section-link {
+  min-width: 0;
+  min-height: 88px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02));
+  color: var(--text);
+  text-align: left;
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+}
+
+.overview-section-link:hover,
+.overview-section-link:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(117,167,255,.28);
+  background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.03));
+}
+
+.overview-section-link-title {
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.overview-section-link strong {
+  min-width: 0;
+  max-width: 100%;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 950;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overview-section-link small {
+  min-width: 0;
+  max-width: 100%;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overview-screen > .dashboard-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+@media (max-width: 1180px) {
+  .overview-section-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .overview-screen {
+    gap: 10px;
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
+
+  .overview-section-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .overview-section-link {
+    min-height: 82px;
+    padding: 11px 12px;
+  }
+}
