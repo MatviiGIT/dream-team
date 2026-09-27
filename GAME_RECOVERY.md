@@ -759,3 +759,11 @@ Then:
 - Added pre-training feedback for average XP and the positions that benefit most from the selected focus.
 - Added a persistent-on-screen session result after training, including upgraded attributes, OVR changes, fitness/morale impact and the selected focus.
 - Clarified the player development bar as «XP / 100» and explicitly marks players whose OVR has reached their potential.
+
+
+### 2026-09-27 — Product direction: simple world-football simulator
+- Removed Training and Contracts from the active in-game navigation. The underlying files/state are kept for compatibility while the simplified game direction is finalized.
+- Replaced the persistent left sidebar with a main Overview hub containing clickable section cards.
+- Squad, Transfers, Tactics, League Table and Finances now open as dedicated fullscreen in-game views with a simple «Закрыть» control returning to Overview.
+- Keep the complex, valuable systems inside those screens; simplify the game primarily by reducing navigation friction and routine management.
+- Long-term progression should emphasize a living football world: players develop, reach a peak, age, retire and are replaced by new generations across many playable clubs and seasons.
