@@ -144,7 +144,7 @@ export function Training({ game, onChange }: { game: GameState; onChange: (nextG
               <strong>{focusItem.title}</strong>
             </div>
             <div className="training-result-summary">
-              <b>{lastChanges.length}</b> {ru.training.playersProgressed.toLowerCase()} · <b>{lastChanges.filter((change) => change.changes.length).length}</b> {ru.training.attributesImproved.toLowerCase()}
+              <b>{roster.length}</b> {ru.training.playersProgressed} · <b>{lastChanges.filter((change) => change.changes.length).length}</b> {ru.training.attributesImproved}
             </div>
           </div>
           <div className="training-result-changes">
