@@ -43,7 +43,7 @@ function recalculateOverall(player: Player): Player {
 function improvePlayer(player: Player, focus: TrainingFocus): Player {
   const startingXp = clamp(player.developmentXp ?? 0, 0, 99.99);
   let xp = startingXp + trainingXpGain(player, focus);
-  let next = {
+  let next: Player = {
     ...player,
     developmentXp: xp,
     fitness: clamp(player.fitness - 4, 0, 100),
