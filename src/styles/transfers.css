@@ -1,6 +1,0 @@
-/* Transfer market skin is intentionally kept as a separate import for compatibility.
-   The visual system is defined centrally in src/styles.css so the desktop game has one
-   consistent fullscreen layout and does not inherit the old dashboard skin. */
-.transfer-filter-field.open { z-index: 300; }
-.transfer-choice-menu { z-index: 500; }
-.transfer-notice { pointer-events: auto; }
