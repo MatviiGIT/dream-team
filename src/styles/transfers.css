@@ -1047,3 +1047,37 @@
     font-size: 14px;
   }
 }
+
+
+/* 2026-09-27 — Transfer header cleanup and compact secondary info blocks. */
+.transfers-header {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.transfer-market-meta > div {
+  min-width: 0;
+  padding: 8px 11px;
+  border: 1px solid rgba(240,184,90,.16);
+  border-radius: 10px;
+  background: rgba(240,184,90,.045);
+}
+.transfer-market-meta > div strong {
+  font-size: 17px;
+}
+.transfer-market-meta > div span {
+  font-size: 13px;
+}
+.transfers-budget > small {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 8px;
+  padding: 5px 8px;
+  border: 1px solid rgba(240,184,90,.13);
+  border-radius: 8px;
+  background: rgba(240,184,90,.035);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .transfers-budget > small { width: 100%; }
+}
