@@ -101,30 +101,6 @@ export interface MatchEvent {
   description: string;
 }
 
-export interface MatchPlayerStats {
-  playerId: string;
-  minutes: number;
-  rating: number;
-  shots: number;
-  goals: number;
-  assists: number;
-}
-
-export interface MatchResult {
-  homeTeamId: string;
-  awayTeamId: string;
-  homeGoals: number;
-  awayGoals: number;
-  homeXg: number;
-  awayXg: number;
-  homeShots: number;
-  awayShots: number;
-  homePossession: number;
-  awayPossession: number;
-  events: MatchEvent[];
-  playerStats?: Record<string, MatchPlayerStats>;
-}
-
 export interface Fixture {
   id: string;
   round: number;
