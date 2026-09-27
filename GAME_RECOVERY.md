@@ -710,3 +710,12 @@ Then:
 - Kept transfer result count and budget/player summary as dedicated small blocks.
 - Tightened the fullscreen Overview latest-result card and made its existing information use the card area more deliberately.
 - Persistent project rule: fullscreen desktop screens should maximize useful content density and avoid decorative empty space.
+
+
+
+### 2026-09-27 — Overview scale + pitch clipping correction
+- Increased the Overview «Состояние сезона» card and all four stat tiles: labels, values and internal spacing now use the same readable scale.
+- Reduced the oversized desktop padding on Overview cards to 18px/20px so content sits closer to the card edges and fullscreen space is used more efficiently.
+- Reduced empty visual space inside «Последний результат» without changing its data.
+- Unified Overview secondary labels such as «Позиция», «Матчи», «Победы» and «Очки» at a readable 15px scale, while smaller utility metadata was raised to 14px.
+- Kept the pitch surface overflow visible, but clipped only the field SVG markings to the field viewport so the center circle renders as the correct half-circle.
