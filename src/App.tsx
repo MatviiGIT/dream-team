@@ -305,6 +305,7 @@ function App() {
       )}
     </div>
   );
+}
 
 function StartScreen(props: {
   careers: StoredCareer[];
