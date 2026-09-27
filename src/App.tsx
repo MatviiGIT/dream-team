@@ -1727,7 +1727,6 @@ function FinanceScreen({ game }: { game: GameState }) {
               <span>{ru.financesPage.income}</span>
               <strong>{formatMoney(totalIncome)}</strong>
             </div>
-            <span className="finance-season-badge">+</span>
           </div>
           <div className="finance-season-rows">
             <div>
@@ -1747,7 +1746,6 @@ function FinanceScreen({ game }: { game: GameState }) {
               <span>{ru.financesPage.expenses}</span>
               <strong>{formatMoney(totalExpenses)}</strong>
             </div>
-            <span className="finance-season-badge">−</span>
           </div>
           <div className="finance-season-rows">
             <div>
@@ -1788,7 +1786,6 @@ function FinanceScreen({ game }: { game: GameState }) {
                   <span>{ru.financesPage.incomeLabel}</span>
                   <strong>+{formatMoney(finance.lastIncome)}</strong>
                 </div>
-                <span className="finance-season-badge">+</span>
               </div>
               <div className="finance-ledger-rows">
                 <div><span>{ru.financesPage.matchdayIncome}</span><strong>+{formatMoney(finance.lastMatchdayIncome)}</strong></div>
@@ -1803,7 +1800,6 @@ function FinanceScreen({ game }: { game: GameState }) {
                   <span>{ru.financesPage.expenseLabel}</span>
                   <strong>-{formatMoney(finance.lastExpenses)}</strong>
                 </div>
-                <span className="finance-season-badge">−</span>
               </div>
               <div className="finance-ledger-rows">
                 <div><span>{ru.financesPage.wageExpense}</span><strong>-{formatMoney(finance.lastExpenses)}</strong></div>
