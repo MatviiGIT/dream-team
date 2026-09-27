@@ -178,7 +178,7 @@ function endSeason(s:GameState){
     c.startingXI=c.startingXI.filter(id=>c.playerIds.includes(id));
     let n=0;
     while(c.playerIds.length<SQUAD){
-      const id=c.id+'_youth_'+s.season+'_'+n,r=rnd(hash(id)),pos:(Position)=>(['GK','DEF','MID','FWD'] as Position[])[n%4];
+      const id=c.id+'_youth_'+s.season+'_'+n,r=rnd(hash(id)),pos:Position=(['GK','DEF','MID','FWD'] as Position[])[n%4];
       const base=clamp(c.reputation-18+int(r,-4,10),35,78);
       const q:InternalSkills={speed:clamp(base+int(r,-4,8),25,92),passing:clamp(base+int(r,-4,8),25,92),shooting:clamp(base+int(r,-4,8)+(pos==='FWD'?7:0),20,93),tackling:clamp(base+int(r,-4,8)+(pos==='DEF'?7:0),20,93),goalkeeping:pos==='GK'?clamp(base+8,25,92):5,technique:clamp(base+int(r,-4,8),25,92),physical:clamp(base+int(r,-4,8),25,92)};
       const o=overall(q,pos);
