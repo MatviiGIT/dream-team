@@ -113,7 +113,12 @@ function App() {
   const [game, setGame] = useState<GameState | null>(null);
   const [careers, setCareers] = useState<StoredCareer[]>(() => loadCareers());
   const [tab, setTab] = useState<Tab>('overview');
-  const [matchCenter, setMatchCenter] = useState<{ match: MatchResult; season: number; round: number } | null>(null);
+  const [matchCenter, setMatchCenter] = useState<{
+    match: MatchResult;
+    season: number;
+    round: number;
+    nextGame: GameState;
+  } | null>(null);
   const [managerName, setManagerName] = useState('');
   const [selectedClub, setSelectedClub] = useState<string>(clubOrder[5]);
   const [nameError, setNameError] = useState('');
@@ -233,9 +238,13 @@ function App() {
                   const matchSeason = game.season;
                   const matchRound = game.currentRound;
                   const nextGame = playNextRound(game);
-                  setGame(nextGame);
                   if (nextGame.lastMatch) {
-                    setMatchCenter({ match: nextGame.lastMatch, season: matchSeason, round: matchRound });
+                    setMatchCenter({
+                      match: nextGame.lastMatch,
+                      season: matchSeason,
+                      round: matchRound,
+                      nextGame,
+                    });
                   }
                 }}
               />
@@ -282,7 +291,10 @@ function App() {
           match={matchCenter.match}
           season={matchCenter.season}
           round={matchCenter.round}
-          onClose={() => setMatchCenter(null)}
+          onClose={() => {
+            setGame(matchCenter.nextGame);
+            setMatchCenter(null);
+          }}
         />
       )}
     </div>
@@ -907,9 +919,11 @@ function LiveMatch({
             <button className="ghost-button" type="button" onClick={() => setPaused((value) => !value)}>
               {paused ? ru.liveMatch.resume : ru.liveMatch.pause}
             </button>
-            <button className="ghost-button live-close-button" type="button" onClick={onClose}>
-              {finished ? ru.liveMatch.close : ru.liveMatch.exit}
-            </button>
+            {finished && (
+              <button className="ghost-button live-close-button" type="button" onClick={onClose}>
+                {ru.liveMatch.close}
+              </button>
+            )}
           </div>
         </header>
 
