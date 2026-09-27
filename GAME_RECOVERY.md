@@ -676,3 +676,10 @@ Then:
 - Kept the round result as a prominent summary-style card aligned to one-third of the section width.
 - Balanced «Зарплаты за тур» to the same one-third width as the «Чистый результат» summary card, while the transfer budget keeps the remaining two-thirds.
 - Preserved the two detailed income/expense cards inside the Last Round section and kept mobile stacking behavior.
+
+### 2026-09-27 — Finance Club two-column redesign + Overview readability
+- Rebuilt the «Финансы клуба» season summary into two large side-by-side flow cards: «Доходы» and «Расходы», with clear line-item breakdowns and a separate season balance strip.
+- Kept transfer, wage and contract amounts in the financial breakdown without changing the underlying finance calculations.
+- Enlarged Finance Club typography again so the main totals and line items are readable at a glance.
+- Removed the Overview right utility rail to reclaim its unused vertical/horizontal space for the main dashboard.
+- Enlarged Overview headings, team names, score, summary numbers, match metadata, calendar rows and manager information, while keeping responsive reductions for narrow screens.
