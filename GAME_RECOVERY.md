@@ -698,3 +698,15 @@ Then:
 - Widened the Transfer Market potential column and added ellipsis protection so «Потенциал» cannot overlap the player price.
 - Increased Transfer filter labels, choices, chips, inputs and dropdown options for clearer readability.
 - Presentation-only changes; game calculations and save data are unchanged.
+
+
+### 2026-09-27 — Unified secondary typography + fullscreen density cleanup
+- Removed redundant visible labels from Overview, Squad, Tactics, Transfers and Contracts: «ВАШ КЛУБ», «Схема», «СКАМЕЙКА», «ТРАНСФЕРНЫЙ ЦЕНТР», «Поиск игрока» and the Contracts subtitle.
+- Removed bottom divider lines from Transfer and Contracts headers.
+- Unified in-game secondary typography at 14px and enlarged the season/round badge.
+- Increased the Tactics formation label/value for readability.
+- Removed pitch wrapper/field clipping overflow.
+- Removed separator lines from Income/Expenses rows in «Итог тура» and replaced them with spacing.
+- Kept transfer result count and budget/player summary as dedicated small blocks.
+- Tightened the fullscreen Overview latest-result card and made its existing information use the card area more deliberately.
+- Persistent project rule: fullscreen desktop screens should maximize useful content density and avoid decorative empty space.
