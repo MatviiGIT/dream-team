@@ -76,6 +76,7 @@ function makePlayer(clubIndex: number, playerIndex: number, clubReputation: numb
     goals: 0,
     assists: 0,
     appearances: 0,
+    developmentXp: 0,
   };
 }
 
