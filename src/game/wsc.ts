@@ -179,7 +179,8 @@ function aiTransfers(s:GameState){
     seller.playerIds=seller.playerIds.filter(id=>id!==p.id); seller.startingXI=seller.startingXI.filter(id=>id!==p.id); seller.budget+=p.marketValue;
     buyer.playerIds.push(p.id); buyer.budget-=p.marketValue;p.transferListed=false;
     seller.wageBill=seller.playerIds.reduce((sum,id)=>sum+s.players[id].wage,0);buyer.wageBill=buyer.playerIds.reduce((sum,id)=>sum+s.players[id].wage,0);
-    buyer.startingXI=defaultXI(buyer.playerIds,s.players);
+    seller.startingXI=defaultXI(seller.playerIds,s.players,seller.formation);
+    buyer.startingXI=defaultXI(buyer.playerIds,s.players,buyer.formation);
   });
 }
 function endSeason(s:GameState){
@@ -189,6 +190,15 @@ function endSeason(s:GameState){
     const rows=sortTable(s.tables[l.id]);
     if(l.level===1){const down=rows.at(-1),lower=Object.values(s.leagues).find(x=>x.country===l.country&&x.level===2);if(down&&lower){l.clubIds=l.clubIds.filter(id=>id!==down.teamId);lower.clubIds.push(down.teamId);s.clubs[down.teamId].leagueId=lower.id;}}
     else {const up=rows[0],upper=Object.values(s.leagues).find(x=>x.country===l.country&&x.level===1);if(up&&upper){l.clubIds=l.clubIds.filter(id=>id!==up.teamId);upper.clubIds.push(up.teamId);s.clubs[up.teamId].leagueId=upper.id;}}
+  });
+  Object.values(s.leagues).forEach(l=>{
+    const rows=sortTable(s.tables[l.id]);
+    rows.forEach((row,index)=>{
+      const c=s.clubs[row.teamId]; if(!c)return;
+      const r=rnd(hash('world:'+s.season+':'+row.teamId));
+      const positionBoost=l.level===1 ? (index===0?2:index>=6?-2:0) : (index===0?3:index>=6?-1:0);
+      c.reputation=clamp(c.reputation+positionBoost+int(r,-1,1),35,97);
+    });
   });
   Object.values(s.players).forEach(p=>{
     p.age++;
@@ -233,7 +243,7 @@ export function simulateNextWeek(s:GameState){
   n.fixtures.filter(f=>f.round===n.week&&!f.played).forEach((f,i)=>{
     const result=simulateMatch(n.clubs[f.homeTeamId],n.clubs[f.awayTeamId],n.players,hash(n.season+':'+n.week+':'+i+':'+f.id));
     f.played=true;f.result=result;results.push(result);n.tables[f.leagueId]=applyResult(n.tables[f.leagueId],result);
-    [f.homeTeamId,f.awayTeamId].forEach(id=>{const c=n.clubs[id],gf=result.homeTeamId===id?result.homeGoals:result.awayGoals,ga=result.homeTeamId===id?result.awayGoals:result.homeGoals; c.budget=Math.max(0,c.budget+(gf>ga?70000:gf===ga?30000:10000)+(id===result.homeTeamId?25000:10000)-c.wageBill);c.playerIds.forEach(pid=>{const p=n.players[pid];if(!p)return;const started=c.startingXI.includes(pid);const fatigue= c.pressure==='HIGH'?11:c.pressure==='LOW'?7:9;p.fitness=clamp(p.fitness+(started?-fatigue:3),30,100);if(started)p.careerAppearances++;p.careerGoals+=result.events.filter(e=>e.playerId===pid).length;p.careerAssists+=result.events.filter(e=>e.assistPlayerId===pid).length;});});
+    [f.homeTeamId,f.awayTeamId].forEach(id=>{const c=n.clubs[id],gf=result.homeTeamId===id?result.homeGoals:result.awayGoals,ga=result.homeTeamId===id?result.awayGoals:result.homeGoals; c.budget=Math.max(0,c.budget+(gf>ga?70000:gf===ga?30000:10000)+(id===result.homeTeamId?25000:10000)-c.wageBill);c.playerIds.forEach(pid=>{const p=n.players[pid];if(!p)return;const started=c.startingXI.includes(pid);const fatigue= c.pressure==='HIGH'?11:c.pressure==='LOW'?7:9;p.fitness=clamp(p.fitness+(started?-fatigue:3),30,100);if(started){p.appearances++;p.careerAppearances++;}p.careerGoals+=result.events.filter(e=>e.playerId===pid).length;p.careerAssists+=result.events.filter(e=>e.assistPlayerId===pid).length;});});
   });
   aiTransfers(n);n.lastWeekResults=results;n.lastMatch=results.find(x=>x.homeTeamId===n.clubId||x.awayTeamId===n.clubId);n.week++;if(n.week>WEEKS)endSeason(n);n.updatedAt=new Date().toISOString();return n;
 }
@@ -241,7 +251,7 @@ export function buyPlayer(s:GameState,id:string){
   if(!isTransferWindow(s))throw new Error('Трансферное окно закрыто');const n=structuredClone(s) as GameState,b=n.clubs[n.clubId],p=n.players[id];
   if(!p||!p.transferListed||b.playerIds.includes(id))throw new Error('Игрок недоступен');if(b.budget<p.marketValue)throw new Error('Недостаточно средств');if(b.playerIds.length>=SQUAD+2)throw new Error('Состав заполнен');
   const seller=Object.values(n.clubs).find(c=>c.playerIds.includes(id));if(!seller)throw new Error('Продавец не найден');
-  seller.playerIds=seller.playerIds.filter(x=>x!==id);seller.startingXI=seller.startingXI.filter(x=>x!==id);seller.budget+=p.marketValue;b.playerIds.push(id);b.budget-=p.marketValue;p.transferListed=false;b.startingXI=defaultXI(b.playerIds,n.players);seller.wageBill=seller.playerIds.reduce((sum,x)=>sum+n.players[x].wage,0);b.wageBill=b.playerIds.reduce((sum,x)=>sum+n.players[x].wage,0);return {...n,updatedAt:new Date().toISOString()};
+  seller.playerIds=seller.playerIds.filter(x=>x!==id);seller.startingXI=seller.startingXI.filter(x=>x!==id);seller.budget+=p.marketValue;b.playerIds.push(id);b.budget-=p.marketValue;p.transferListed=false;seller.startingXI=defaultXI(seller.playerIds,n.players,seller.formation);b.startingXI=defaultXI(b.playerIds,n.players,b.formation);seller.wageBill=seller.playerIds.reduce((sum,x)=>sum+n.players[x].wage,0);b.wageBill=b.playerIds.reduce((sum,x)=>sum+n.players[x].wage,0);return {...n,updatedAt:new Date().toISOString()};
 }
 export function sellPlayer(s:GameState,id:string){
   if(!isTransferWindow(s))throw new Error('Трансферное окно закрыто');const n=structuredClone(s) as GameState,c=n.clubs[n.clubId],p=n.players[id];
