@@ -719,3 +719,10 @@ Then:
 - Reduced empty visual space inside «Последний результат» without changing its data.
 - Unified Overview secondary labels such as «Позиция», «Матчи», «Победы» and «Очки» at a readable 15px scale, while smaller utility metadata was raised to 14px.
 - Kept the pitch surface overflow visible, but clipped only the field SVG markings to the field viewport so the center circle renders as the correct half-circle.
+
+
+### 2026-09-27 — Overview stat tiles real size correction
+- The «Состояние сезона» tiles now explicitly fill the available card height with a 2×2 equal grid instead of leaving most of the card as empty space.
+- Reduced Overview card corner padding and the gaps between dashboard cards for the fullscreen layout.
+- Set «Позиция / Матчи / Победы / Очки» to the same 14px secondary-text scale used by the Overview's other secondary metadata.
+- Kept the previously corrected pitch SVG clipping unchanged.
