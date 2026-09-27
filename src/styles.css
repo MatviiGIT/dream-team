@@ -106,9 +106,10 @@ button, input, select { -webkit-tap-highlight-color:transparent; }
 
 /* ---------- career / start screen ---------- */
 .wsc-start-screen {
-  width:100vw;
-  height:100dvh;
-  min-height:620px;
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
   overflow:hidden;
   background:
     linear-gradient(180deg, rgba(255,255,255,.04), transparent 28%),
@@ -214,8 +215,17 @@ button, input, select { -webkit-tap-highlight-color:transparent; }
 
 /* ---------- main shell ---------- */
 .wsc-app-shell {
-  width:100vw;height:100dvh;display:flex;flex-direction:column;overflow:hidden;
-  background:var(--navy-900); color:var(--ink);
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:var(--navy-900);
+  color:var(--ink);
 }
 .wsc-app-header {
   flex:0 0 66px; display:flex; align-items:center; gap:12px; padding:0 20px;
@@ -941,4 +951,78 @@ html:fullscreen #root {
   .squad-tactics-caption strong { font-size:18px; }
   .squad-tactic-choices .tactic-choice { min-height:32px; }
   .squad-panel .team-sheet { margin-top:6px; }
+}
+
+
+/* Fullscreen stability:
+   the game shell is sized from the fullscreen root rather than the browser
+   viewport so mounting the career screen after entering fullscreen cannot shift it. */
+html:fullscreen,
+html:fullscreen body,
+html:fullscreen #root {
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+  margin:0;
+  overflow:hidden;
+}
+html:fullscreen #root {
+  position:relative;
+  inset:auto;
+}
+html:fullscreen .wsc-app-shell,
+html:fullscreen .wsc-start-screen {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  max-width:none;
+  max-height:none;
+  transform:none;
+}
+
+/* The main home screen is the primary navigation surface. */
+.wsc-app-content {
+  padding:16px 20px 20px;
+}
+.wsc-home-grid {
+  grid-template-columns:minmax(0,1fr) clamp(350px,29vw,440px);
+}
+.wsc-next-match-tile {
+  padding:13px 15px 12px;
+}
+.wsc-next-match-body {
+  padding:4px 0;
+}
+.wsc-schedule-tile {
+  padding-bottom:11px;
+}
+.wsc-home-secondary .wsc-team-tile {
+  padding:13px;
+}
+.wsc-two-actions {
+  gap:9px;
+}
+.wsc-action-tile {
+  padding:12px 14px;
+}
+@media (max-height:780px) {
+  .wsc-app-content { padding:11px 16px 15px; }
+  .wsc-week-strip { margin-bottom:7px; }
+  .wsc-home-grid { height:calc(100% - 39px); gap:9px; }
+  .wsc-home-primary,.wsc-home-secondary { gap:9px; }
+  .wsc-next-match-tile { padding:9px 12px; }
+  .wsc-next-match-body { height:auto; }
+  .wsc-big-crest { width:58px;height:58px; }
+  .wsc-next-match-club strong { font-size:14px; }
+  .wsc-next-match-ratings { padding:3px 0; }
+  .wsc-next-match-ratings span { padding:3px 6px; font-size:10px; }
+  .wsc-green-action { min-height:36px; font-size:13px; }
+  .wsc-schedule-tile,.wsc-team-tile,.wsc-action-tile { padding:9px; }
+}
+@media (min-width:1400px) and (min-height:800px) {
+  .wsc-app-content { padding:20px 26px 26px; }
+  .wsc-home-grid { gap:14px; }
+  .wsc-home-primary,.wsc-home-secondary { gap:14px; }
 }
