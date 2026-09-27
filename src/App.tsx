@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { GameState, Player, Club, Formation } from './domain/types';
+import type { GameState, Player, Club, Formation, TacticalMentality, TacticalPressure } from './domain/types';
 import {
   buyPlayer,
   createCareer,
@@ -14,6 +14,7 @@ import {
   swapStartingPlayers,
   takeJob,
   updateFormation,
+  updateTactics,
 } from './game/wsc';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
 
@@ -146,7 +147,7 @@ export default function App(){
 
     <main className="content">
       {screen==='home'&&<Home game={game} onScreen={setScreen} onPlay={advance}/>}
-      {screen==='squad'&&<Squad game={game} onHome={()=>setScreen('home')} onChange={next=>mutate(s=>swapStartingPlayers(s,next[0],next[1]))} onFormation={f=>mutate(s=>updateFormation(s,f))}/>}
+      {screen==='squad'&&<Squad game={game} onHome={()=>setScreen('home')} onChange={next=>mutate(s=>swapStartingPlayers(s,next[0],next[1]))} onFormation={f=>mutate(s=>updateFormation(s,f))} onTactics={(m,p)=>mutate(s=>updateTactics(s,m,p))}/>}
       {screen==='transfers'&&<Transfers game={game} onHome={()=>setScreen('home')} onBuy={id=>mutate(s=>buyPlayer(s,id))} onSell={id=>mutate(s=>sellPlayer(s,id))}/>}
       {screen==='competition'&&<Competition game={game} onHome={()=>setScreen('home')}/>}
       {screen==='news'&&<NewsScreen game={game} onHome={()=>setScreen('home')}/>}
@@ -289,11 +290,16 @@ function Home({game,onScreen,onPlay}:{game:GameState;onScreen:(x:Screen)=>void;o
   </div>;
 }
 
-function Squad({game,onHome,onChange,onFormation}:{game:GameState;onHome:()=>void;onChange:(pair:[string,string])=>void;onFormation:(f:Formation)=>void}){
-  const club=game.clubs[game.clubId],[first,setFirst]=useState('');
+function Squad({game,onHome,onChange,onFormation,onTactics}:{game:GameState;onHome:()=>void;onChange:(pair:[string,string])=>void;onFormation:(f:Formation)=>void;onTactics:(mentality:TacticalMentality,pressure:TacticalPressure)=>void}){
+  const club=game.clubs[game.clubId],[first,setFirst]=useState(''),[selected,setSelected]=useState('');
   const players=club.playerIds.map(id=>game.players[id]).filter(Boolean) as Player[];
   const xi=club.startingXI, layout=PITCH_LAYOUTS[club.formation];
-  const choose=(id:string)=>{if(!first)setFirst(id);else{onChange([first,id]);setFirst('')}};
+  const mentality=club.mentality??'NEUTRAL',pressure=club.pressure??'NORMAL';
+  const choose=(id:string)=>{setSelected(id);if(!first)setFirst(id);else{onChange([first,id]);setFirst('')}};
+  const cycleMentality=()=>{const v:TacticalMentality=mentality==='DEFENSIVE'?'NEUTRAL':mentality==='NEUTRAL'?'ATTACKING':'DEFENSIVE';onTactics(v,pressure)};
+  const cyclePressure=()=>{const v:TacticalPressure=pressure==='LOW'?'NORMAL':pressure==='NORMAL'?'HIGH':'LOW';onTactics(mentality,v)};
+  const focus=selected?game.players[selected]:undefined;
+  const bench=players.filter(p=>!xi.includes(p.id));
   return <section className="page squad-page">
     <div className="page-head squad-head">
       <div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>TEAM MANAGEMENT</span><h2>{club.name}</h2></div></div>
@@ -305,17 +311,31 @@ function Squad({game,onHome,onChange,onFormation}:{game:GameState;onHome:()=>voi
         <div className="pitch-box-lines"/><div className="pitch-centre-circle"/><div className="pitch-goal goal-top"/><div className="pitch-goal goal-bottom"/>
         {xi.map((id,i)=>{const player=game.players[id],xy=layout[i]??[50,50];return <button key={id} className={['player-dot-wsc',player?.position==='GK'?'gk':'',first===id?'picked':''].filter(Boolean).join(' ')} style={{left:xy[0]+'%',top:xy[1]+'%'}} onClick={()=>choose(id)}><b>{player?.overall??'?'}</b><span>{player?.name.split(' ')[0]??'Player'}</span></button>})}
       </div>
-      <div className="roster-table-wsc">
-        <div className="roster-head-wsc"><span># PLAYER</span><b>SPD</b><b>PASS</b><b>SHOT</b><b>TCKL</b><b>GK</b><b>OVR</b></div>
-        {players.map(p=><button className={xi.includes(p.id)?'roster-row-wsc starter':'roster-row-wsc'} key={p.id} onClick={()=>choose(p.id)}>
-          <span><strong>{p.name}</strong><small>{p.position} · {p.age} · {p.nationality}</small></span><b>{p.skills.speed}</b><b>{p.skills.passing}</b><b>{p.skills.shooting}</b><b>{p.skills.tackling}</b><b>{p.skills.goalkeeping}</b><b className="ovr">{p.overall}</b>
-        </button>)}
+      <div className="squad-side-wsc">
+        <div className="player-focus-wsc">
+          <div className="focus-title">PLAYER DETAILS</div>
+          {focus?<div className="focus-card-wsc"><div className="focus-avatar">{focus.overall}</div><div><strong>{focus.name}</strong><span>{focus.position} · {focus.age} · {focus.nationality}</span><small>SPD {focus.skills.speed} · PASS {focus.skills.passing} · SHOT {focus.skills.shooting}</small><small>TCKL {focus.skills.tackling} · GK {focus.skills.goalkeeping}</small></div></div>:<div className="focus-empty">Select a player. Select a second player to swap him with the first.</div>}
+        </div>
+        <div className="bench-wsc">
+          <div className="bench-title"><span>SUBSTITUTES</span><b>{bench.length}</b></div>
+          <div className="bench-grid-wsc">{bench.slice(0,8).map(p=><button key={p.id} className={first===p.id?'bench-player-wsc picked':''||'bench-player-wsc'} onClick={()=>choose(p.id)}><b>{p.overall}</b><span>{p.name.split(' ')[0]}</span><small>{p.position}</small></button>)}</div>
+        </div>
+        <div className="roster-table-wsc">
+          <div className="roster-head-wsc"><span>PLAYER</span><b>SPD</b><b>PASS</b><b>SHOT</b><b>TCKL</b><b>GK</b><b>OVR</b></div>
+          {players.map(p=><button className={xi.includes(p.id)?'roster-row-wsc starter':'roster-row-wsc'} key={p.id} onClick={()=>choose(p.id)}>
+            <span><strong>{p.name}</strong><small>{p.position} · {p.age} · {p.nationality}</small></span><b>{p.skills.speed}</b><b>{p.skills.passing}</b><b>{p.skills.shooting}</b><b>{p.skills.tackling}</b><b>{p.skills.goalkeeping}</b><b className="ovr">{p.overall}</b>
+          </button>)}
+        </div>
       </div>
     </div>
-    <div className="squad-bottom-controls"><span>{first?'SELECT ANOTHER PLAYER TO SWAP':'SELECT TWO PLAYERS TO SWAP'}</span><span>MENTALITY <b>NEUTRAL</b></span><span>PRESSURE <b>NORMAL</b></span><span>FORMATION <b>{club.formation}</b></span></div>
+    <div className="squad-bottom-controls">
+      <span>{first?'SELECT ANOTHER PLAYER TO SWAP':'SELECT TWO PLAYERS TO SWAP'}</span>
+      <button className="tactic-control-wsc" onClick={cycleMentality}><span>MENTALITY</span><b>{mentality}</b></button>
+      <button className="tactic-control-wsc" onClick={cyclePressure}><span>PRESSURE</span><b>{pressure}</b></button>
+      <span>FORMATION <b>{club.formation}</b></span>
+    </div>
   </section>;
 }
-
 function Transfers({game,onHome,onBuy,onSell}:{game:GameState;onHome:()=>void;onBuy:(id:string)=>void;onSell:(id:string)=>void}){
   const [tab,setTab]=useState<'buy'|'sell'>('buy'),[q,setQ]=useState('');
   const market=getMarketPlayers(game),club=game.clubs[game.clubId];
