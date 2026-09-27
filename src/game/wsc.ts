@@ -41,7 +41,7 @@ function publicSkills(s:InternalSkills):PlayerSkills{
   return {speed:s.speed,passing:s.passing,shooting:s.shooting,tackling:s.tackling,goalkeeping:s.goalkeeping};
 }
 function makePlayer(country:string, seedText:string, strength:number, index:number):Player{
-  const r=rnd(hash(seedText)); const pos:Position[]=['GK','DEF','DEF','DEF','DEF','MID','MID','MID','MID','FWD','FWD','FWD','DEF','MID','FWD','GK'][index];
+  const r=rnd(hash(seedText)); const positions: Position[]=['GK','DEF','DEF','DEF','DEF','MID','MID','MID','MID','FWD','FWD','FWD','DEF','MID','FWD','GK']; const pos=positions[index];
   const age=int(r,17,34), base=clamp(strength+int(r,-8,7),40,93);
   const s:InternalSkills={
     speed:clamp(base+int(r,-6,9),20,97),
