@@ -6858,3 +6858,29 @@ select optgroup {
     font-size: 25px;
   }
 }
+
+
+/* 2026-09-27 — Finance card containment + clean visual hierarchy. */
+.finance-page {
+  padding-bottom: 34px;
+}
+.finance-page .finance-season-card-header {
+  justify-content: flex-start;
+}
+.finance-page .finance-season-badge,
+.finance-page .finance-flow-badge {
+  display: none;
+}
+.finance-page .finance-section .finance-ledger-round {
+  align-items: stretch;
+  overflow: hidden;
+  padding-bottom: 2px;
+}
+.finance-page .finance-section .finance-ledger-round .finance-ledger-card {
+  min-height: 0;
+  height: auto;
+  overflow: hidden;
+}
+.finance-page .finance-section .finance-ledger-rows {
+  min-height: 0;
+}
