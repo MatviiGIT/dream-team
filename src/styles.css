@@ -493,3 +493,205 @@ html:fullscreen .app,html:fullscreen .start{position:absolute;inset:0;width:100%
   .player-dot-wsc small{top:46px;font-size:8px}
   .player-dot-wsc.gk small{top:auto;bottom:48px}
 }
+
+
+/* ============================================================
+   WSC screen transfer: schedule, newspaper, club viewer, saves
+   ============================================================ */
+
+/* Home schedule rows behave like native WSC cards, not generic table rows. */
+.schedule-row-button{
+  width:100%;padding:0 2px;background:transparent;color:#fff;text-align:left;
+  border:0;font:inherit;
+}
+.schedule-row-button:hover{background:rgba(255,255,255,.06)}
+
+/* Dedicated schedule */
+.schedule-page-body{
+  flex:1;min-height:0;display:flex;flex-direction:column;
+  padding:14px 16px 16px;overflow:hidden;
+}
+.schedule-calendar-head,.schedule-calendar-row{
+  display:grid;grid-template-columns:72px minmax(250px,1.6fr) minmax(160px,1fr) 100px 100px;
+  gap:10px;align-items:center;
+}
+.schedule-calendar-head{
+  flex:0 0 38px;background:#303247;color:#fff;padding:0 12px;
+  font-size:9px;font-weight:900;letter-spacing:.05em;
+}
+.schedule-calendar-list{flex:1;min-height:0;overflow:auto}
+.schedule-calendar-row{
+  width:100%;min-height:62px;border:0;border-bottom:2px solid #d2d4d7;
+  background:#f4f5f3;color:#192047;padding:6px 12px;text-align:left;
+}
+.schedule-calendar-row:hover{background:#e8ebef}
+.schedule-calendar-row.played{background:#e5e7e9}
+.schedule-calendar-row> b:first-child{font-size:11px}
+.schedule-team{display:flex;align-items:center;gap:9px;min-width:0}
+.schedule-team i{
+  width:32px;height:32px;flex:0 0 32px;border-radius:50%;display:grid;place-items:center;
+  color:#fff;font-size:7px;font-style:normal;font-weight:900;
+}
+.schedule-team strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.schedule-calendar-row small{color:#73798a;font-size:8px;font-weight:800}
+.schedule-calendar-row>span:nth-last-child(2){font-size:9px;font-weight:900;color:#60687a}
+.schedule-result{text-align:right;font-size:14px}
+.schedule-meta{display:flex;align-items:center;gap:5px;color:#626a7b}
+.schedule-meta b{font-size:15px;color:#19204f;margin-left:10px}
+.schedule-meta span{font-size:8px;font-weight:900}
+
+/* Competition rows are clickable club links. */
+.table-team-button,.leader-team-button{
+  width:100%;border:0;font:inherit;text-align:left;cursor:pointer;
+}
+.table-team-button{color:#192047}
+.table-team-button:hover{background:#e3e8ef}
+.table-team-button.yours{border-left:4px solid #3d6fd1}
+.leader-team-button:hover{background:#e8ebef}
+
+/* Newspaper: WSC's expanded newspaper is content-heavy rather than four generic cards. */
+.newspaper-layout{
+  flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 290px;
+  gap:12px;padding:12px 16px 16px;overflow:hidden;background:#1d215f;
+}
+.newspaper-paper{
+  min-width:0;min-height:0;overflow:auto;background:#ecebe5;color:#20243a;
+  padding:18px 22px;box-shadow:5px 5px 0 rgba(0,0,0,.14);
+}
+.paper-masthead{
+  display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:end;
+  border-bottom:5px double #25283b;padding-bottom:9px;
+}
+.paper-masthead span{font-family:Georgia,serif;font-size:25px;font-weight:900;letter-spacing:-.03em}
+.paper-masthead b{font-size:10px;letter-spacing:.09em}
+.paper-masthead small{font-size:8px;color:#6d7180}
+.lead-story{padding:16px 0 12px;border-bottom:1px solid #b8b9b6}
+.lead-story>span,.paper-grid article>span{font-size:8px;font-weight:900;letter-spacing:.12em;color:#777b87}
+.lead-story h3{font-family:Georgia,serif;font-size:29px;line-height:1.04;margin:5px 0 8px}
+.lead-story p,.paper-grid p{font-family:Georgia,serif;font-size:11px;line-height:1.45;margin:0;color:#444856}
+.paper-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 22px}
+.paper-grid article{padding:14px 0;border-bottom:1px solid #b8b9b6}
+.paper-grid h4{font-family:Georgia,serif;font-size:16px;line-height:1.08;margin:4px 0 5px}
+.news-sidebar{min-width:0;min-height:0;overflow:auto;background:#4a4b5f;color:#fff;padding:0}
+.news-sidebar-title{
+  height:38px;display:flex;align-items:center;padding:0 12px;background:#292b40;
+  color:#e0b44d;font-size:10px;font-weight:900;letter-spacing:.1em;
+}
+.news-sidebar button{
+  width:100%;min-height:65px;border:0;border-bottom:1px solid rgba(255,255,255,.1);
+  background:transparent;color:#fff;display:grid;grid-template-columns:27px minmax(0,1fr);
+  gap:8px;align-items:center;padding:8px 10px;text-align:left;
+}
+.news-sidebar button:hover{background:rgba(255,255,255,.06)}
+.news-sidebar button>b{font-size:13px;color:#e0b44d}
+.news-sidebar button div{display:flex;flex-direction:column;min-width:0}
+.news-sidebar button strong{font-size:10px;line-height:1.15}
+.news-sidebar button small{font-size:7px;color:#bdc1ce;margin-top:4px}
+.news-date{font-size:8px!important;color:#757b8d!important;white-space:nowrap}
+
+/* Club profile: overview first, squad only after explicit SQUAD action. */
+.team-page{background:#e0e2e1}
+.team-squad-open,.team-back-main{
+  min-height:34px;padding:0 14px;border:0;background:#19204e;color:#fff;font-size:10px;font-weight:900;
+}
+.team-squad-open:hover,.team-back-main:hover{background:#252e67}
+.team-overview-body{flex:1;min-height:0;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+.team-hero{
+  flex:0 0 auto;display:flex;align-items:center;gap:15px;background:#4a4b5f;color:#fff;padding:18px 20px;
+}
+.team-big-crest{
+  width:82px;height:82px;flex:0 0 82px;border-radius:50%;display:grid;place-items:center;
+  border:4px solid #fff;color:#fff;font-size:13px;font-weight:900;box-shadow:0 3px 7px rgba(0,0,0,.2);
+}
+.team-hero>div:last-child{min-width:0}
+.team-hero span{font-size:8px;color:#cfd2dc;font-weight:900;letter-spacing:.08em}
+.team-hero h3{margin:4px 0;font-size:26px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.team-hero p{margin:0;color:#cfd2dc;font-size:10px}
+.team-stars{margin-top:8px;color:#e1b44d;letter-spacing:2px;font-size:15px}
+.team-stat-grid{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;
+}
+.team-stat-grid>div{
+  background:#f4f5f3;border:1px solid #cdd0d3;padding:12px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.team-stat-grid small,.team-detail-grid span{font-size:8px;color:#73798a;font-weight:900;letter-spacing:.06em;text-align:center}
+.team-stat-grid b{font-size:22px;color:#19204e;margin-top:5px}
+.team-detail-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.team-detail-grid section{
+  background:#f4f5f3;border:1px solid #cdd0d3;padding:12px;display:flex;flex-direction:column;gap:5px;
+}
+.team-detail-grid strong{font-size:14px;color:#19204e}
+.team-action-strip{
+  margin-top:auto;display:grid;grid-template-columns:minmax(0,2fr) 1fr 1fr;gap:8px;
+}
+.team-action-strip button,.team-action-strip>div{
+  border:0;background:#4a4b5f;color:#fff;min-height:62px;padding:9px 11px;text-align:left;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.team-action-strip button{cursor:pointer}
+.team-action-strip button:hover{background:#57596c}
+.team-action-strip button strong{font-size:13px}
+.team-action-strip button small{font-size:8px;color:#c5c8d2;margin-top:4px}
+.team-action-strip>div span{font-size:8px;color:#c5c8d2;font-weight:900}
+.team-action-strip>div strong{font-size:17px;margin-top:4px}
+.club-squad-body{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px 16px;overflow:hidden}
+.club-squad-title,.club-squad-row{
+  display:grid;grid-template-columns:minmax(0,1fr) 45px 50px 55px 55px 55px 55px 45px 55px;
+  gap:4px;align-items:center;
+}
+.club-squad-title{height:39px;flex:0 0 39px;background:#333546;color:#fff;padding:0 10px;font-size:8px;font-weight:900}
+.club-squad-row{
+  min-height:52px;background:#f3f4f2;border-bottom:1px solid #d0d2d5;padding:0 10px;color:#242b47;
+}
+.club-squad-row.starter{background:#e2e8f3}
+.club-squad-row:hover{background:#e8ebee}
+.club-squad-row strong{display:flex;align-items:center;gap:9px;min-width:0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.club-squad-row strong em{font-size:8px;color:#7a808e;font-style:normal}
+.club-squad-row span,.club-squad-row b{font-size:9px}
+.club-squad-row .ovr{font-size:14px;font-weight:900}
+
+/* Saved careers: make them feel like actual save slots rather than plain list rows. */
+.career-select-body{background:#d6d8da}
+.career-save-list{
+  padding:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
+  align-content:start;background:#d6d8da;
+}
+.career-save-row{
+  min-height:96px;margin:0;border-left:6px solid #18204e;
+  grid-template-columns:30px 52px minmax(0,1fr) 36px 32px;
+  background:#f5f5f2;box-shadow:3px 3px 0 rgba(0,0,0,.09);
+}
+.career-save-row:hover{background:#fff;transform:translateY(-1px)}
+.save-index{
+  width:24px;height:24px;display:grid;place-items:center;background:#292b40;color:#fff;border-radius:50%;font-size:11px;
+}
+.save-crest{width:46px;height:46px}
+.career-save-row strong{font-size:14px}
+.career-save-row>div span{font-size:10px;color:#30364e}
+.career-save-row>div small{font-size:8px}
+.save-play{width:34px;height:34px}
+.save-delete{width:30px;height:30px}
+.career-empty{min-height:240px;grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#eeefed;color:#29304b}
+.career-empty strong{font-size:15px}
+.career-empty span{margin-top:5px;font-size:9px;color:#767d8e}
+
+@media (max-width:1050px) and (min-width:921px){
+  .schedule-calendar-head,.schedule-calendar-row{
+    grid-template-columns:58px minmax(190px,1.5fr) minmax(110px,1fr) 76px 70px;
+  }
+  .newspaper-layout{grid-template-columns:minmax(0,1fr) 230px}
+  .team-stat-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:920px){
+  .schedule-page-body{overflow:auto}
+  .schedule-calendar-head{display:none}
+  .schedule-calendar-row{grid-template-columns:54px minmax(0,1fr) 70px 65px;gap:7px}
+  .schedule-calendar-row small{display:none}
+  .newspaper-layout{grid-template-columns:1fr;overflow:auto}
+  .news-sidebar{display:none}
+  .paper-grid{grid-template-columns:1fr}
+  .team-stat-grid{grid-template-columns:repeat(3,1fr)}
+  .team-detail-grid{grid-template-columns:1fr 1fr}
+  .team-action-strip{grid-template-columns:1fr}
+  .career-save-list{grid-template-columns:1fr}
+}
