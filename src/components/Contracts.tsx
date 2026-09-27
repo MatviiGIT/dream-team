@@ -153,9 +153,7 @@ export function Contracts({ game, onChange }: { game: GameState; onChange: (next
     <section className="card content-card contracts-panel">
       <div className="contracts-header">
         <div>
-          <div className="eyebrow">{ru.contracts.eyebrow}</div>
           <h2>{ru.contracts.title}</h2>
-          <p>{ru.contracts.subtitle}</p>
         </div>
         <div className="contracts-budget">
           <div><span>{ru.transfers.budget}</span><strong>{formatMoney(club.budget)}</strong></div>
@@ -172,8 +170,7 @@ export function Contracts({ game, onChange }: { game: GameState; onChange: (next
 
       <div className="contract-toolbar">
         <label className="transfer-search">
-          <span>{ru.contracts.search}</span>
-          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={ru.contracts.searchPlaceholder} type="search" />
+          <input aria-label={ru.contracts.search} value={search} onChange={(event) => setSearch(event.target.value)} placeholder={ru.contracts.searchPlaceholder} type="search" />
         </label>
         <div className="contract-role-filters">
           {[
