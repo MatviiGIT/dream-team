@@ -348,9 +348,6 @@ export function simulateMatch(
     description: 'Full-time',
   });
 
-  const homeShots = Math.max(homeGoals, Math.round(homeChance * rng.range(4.8, 7.1) + rng.range(1, 5)));
-  const awayShots = Math.max(awayGoals, Math.round(awayChance * rng.range(4.8, 7.1) + rng.range(1, 5)));
-
   for (const event of events) {
     if (event.type !== 'goal' || !event.playerId) continue;
     const scoringTeam = event.teamId === homeTeam.id ? homeTeam : awayTeam;
@@ -365,12 +362,6 @@ export function simulateMatch(
     awayTeamId: awayTeam.id,
     homeGoals,
     awayGoals,
-    homeXg: Number(homeChance.toFixed(2)),
-    awayXg: Number(awayChance.toFixed(2)),
-    homeShots,
-    awayShots,
-    homePossession: Math.round(homePossession),
-    awayPossession: Math.round(awayPossession),
     events,
   };
 }
