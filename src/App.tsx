@@ -829,12 +829,10 @@ function LiveMatch({
   onClose: () => void;
 }) {
   const [minute, setMinute] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [speed, setSpeed] = useState<1 | 2>(1);
   const [finished, setFinished] = useState(false);
 
   useEffect(() => {
-    if (paused || finished) return;
+    if (finished) return;
 
     const timer = window.setInterval(() => {
       setMinute((current) => {
@@ -842,48 +840,55 @@ function LiveMatch({
           setFinished(true);
           return 90;
         }
-        return Math.min(90, current + 1);
+        return current + 1;
       });
-    }, 350 / speed);
+    }, 650);
 
     return () => window.clearInterval(timer);
-  }, [paused, speed, finished]);
+  }, [finished]);
 
   useEffect(() => {
     if (minute >= 90) setFinished(true);
   }, [minute]);
 
   const revealedEvents = match.events.filter((event) => event.minute <= minute);
-  const visibleEvents = revealedEvents.slice(-7).reverse();
+  const matchEvents = revealedEvents.filter((event) => event.type !== 'half-time' && event.type !== 'full-time');
+  const recentEvents = matchEvents.slice(-8).reverse();
+  const latestEvent = matchEvents[matchEvents.length - 1];
+
   const visibleGoals = revealedEvents.filter((event) => event.type === 'goal');
   const homeGoals = visibleGoals.filter((event) => event.teamId === match.homeTeamId).length;
   const awayGoals = visibleGoals.filter((event) => event.teamId === match.awayTeamId).length;
-  const latestEvent = visibleEvents[0];
-  const phase = finished
-    ? 'full-time'
-    : minute === 45
-      ? 'half-time'
-      : minute < 45
-        ? 'first-half'
-        : 'second-half';
 
   const home = game.clubs[match.homeTeamId];
   const away = game.clubs[match.awayTeamId];
-  const homeSpots = getLivePlayerSpots('home', minute);
-  const awaySpots = getLivePlayerSpots('away', minute);
+  const homeTeamName = home?.name ?? '—';
+  const awayTeamName = away?.name ?? '—';
 
-  const ballEvent = latestEvent?.type === 'goal' ? latestEvent : revealedEvents[revealedEvents.length - 1];
-  const ballTeamIsHome = ballEvent?.teamId === match.homeTeamId;
-  const attackingHome = ballTeamIsHome ?? (Math.floor(minute / 5) % 2 === 0);
-  const ballBaseX = attackingHome ? 61 + Math.sin(minute / 4) * 15 : 39 + Math.sin(minute / 4) * 15;
-  const ballBaseY = 49 + Math.cos(minute / 5) * 18;
+  const currentPhase = finished
+    ? ru.liveMatch.fullTime
+    : minute < 45
+      ? ru.liveMatch.firstHalf
+      : minute === 45
+        ? ru.liveMatch.halfTime
+        : ru.liveMatch.secondHalf;
 
   const eventClass = (type: MatchResult['events'][number]['type']) => {
     if (type === 'goal') return 'live-event goal';
     if (type === 'chance') return 'live-event chance';
     if (type === 'yellow') return 'live-event yellow';
     if (type === 'injury') return 'live-event injury';
+    if (type === 'substitution') return 'live-event substitution';
     return 'live-event';
+  };
+
+  const eventIcon = (type: MatchResult['events'][number]['type']) => {
+    if (type === 'goal') return '⚽';
+    if (type === 'yellow') return '🟨';
+    if (type === 'injury') return '✚';
+    if (type === 'substitution') return '↕';
+    if (type === 'chance') return '◉';
+    return '•';
   };
 
   return (
@@ -891,133 +896,162 @@ function LiveMatch({
       <section className="live-match-screen" role="dialog" aria-modal="true" aria-labelledby="live-match-title">
         <header className="live-match-topbar">
           <div className="live-match-competition">
-            <span className="eyebrow">{ru.liveMatch.eyebrow} · {ru.liveMatch.season} {season}</span>
-            <strong id="live-match-title">{ru.liveMatch.round} {round}</strong>
+            <div className="eyebrow">{ru.liveMatch.eyebrow}</div>
+            <strong>{ru.liveMatch.season} {season} · {ru.liveMatch.round} {round}</strong>
           </div>
-
-          <div className="live-scoreboard">
-            <div className="live-team-name home">
-              <span className="live-team-badge" style={{ background: home?.color ?? '#50616d' }}>{home?.shortName ?? '—'}</span>
-              <strong>{home?.name ?? '—'}</strong>
-            </div>
-            <div className="live-score">
-              <strong>{homeGoals} : {awayGoals}</strong>
-              <span>{minute}'</span>
-            </div>
-            <div className="live-team-name away">
-              <strong>{away?.name ?? '—'}</strong>
-              <span className="live-team-badge" style={{ background: away?.color ?? '#50616d' }}>{away?.shortName ?? '—'}</span>
-            </div>
+          <div className="live-match-status-pill">
+            <span className={finished ? 'status-dot finished' : 'status-dot'} />
+            {currentPhase}
           </div>
-
-          <div className="live-match-actions">
-            <button className="ghost-button" type="button" onClick={() => setPaused((value) => !value)}>
-              {paused ? ru.liveMatch.resume : ru.liveMatch.pause}
+          {finished ? (
+            <button className="ghost-button live-close-button" type="button" onClick={onClose}>
+              {ru.liveMatch.close}
             </button>
-            {finished && (
-              <button className="ghost-button live-close-button" type="button" onClick={onClose}>
-                {ru.liveMatch.close}
-              </button>
-            )}
-          </div>
+          ) : (
+            <div className="live-auto-label">АВТОМАТИЧЕСКИЙ МАТЧ</div>
+          )}
         </header>
 
-        <div className="live-match-main">
-          <div className="live-pitch" aria-label={ru.liveMatch.fieldLabel}>
-            <div className="live-pitch-halfway" />
-            <div className="live-pitch-center-circle" />
-            <div className="live-pitch-center-dot" />
-            <div className="live-pitch-box live-pitch-box-top" />
-            <div className="live-pitch-box live-pitch-box-bottom" />
-            <div className="live-pitch-goal live-pitch-goal-top" />
-            <div className="live-pitch-goal live-pitch-goal-bottom" />
-
-            {homeSpots.map((spot, index) => (
-              <span
-                key={`home-${index}`}
-                className="live-player home"
-                style={{ left: `${spot.left}%`, top: `${spot.top}%` }}
-              />
-            ))}
-            {awaySpots.map((spot, index) => (
-              <span
-                key={`away-${index}`}
-                className="live-player away"
-                style={{ left: `${spot.left}%`, top: `${spot.top}%` }}
-              />
-            ))}
-
-            <span
-              className={`live-ball ${latestEvent?.type === 'goal' ? 'is-event' : ''}`}
-              style={{
-                left: `${Math.max(8, Math.min(92, ballBaseX))}%`,
-                top: `${Math.max(10, Math.min(90, ballBaseY))}%`,
-              }}
-            />
-
-            {latestEvent && latestEvent.type !== 'half-time' && latestEvent.type !== 'full-time' && (
-              <div className={`live-pitch-callout ${latestEvent.type}`}>
-                <strong>{latestEvent.minute}'</strong>
-                <span>{eventText(game, latestEvent)}</span>
-              </div>
-            )}
-
-            {phase === 'half-time' && <div className="live-pitch-status">Перерыв</div>}
-            {phase === 'full-time' && <div className="live-pitch-status">Матч завершён</div>}
-          </div>
-
-          <aside className="live-match-feed">
-            <div className="live-feed-header">
-              <div>
-                <div className="eyebrow">{ru.liveMatch.matchFlow}</div>
-                <h2>{ru.liveMatch.matchEvents}</h2>
-              </div>
-              <span className="live-feed-phase">
-                {phase === 'first-half' ? ru.liveMatch.firstHalf : phase === 'second-half' ? ru.liveMatch.secondHalf : phase === 'half-time' ? ru.liveMatch.halfTime : ru.liveMatch.fullTime}
-              </span>
+        <main className="live-match-content">
+          <section className="live-score-card">
+            <div className="live-score-card-heading">
+              <span>МАТЧ</span>
+              <strong>{minute}'</strong>
             </div>
 
-            <div className="live-event-list">
-              {visibleEvents.length ? visibleEvents.map((event) => (
-                <div className={eventClass(event.type)} key={event.id}>
-                  <strong>{event.minute}'</strong>
-                  <span>{eventText(game, event)}</span>
+            <div className="live-score-teams">
+              <div className="live-score-team">
+                <div
+                  className="live-team-badge large"
+                  style={{ background: home?.color ?? '#50616d' }}
+                >
+                  {home?.shortName ?? '—'}
                 </div>
-              )) : (
-                <div className="live-event-empty">{ru.liveMatch.started}</div>
-              )}
-            </div>
-          </aside>
-        </div>
+                <strong>{homeTeamName}</strong>
+                <span>{ru.liveMatch.home}</span>
+              </div>
 
-        <footer className="live-match-footer">
-          <div className="live-progress">
-            <div className="live-progress-track">
+              <div className="live-score-main">
+                <strong>{homeGoals} : {awayGoals}</strong>
+                <span>{finished ? ru.liveMatch.fullTime : currentPhase}</span>
+              </div>
+
+              <div className="live-score-team away">
+                <div
+                  className="live-team-badge large"
+                  style={{ background: away?.color ?? '#50616d' }}
+                >
+                  {away?.shortName ?? '—'}
+                </div>
+                <strong>{awayTeamName}</strong>
+                <span>{ru.liveMatch.away}</span>
+              </div>
+            </div>
+
+            <div className="live-match-progress">
               <span style={{ width: `${(minute / 90) * 100}%` }} />
             </div>
-            <div className="live-progress-labels">
-              <span>0'</span>
-              <span>{latestEvent ? eventText(game, latestEvent) : ru.liveMatch.kickOff}</span>
-              <span>90'</span>
-            </div>
-          </div>
+          </section>
 
-          <div className="live-footer-controls">
-            <span className="live-speed-label">{ru.liveMatch.speed}</span>
-            <button
-              className={speed === 1 ? 'live-speed active' : 'live-speed'}
-              type="button"
-              onClick={() => setSpeed(1)}
-            >
-              1×
-            </button>
-            <button
-              className={speed === 2 ? 'live-speed active' : 'live-speed'}
-              type="button"
-              onClick={() => setSpeed(2)}
-            >
-              2×
-            </button>
+          <section className="live-match-grid">
+            <article className="live-match-card live-current-card">
+              <div className="live-card-header">
+                <div>
+                  <div className="eyebrow">{ru.liveMatch.matchEvents}</div>
+                  <h2>Последнее событие</h2>
+                </div>
+                <span className="live-minute-chip">{latestEvent ? `${latestEvent.minute}'` : "0'"}</span>
+              </div>
+
+              <div className={latestEvent ? `live-current-event ${latestEvent.type}` : 'live-current-event empty'}>
+                <div className="live-current-event-icon">
+                  {latestEvent ? eventIcon(latestEvent.type) : '⚽'}
+                </div>
+                <div>
+                  <strong>{latestEvent ? eventText(game, latestEvent) : ru.liveMatch.started}</strong>
+                  <span>
+                    {latestEvent
+                      ? latestEvent.description
+                      : ru.liveMatch.kickOff}
+                  </span>
+                </div>
+              </div>
+
+              <div className="live-score-mini">
+                <span>{homeTeamName}</span>
+                <strong>{homeGoals} : {awayGoals}</strong>
+                <span>{awayTeamName}</span>
+              </div>
+            </article>
+
+            <article className="live-match-card live-timeline-card">
+              <div className="live-card-header">
+                <div>
+                  <div className="eyebrow">{ru.liveMatch.matchFlow}</div>
+                  <h2>Хронология</h2>
+                </div>
+                <span className="live-total-events">{matchEvents.length}</span>
+              </div>
+
+              <div className="live-timeline-list">
+                {recentEvents.length ? recentEvents.map((event) => {
+                  const isHome = event.teamId === match.homeTeamId;
+                  return (
+                    <div className={`live-timeline-row ${isHome ? 'home' : 'away'}`} key={event.id}>
+                      <span className="live-timeline-minute">{event.minute}'</span>
+                      <span className={eventClass(event.type)}>{eventIcon(event.type)}</span>
+                      <div className="live-timeline-copy">
+                        <strong>{eventText(game, event)}</strong>
+                        <span>{event.description}</span>
+                      </div>
+                      <span className="live-timeline-team">{isHome ? home?.shortName : away?.shortName}</span>
+                    </div>
+                  );
+                }) : (
+                  <div className="live-timeline-empty">{ru.liveMatch.started}</div>
+                )}
+              </div>
+            </article>
+
+            <article className="live-match-card live-breakdown-card">
+              <div className="live-card-header">
+                <div>
+                  <div className="eyebrow">ХОД ИГРЫ</div>
+                  <h2>Матч по минутам</h2>
+                </div>
+              </div>
+
+              <div className="live-minute-blocks">
+                <div className={`live-half-block ${minute < 45 ? 'active' : ''}`}>
+                  <span>1</span>
+                  <strong>1-й тайм</strong>
+                  <small>0' — 45'</small>
+                </div>
+                <div className={`live-half-block ${minute >= 45 && minute < 90 ? 'active' : ''}`}>
+                  <span>2</span>
+                  <strong>2-й тайм</strong>
+                  <small>45' — 90'</small>
+                </div>
+              </div>
+
+              <div className="live-key-events">
+                <div><span>Голы</span><strong>{visibleGoals.length}</strong></div>
+                <div><span>События</span><strong>{matchEvents.length}</strong></div>
+                <div><span>Минута</span><strong>{minute}'</strong></div>
+              </div>
+            </article>
+          </section>
+        </main>
+
+        <footer className="live-match-footer">
+          <div className="live-footer-left">
+            <span className="live-auto-dot" />
+            <span>{finished ? ru.liveMatch.fullTime : 'Результат появляется автоматически по минутам'}</span>
+          </div>
+          <div className="live-footer-right">
+            <span>0'</span>
+            <div className="live-footer-track"><span style={{ width: `${(minute / 90) * 100}%` }} /></div>
+            <span>90'</span>
           </div>
         </footer>
       </section>
