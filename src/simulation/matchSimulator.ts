@@ -1,6 +1,10 @@
 import type { Club, Formation, MatchEvent, MatchResult, Player, Position } from '../domain/types';
 import { SeededRng } from './rng';
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
 interface TeamProfile {
   attack: number;
   defense: number;
