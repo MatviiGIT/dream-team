@@ -884,8 +884,8 @@ function LiveMatch({
       <section className="live-match-screen" role="dialog" aria-modal="true" aria-labelledby="live-match-title">
         <header className="live-match-topbar">
           <div className="live-match-competition">
-            <span className="eyebrow">МАТЧ · СЕЗОН {season}</span>
-            <strong id="live-match-title">Тур {round}</strong>
+            <span className="eyebrow">{ru.liveMatch.eyebrow} · {ru.liveMatch.season} {season}</span>
+            <strong id="live-match-title">{ru.liveMatch.round} {round}</strong>
           </div>
 
           <div className="live-scoreboard">
@@ -905,16 +905,16 @@ function LiveMatch({
 
           <div className="live-match-actions">
             <button className="ghost-button" type="button" onClick={() => setPaused((value) => !value)}>
-              {paused ? 'Продолжить' : 'Пауза'}
+              {paused ? ru.liveMatch.resume : ru.liveMatch.pause}
             </button>
             <button className="ghost-button live-close-button" type="button" onClick={onClose}>
-              {finished ? 'Закрыть' : 'Выйти'}
+              {finished ? ru.liveMatch.close : ru.liveMatch.exit}
             </button>
           </div>
         </header>
 
         <div className="live-match-main">
-          <div className="live-pitch" aria-label="Поле матча">
+          <div className="live-pitch" aria-label={ru.liveMatch.fieldLabel}>
             <div className="live-pitch-halfway" />
             <div className="live-pitch-center-circle" />
             <div className="live-pitch-center-dot" />
@@ -960,11 +960,11 @@ function LiveMatch({
           <aside className="live-match-feed">
             <div className="live-feed-header">
               <div>
-                <div className="eyebrow">ХОД МАТЧА</div>
-                <h2>События</h2>
+                <div className="eyebrow">{ru.liveMatch.matchFlow}</div>
+                <h2>{ru.liveMatch.matchEvents}</h2>
               </div>
               <span className="live-feed-phase">
-                {phase === 'first-half' ? '1-й тайм' : phase === 'second-half' ? '2-й тайм' : phase === 'half-time' ? 'Перерыв' : 'Финал'}
+                {phase === 'first-half' ? ru.liveMatch.firstHalf : phase === 'second-half' ? ru.liveMatch.secondHalf : phase === 'half-time' ? ru.liveMatch.halfTime : ru.liveMatch.fullTime}
               </span>
             </div>
 
@@ -975,7 +975,7 @@ function LiveMatch({
                   <span>{eventText(game, event)}</span>
                 </div>
               )) : (
-                <div className="live-event-empty">Матч только начался.</div>
+                <div className="live-event-empty">{ru.liveMatch.started}</div>
               )}
             </div>
           </aside>
@@ -988,13 +988,13 @@ function LiveMatch({
             </div>
             <div className="live-progress-labels">
               <span>0'</span>
-              <span>{latestEvent ? eventText(game, latestEvent) : 'Начало матча'}</span>
+              <span>{latestEvent ? eventText(game, latestEvent) : ru.liveMatch.kickOff}</span>
               <span>90'</span>
             </div>
           </div>
 
           <div className="live-footer-controls">
-            <span className="live-speed-label">Скорость</span>
+            <span className="live-speed-label">{ru.liveMatch.speed}</span>
             <button
               className={speed === 1 ? 'live-speed active' : 'live-speed'}
               type="button"
