@@ -830,3 +830,115 @@ html:fullscreen #root {
   .wsc-next-match-ratings { padding:4px 0; }
   .wsc-green-action { min-height:36px; }
 }
+
+
+/* tactics live inside the squad screen, beside the field */
+.squad-tactics-bar {
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:150px 260px minmax(0,1fr);
+  gap:8px;
+  align-items:stretch;
+  margin-top:9px;
+  padding:8px;
+  background:var(--navy-850);
+  color:#fff;
+  border-top:4px solid var(--gold);
+}
+.squad-tactics-caption {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:4px 8px;
+}
+.squad-tactics-caption span {
+  color:var(--gold);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+.squad-tactics-caption strong {
+  margin-top:2px;
+  font-size:21px;
+  line-height:1;
+}
+.squad-formation-buttons {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+}
+.squad-formation-buttons button {
+  min-width:0;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.05);
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+}
+.squad-formation-buttons button:hover,
+.squad-formation-buttons button.active {
+  border-color:var(--gold);
+  background:var(--gold);
+  color:var(--navy-900);
+}
+.squad-tactic-choices {
+  min-width:0;
+  display:grid;
+  grid-template-columns:repeat(5,minmax(72px,1fr));
+  gap:5px;
+}
+.squad-tactic-choices .tactic-field {
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+.squad-tactic-choices .tactic-field > span {
+  color:#bfc7d8;
+  font-size:8px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.squad-tactic-choices .tactic-choice {
+  min-width:0;
+  min-height:36px;
+  padding:0 7px;
+  border:1px solid rgba(255,255,255,.18);
+  background:#fff;
+  color:var(--ink);
+}
+.squad-tactic-choices .tactic-choice strong {
+  font-size:10px;
+}
+.squad-tactic-choices .tactic-menu {
+  top:calc(100% + 2px);
+  min-width:140px;
+}
+.squad-panel .team-sheet {
+  margin-top:9px;
+}
+@media (max-width:1250px) {
+  .squad-tactics-bar {
+    grid-template-columns:130px 220px minmax(0,1fr);
+  }
+  .squad-tactic-choices {
+    grid-template-columns:repeat(5,minmax(58px,1fr));
+  }
+}
+@media (max-width:1040px) {
+  .squad-tactics-bar {
+    grid-template-columns:120px 210px minmax(0,1fr);
+  }
+  .squad-tactic-choices {
+    overflow:auto;
+  }
+}
+@media (max-height:700px) {
+  .squad-tactics-bar {
+    padding:6px;
+    margin-top:6px;
+  }
+  .squad-tactics-caption strong { font-size:18px; }
+  .squad-tactic-choices .tactic-choice { min-height:32px; }
+  .squad-panel .team-sheet { margin-top:6px; }
+}
