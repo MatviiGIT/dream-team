@@ -194,9 +194,7 @@ export function TransferMarket({ game, onChange }: { game: GameState; onChange: 
     <section className="card content-card transfers-panel">
       <div className="transfers-header">
         <div>
-          <div className="eyebrow">{ru.transfers.eyebrow}</div>
           <h2>{ru.transfers.title}</h2>
-          <p>{ru.transfers.subtitle}</p>
         </div>
         <div className="transfers-budget">
           <span>{ru.transfers.budget}</span>
@@ -207,8 +205,7 @@ export function TransferMarket({ game, onChange }: { game: GameState; onChange: 
 
       <div className="transfer-toolbar">
         <label className="transfer-search">
-          <span>{ru.transfers.search}</span>
-          <input
+          <input aria-label={ru.transfers.search}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder={ru.transfers.searchPlaceholder}
