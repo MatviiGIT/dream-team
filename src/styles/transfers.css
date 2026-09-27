@@ -698,7 +698,7 @@
 }
 .transfer-player-card {
   display:grid;
-  grid-template-columns:40px minmax(180px,1.5fr) 110px 48px 56px 145px 92px;
+  grid-template-columns:40px minmax(180px,1.5fr) 110px 52px 74px 145px 92px;
   gap:10px;
   align-items:center;
   min-height:70px;
@@ -756,7 +756,7 @@
 .transfer-empty span { max-width:420px; font-size:12px; line-height:1.5; }
 @media (max-width:1250px) {
   .transfer-filter-groups { grid-template-columns:1fr 1fr 1fr; }
-  .transfer-player-card { grid-template-columns:40px minmax(160px,1.4fr) 100px 46px 52px 135px 84px; }
+  .transfer-player-card { grid-template-columns:40px minmax(160px,1.4fr) 100px 52px 70px 135px 84px; }
 }
 @media (max-width:1040px) {
   .transfer-filter-groups { grid-template-columns:1fr 1fr; }
@@ -991,5 +991,59 @@
   }
   .transfer-player-name-line strong {
     font-size: 16px;
+  }
+}
+
+
+/* 2026-09-27 — Transfer filter readability + potential column fit. */
+.transfer-filter-group>span,
+.transfer-filter-field>span,
+.transfer-filter-range>span,
+.transfer-search span {
+  font-size: 14px;
+}
+.transfer-filter-chip {
+  min-height: 40px;
+  padding-inline: 12px;
+  font-size: 14px;
+}
+.transfer-choice {
+  min-height: 50px;
+}
+.transfer-choice strong {
+  font-size: 15px;
+}
+.transfer-choice-option {
+  min-height: 42px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.transfer-filter-range input {
+  height: 40px;
+  font-size: 13px;
+}
+.transfer-filter-range>div>span {
+  font-size: 13px;
+}
+.transfer-filter-trigger {
+  min-height: 50px;
+  font-size: 15px;
+}
+.transfer-player-role small,
+.transfer-player-stat small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 760px) {
+  .transfer-filter-group>span,
+  .transfer-filter-field>span,
+  .transfer-filter-range>span,
+  .transfer-search span {
+    font-size: 13px;
+  }
+  .transfer-filter-chip {
+    min-height: 40px;
+    font-size: 14px;
   }
 }
