@@ -568,108 +568,81 @@ function Overview({
 }) {
   const club = game.clubs[game.clubId];
   const lastMatch = game.lastMatch;
-  const opponentId = nextFixture
-    ? (nextFixture.homeTeamId === game.clubId ? nextFixture.awayTeamId : nextFixture.homeTeamId)
-    : undefined;
+  const opponentId = nextFixture ? (nextFixture.homeTeamId === game.clubId ? nextFixture.awayTeamId : nextFixture.homeTeamId) : undefined;
   const opponent = opponentId ? game.clubs[opponentId] : undefined;
   const home = nextFixture?.homeTeamId === game.clubId;
   const roster = club.playerIds.map((id) => game.players[id]).filter(Boolean);
-  const squadEnergy = roster.length
-    ? Math.round(roster.reduce((sum, player) => sum + player.fitness, 0) / roster.length)
-    : 0;
+  const avgFor = (position: Position) => {
+    const players = roster.filter((player) => player.position === position);
+    return players.length ? Math.round(players.reduce((sum, player) => sum + player.overall, 0) / players.length) : 0;
+  };
+  const squadEnergy = roster.length ? Math.round(roster.reduce((sum, player) => sum + player.fitness, 0) / roster.length) : 0;
+  const teamRating = Math.round((avgFor('DEF') + avgFor('MID') + avgFor('FWD')) / 3);
+  const difficulty = opponent ? Math.max(1, Math.min(5, Math.round((opponent.reputation - club.reputation + 100) / 40))) : 1;
 
   return (
     <div className="wsc-home-screen">
       <div className="wsc-week-strip">
-        <span>{ru.app.season} {game.season} · НЕДЕЛЯ {game.currentRound}</span>
-        <span>{position} МЕСТО · {row?.points ?? 0} ОЧКОВ</span>
+        <span>YEAR {game.season} · WEEK {game.currentRound}</span>
+        <span>{position} · {row?.points ?? 0} PTS</span>
       </div>
 
-      <div className="wsc-home-grid">
-        <main className="wsc-home-primary">
-          <section className="wsc-tile wsc-next-match-tile">
-            <div className="wsc-tile-title">
-              <div><span>СЛЕДУЮЩИЙ МАТЧ</span><strong>{nextFixture ? 'ТУР ' + game.currentRound : ru.overview.seasonComplete}</strong></div>
-              {nextFixture && <b>{home ? '(H)' : '(A)'}</b>}
-            </div>
-
-            {opponent ? (
-              <>
-                <div className="wsc-next-match-body">
-                  <div className="wsc-next-match-club">
-                    <div className="wsc-big-crest" style={{ background: club.color }}>{club.shortName}</div>
-                    <strong>{club.name}</strong>
+      <div className="wsc-home-board">
+        <section className="wsc-board-card wsc-next-match-card">
+          <div className="wsc-board-title">
+            <div><span>NEXT MATCH</span><strong>{nextFixture ? 'GAME ' + game.currentRound : ru.overview.seasonComplete}</strong></div>
+            <b>{nextFixture ? (home ? '(H)' : '(A)') : ''}</b>
+          </div>
+          {opponent ? (
+            <>
+              <button className="wsc-next-match-link" type="button" onClick={onPlay}>
+                <div className="wsc-next-match-left">
+                  <strong>{opponent.name}</strong>
+                  <span>{home ? 'HOME' : 'AWAY'}</span>
+                  <em>{ru.liveMatch.eyebrow}</em>
+                  <div className="wsc-next-match-ratings">
+                    <span>DEF: {avgFor('DEF')}</span><span>MID: {avgFor('MID')}</span><span>ATT: {avgFor('FWD')}</span>
                   </div>
-                  <div className="wsc-next-match-center">
-                    <span>VS</span>
-                    <small>{home ? 'ДОМА' : 'ГОСТИ'}</small>
-                  </div>
-                  <div className="wsc-next-match-club">
-                    <div className="wsc-big-crest" style={{ background: opponent.color }}>{opponent.shortName}</div>
-                    <strong>{opponent.name}</strong>
+                  <div className="wsc-difficulty">
+                    {[1, 2, 3, 4, 5].map((star) => <i key={star} className={star <= difficulty ? 'filled' : ''}>★</i>)}
                   </div>
                 </div>
-                <div className="wsc-next-match-ratings">
-                  <span>ЗАЩ {Math.round(roster.filter((p) => p.position === 'DEF').reduce((a,p) => a+p.overall,0) / Math.max(1, roster.filter((p) => p.position === 'DEF').length))}</span>
-                  <span>ПЗЩ {Math.round(roster.filter((p) => p.position === 'MID').reduce((a,p) => a+p.overall,0) / Math.max(1, roster.filter((p) => p.position === 'MID').length))}</span>
-                  <span>НАП {Math.round(roster.filter((p) => p.position === 'FWD').reduce((a,p) => a+p.overall,0) / Math.max(1, roster.filter((p) => p.position === 'FWD').length))}</span>
-                </div>
-                <button className="wsc-green-action" type="button" onClick={onPlay}>▶ ИГРАТЬ МАТЧ</button>
-              </>
-            ) : <div className="wsc-empty-panel">{ru.overview.noMatch}</div>}
-          </section>
+                <div className="wsc-next-match-opponent"><div className="wsc-big-crest" style={{ background: opponent.color }}>{opponent.shortName}</div></div>
+              </button>
+              <button className="wsc-green-action wsc-next-play-button" type="button" onClick={onPlay}>▶ PLAY</button>
+            </>
+          ) : <div className="wsc-empty-panel">{ru.overview.noMatch}</div>}
+        </section>
 
-          <section className="wsc-tile wsc-schedule-tile">
-            <div className="wsc-tile-title"><div><span>РАСПИСАНИЕ</span><strong>БЛИЖАЙШИЕ МАТЧИ</strong></div><button type="button" onClick={() => document.querySelector<HTMLButtonElement>('.calendar-preview')?.click()}>›</button></div>
-            <UpcomingCalendar game={game} />
-          </section>
-        </main>
-
-        <aside className="wsc-home-secondary">
-          <button className="wsc-tile wsc-team-tile" type="button" onClick={() => onOpenSection('squad')}>
-            <div className="wsc-tile-title"><div><span>КОМАНДА</span><strong>УПРАВЛЕНИЕ КОМАНДОЙ</strong></div><b>›</b></div>
-            <div className="wsc-team-preview">
-              <div className="wsc-mini-pitch">
-                <i /><i /><i /><i /><i /><i /><i />
-              </div>
-              <div className="wsc-team-summary">
-                <strong>{club.tactic.formation}</strong>
-                <span>ЭНЕРГИЯ: {squadEnergy}%</span>
-                <span>ПОЗИЦИЙ: {roster.length}</span>
+        <section className="wsc-board-card wsc-team-management-card">
+          <button type="button" onClick={() => onOpenSection('squad')}>
+            <div className="wsc-board-title"><div><span>TEAM MANAGEMENT</span><strong>{club.tactic.formation} · ENERGY {squadEnergy}%</strong></div><b>›</b></div>
+            <div className="wsc-team-management-body">
+              <div className="wsc-chalkboard"><div className="wsc-chalk-line midfield" /><div className="wsc-chalk-circle" /><div className="wsc-chalk-arrow a" /><div className="wsc-chalk-arrow b" /><div className="wsc-chalk-x x1" /><div className="wsc-chalk-x x2" /><div className="wsc-chalk-x x3" /></div>
+              <div className="wsc-team-management-copy">
+                <strong>{club.tactic.formation}</strong><span>{club.name}</span>
+                <div><b>DEF {avgFor('DEF')}</b><b>MID {avgFor('MID')}</b><b>ATT {avgFor('FWD')}</b></div>
+                <div className="wsc-stars">{[1,2,3,4,5].map((star) => <i key={star} className={star <= Math.max(1, Math.min(5, Math.round(teamRating / 20))) ? 'filled' : ''}>★</i>)}</div>
               </div>
             </div>
           </button>
+        </section>
 
-          <div className="wsc-two-actions">
-            <button className="wsc-tile wsc-action-tile" type="button" onClick={() => onOpenSection('transfers')}>
-              <span>ТРАНСФЕРЫ</span><strong>КУПИТЬ</strong><b>›</b>
-            </button>
-            <button className="wsc-tile wsc-action-tile" type="button" onClick={() => onOpenSection('transfers')}>
-              <span>ТРАНСФЕРЫ</span><strong>ПРОДАТЬ</strong><b>›</b>
-            </button>
-          </div>
+        <section className="wsc-board-card wsc-schedule-board">
+          <div className="wsc-board-title"><div><span>SCHEDULE</span><strong>UPCOMING FIXTURES</strong></div><button type="button" onClick={() => document.querySelector<HTMLButtonElement>('.calendar-preview')?.click()}>›</button></div>
+          <UpcomingCalendar game={game} />
+        </section>
 
-          <div className="wsc-two-actions">
-            <button className="wsc-tile wsc-action-tile" type="button" onClick={() => onOpenSection('table')}>
-              <span>ЧЕМПИОНАТ</span><strong>ТАБЛИЦА</strong><b>›</b>
-            </button>
-            <button className="wsc-tile wsc-action-tile" type="button" onClick={() => onOpenSection('finances')}>
-              <span>КЛУБ</span><strong>ФИНАНСЫ</strong><b>›</b>
-            </button>
-          </div>
-
-          {lastMatch && (
-            <section className="wsc-last-tile">
-              <span>ПОСЛЕДНИЙ РЕЗУЛЬТАТ</span>
-              <div><strong>{game.clubs[lastMatch.homeTeamId]?.shortName}</strong><b>{lastMatch.homeGoals}:{lastMatch.awayGoals}</b><strong>{game.clubs[lastMatch.awayTeamId]?.shortName}</strong></div>
-            </section>
-          )}
-        </aside>
+        <section className="wsc-transfer-board">
+          <button className="wsc-board-card wsc-transfer-card" type="button" onClick={() => onOpenSection('transfers')}><span>TRANSFERS</span><strong>BUY</strong><b>↪</b><small>FIND PLAYERS</small></button>
+          <button className="wsc-board-card wsc-transfer-card" type="button" onClick={() => onOpenSection('transfers')}><span>TRANSFERS</span><strong>SELL</strong><b>↪</b><small>MANAGE SQUAD</small></button>
+          <button className="wsc-board-card wsc-transfer-card wsc-competition-mini" type="button" onClick={() => onOpenSection('table')}><span>COMPETITION</span><strong>TABLE</strong><b>›</b><small>{position} PLACE · {row?.points ?? 0} PTS</small></button>
+          {lastMatch && <button className="wsc-board-card wsc-transfer-card wsc-result-mini" type="button" onClick={() => onOpenSection('table')}><span>LAST RESULT</span><strong>{game.clubs[lastMatch.homeTeamId]?.shortName} {lastMatch.homeGoals}:{lastMatch.awayGoals} {game.clubs[lastMatch.awayTeamId]?.shortName}</strong><small>VIEW COMPETITION</small></button>}
+        </section>
       </div>
     </div>
   );
 }
-
 function UpcomingCalendar({ game }: { game: GameState }) {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const fixtures = game.fixtures
