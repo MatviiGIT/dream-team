@@ -24,16 +24,16 @@ const FORMATIONS: Formation[]=[
 ];
 
 const PITCH_LAYOUTS: Record<Formation, Array<[number,number]>>={
-  '4-3-3':[[8,50],[24,20],[24,50],[24,80],[41,18],[41,50],[41,82],[69,20],[78,50],[69,80],[92,50]],
-  '4-4-2':[[8,50],[23,18],[23,40],[23,60],[23,82],[42,18],[42,40],[42,60],[42,82],[73,38],[73,62]],
-  '4-2-3-1':[[8,50],[23,18],[23,40],[23,60],[23,82],[42,37],[42,63],[65,22],[68,50],[65,78],[91,50]],
-  '4-5-1':[[8,50],[23,18],[23,40],[23,60],[23,82],[43,18],[43,38],[43,58],[43,78],[67,50],[91,50]],
-  '3-5-2':[[8,50],[24,24],[24,50],[24,76],[45,16],[45,37],[45,50],[45,63],[45,84],[75,36],[75,64]],
-  '3-4-3':[[8,50],[24,24],[24,50],[24,76],[45,20],[45,43],[45,57],[45,80],[74,22],[78,50],[74,78]],
-  '5-3-2':[[8,50],[22,15],[22,34],[22,50],[22,66],[22,85],[46,28],[46,50],[46,72],[76,35],[76,65]],
-  '5-4-1':[[8,50],[22,14],[22,32],[22,50],[22,68],[22,86],[46,20],[46,41],[46,59],[46,80],[91,50]],
-  '4-1-4-1':[[8,50],[23,18],[23,40],[23,60],[23,82],[40,50],[61,18],[61,40],[61,60],[61,82],[91,50]],
-  '3-4-2-1':[[8,50],[24,24],[24,50],[24,76],[47,23],[47,42],[47,58],[47,77],[70,36],[70,64],[91,50]],
+  '4-3-3':[[50,90],[14,68],[37,72],[63,72],[86,68],[25,47],[50,44],[75,47],[18,20],[50,13],[82,20]],
+  '4-4-2':[[50,90],[14,68],[37,72],[63,72],[86,68],[14,48],[37,46],[63,46],[86,48],[38,20],[62,20]],
+  '4-2-3-1':[[50,90],[14,68],[37,72],[63,72],[86,68],[34,53],[66,53],[18,31],[50,27],[82,31],[50,12]],
+  '4-5-1':[[50,90],[14,68],[37,72],[63,72],[86,68],[12,49],[31,46],[50,44],[69,46],[88,49],[50,12]],
+  '3-5-2':[[50,90],[25,70],[50,73],[75,70],[12,49],[31,46],[50,44],[69,46],[88,49],[38,19],[62,19]],
+  '3-4-3':[[50,90],[24,70],[50,73],[76,70],[14,49],[37,46],[63,46],[86,49],[18,20],[50,13],[82,20]],
+  '5-3-2':[[50,90],[10,68],[28,70],[50,72],[72,70],[90,68],[27,47],[50,44],[73,47],[38,19],[62,19]],
+  '5-4-1':[[50,90],[10,68],[28,70],[50,72],[72,70],[90,68],[16,48],[38,46],[62,46],[84,48],[50,12]],
+  '4-1-4-1':[[50,90],[14,68],[37,72],[63,72],[86,68],[50,58],[16,44],[38,42],[62,42],[84,44],[50,12]],
+  '3-4-2-1':[[50,90],[24,70],[50,73],[76,70],[15,49],[38,46],[62,46],[85,49],[39,29],[61,29],[50,12]],
 };
 
 function money(v:number){
@@ -146,15 +146,15 @@ export default function App(){
 
     <main className="content">
       {screen==='home'&&<Home game={game} onScreen={setScreen} onPlay={advance}/>}
-      {screen==='squad'&&<Squad game={game} onChange={next=>mutate(s=>swapStartingPlayers(s,next[0],next[1]))} onFormation={f=>mutate(s=>updateFormation(s,f))}/>}
-      {screen==='transfers'&&<Transfers game={game} onBuy={id=>mutate(s=>buyPlayer(s,id))} onSell={id=>mutate(s=>sellPlayer(s,id))}/>}
-      {screen==='competition'&&<Competition game={game}/>}
-      {screen==='news'&&<NewsScreen game={game}/>}
-      {screen==='coach'&&<CoachRoom game={game} onScreen={setScreen}/>}
-      {screen==='trophies'&&<Trophies game={game}/>}
+      {screen==='squad'&&<Squad game={game} onHome={()=>setScreen('home')} onChange={next=>mutate(s=>swapStartingPlayers(s,next[0],next[1]))} onFormation={f=>mutate(s=>updateFormation(s,f))}/>}
+      {screen==='transfers'&&<Transfers game={game} onHome={()=>setScreen('home')} onBuy={id=>mutate(s=>buyPlayer(s,id))} onSell={id=>mutate(s=>sellPlayer(s,id))}/>}
+      {screen==='competition'&&<Competition game={game} onHome={()=>setScreen('home')}/>}
+      {screen==='news'&&<NewsScreen game={game} onHome={()=>setScreen('home')}/>}
+      {screen==='coach'&&<CoachRoom game={game} onHome={()=>setScreen('home')} onScreen={setScreen}/>}
+      {screen==='trophies'&&<Trophies game={game} onHome={()=>setScreen('home')}/>}
     </main>
 
-    {menu&&<SideMenu game={game} screen={screen} setScreen={setScreen} close={()=>setMenu(false)} onCareer={()=>{setGame(null);setMenu(false);setShowCareers(true)}}/>}
+    {menu&&<CareerExitMenu club={club} close={()=>setMenu(false)} onCareer={()=>{setGame(null);setMenu(false);setShowCareers(true)}}/>}
     {game.jobOffers.length>0&&screen==='home'&&<JobOffers game={game} onTake={id=>mutate(s=>takeJob(s,id))}/>}
   </div>;
 }
@@ -289,22 +289,25 @@ function Home({game,onScreen,onPlay}:{game:GameState;onScreen:(x:Screen)=>void;o
   </div>;
 }
 
-function Squad({game,onChange,onFormation}:{game:GameState;onChange:(pair:[string,string])=>void;onFormation:(f:Formation)=>void}){
+function Squad({game,onHome,onChange,onFormation}:{game:GameState;onHome:()=>void;onChange:(pair:[string,string])=>void;onFormation:(f:Formation)=>void}){
   const club=game.clubs[game.clubId],[first,setFirst]=useState('');
   const players=club.playerIds.map(id=>game.players[id]).filter(Boolean) as Player[];
   const xi=club.startingXI, layout=PITCH_LAYOUTS[club.formation];
   const choose=(id:string)=>{if(!first)setFirst(id);else{onChange([first,id]);setFirst('')}};
   return <section className="page squad-page">
-    <div className="page-head squad-head"><div><span>TEAM MANAGEMENT</span><h2>{club.name}</h2></div><div className="formation-picker"><button className="formation-arrow" onClick={()=>onFormation(FORMATIONS[(FORMATIONS.indexOf(club.formation)-1+FORMATIONS.length)%FORMATIONS.length] )}>‹</button><strong>{club.formation}</strong><button className="formation-arrow" onClick={()=>onFormation(FORMATIONS[(FORMATIONS.indexOf(club.formation)+1)%FORMATIONS.length] )}>›</button></div></div>
+    <div className="page-head squad-head">
+      <div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>TEAM MANAGEMENT</span><h2>{club.name}</h2></div></div>
+      <div className="formation-picker"><button className="formation-arrow" onClick={()=>onFormation(FORMATIONS[(FORMATIONS.indexOf(club.formation)-1+FORMATIONS.length)%FORMATIONS.length] )}>‹</button><strong>{club.formation}</strong><button className="formation-arrow" onClick={()=>onFormation(FORMATIONS[(FORMATIONS.indexOf(club.formation)+1)%FORMATIONS.length] )}>›</button></div>
+    </div>
     <div className="formation-strip">{FORMATIONS.map(f=><button key={f} className={club.formation===f?'active':''} onClick={()=>onFormation(f)}>{f}</button>)}</div>
     <div className="squad-layout-wsc">
       <div className="pitch-wsc">
         <div className="pitch-box-lines"/><div className="pitch-centre-circle"/><div className="pitch-goal goal-top"/><div className="pitch-goal goal-bottom"/>
-        {xi.map((id,i)=>{const player=game.players[id],xy=layout[i]??[50,50];return <button key={id} className={first===id?'player-dot-wsc picked':'player-dot-wsc'} style={{left:xy[0]+'%',top:xy[1]+'%'}} onClick={()=>choose(id)}><b>{player?.overall??'?'}</b><span>{player?.name.split(' ')[0]??'Player'}</span></button>})}
+        {xi.map((id,i)=>{const player=game.players[id],xy=layout[i]??[50,50];return <button key={id} className={['player-dot-wsc',player?.position==='GK'?'gk':'',first===id?'picked':''].filter(Boolean).join(' ')} style={{left:xy[0]+'%',top:xy[1]+'%'}} onClick={()=>choose(id)}><b>{player?.overall??'?'}</b><span>{player?.name.split(' ')[0]??'Player'}</span></button>})}
       </div>
       <div className="roster-table-wsc">
         <div className="roster-head-wsc"><span># PLAYER</span><b>SPD</b><b>PASS</b><b>SHOT</b><b>TCKL</b><b>GK</b><b>OVR</b></div>
-        {players.map((p,i)=><button className={xi.includes(p.id)?'roster-row-wsc starter':'roster-row-wsc'} key={p.id} onClick={()=>choose(p.id)}>
+        {players.map(p=><button className={xi.includes(p.id)?'roster-row-wsc starter':'roster-row-wsc'} key={p.id} onClick={()=>choose(p.id)}>
           <span><strong>{p.name}</strong><small>{p.position} · {p.age} · {p.nationality}</small></span><b>{p.skills.speed}</b><b>{p.skills.passing}</b><b>{p.skills.shooting}</b><b>{p.skills.tackling}</b><b>{p.skills.goalkeeping}</b><b className="ovr">{p.overall}</b>
         </button>)}
       </div>
@@ -313,37 +316,37 @@ function Squad({game,onChange,onFormation}:{game:GameState;onChange:(pair:[strin
   </section>;
 }
 
-function Transfers({game,onBuy,onSell}:{game:GameState;onBuy:(id:string)=>void;onSell:(id:string)=>void}){
+function Transfers({game,onHome,onBuy,onSell}:{game:GameState;onHome:()=>void;onBuy:(id:string)=>void;onSell:(id:string)=>void}){
   const [tab,setTab]=useState<'buy'|'sell'>('buy'),[q,setQ]=useState('');
   const market=getMarketPlayers(game),club=game.clubs[game.clubId];
   const list=tab==='buy'?market.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())):club.playerIds.map(id=>game.players[id]).filter(Boolean) as Player[];
   return <section className="page">
-    <div className="page-head"><div><span>TRANSFERS</span><h2>{isTransferWindow(game)?'TRANSFER WINDOW OPEN':'MARKET CLOSED'}</h2></div><div className="transfer-tabs"><button className={tab==='buy'?'active':''} onClick={()=>setTab('buy')}>BUY</button><button className={tab==='sell'?'active':''} onClick={()=>setTab('sell')}>SELL</button></div></div>
+    <div className="page-head"><div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>TRANSFERS</span><h2>{isTransferWindow(game)?'TRANSFER WINDOW OPEN':'MARKET CLOSED'}</h2></div></div><div className="transfer-tabs"><button className={tab==='buy'?'active':''} onClick={()=>setTab('buy')}>BUY</button><button className={tab==='sell'?'active':''} onClick={()=>setTab('sell')}>SELL</button></div></div>
     <div className="transfer-bar"><span>FUNDS {money(club.budget)}</span><span>SQUAD {club.playerIds.length}/18</span>{tab==='buy'&&<input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search player"/>}</div>
     <div className="transfer-list">{list.map(p=><div className="transfer-row" key={p.id}><div className="transfer-player"><strong>{p.name}</strong><span>{p.position} · {p.age} · {p.nationality}</span></div><b>{p.overall}</b><span>{money(p.marketValue)}</span><span>{money(p.wage)}/week</span><button className={tab==='buy'?'action green':'action gray'} onClick={()=>tab==='buy'?onBuy(p.id):onSell(p.id)}>{tab==='buy'?'BUY':'SELL'}</button></div>)}{!list.length&&<div className="empty">No players available.</div>}</div>
   </section>;
 }
 
-function Competition({game}:{game:GameState}){
+function Competition({game,onHome}:{game:GameState;onHome:()=>void}){
   const [tab,setTab]=useState<'table'|'goals'|'assists'>('table'),l=getLeague(game),rows=game.tables[l.id]??[],top=leaders(game,tab==='assists'?'assists':'goals');
-  return <section className="page"><div className="page-head"><div><span>COMPETITION</span><h2>{l.name}</h2></div><div className="transfer-tabs">{(['table','goals','assists'] as const).map(t=><button className={tab===t?'active':''} key={t} onClick={()=>setTab(t)}>{t==='table'?'TABLE':t==='goals'?'SCORERS':'ASSISTS'}</button>)}</div></div>
+  return <section className="page"><div className="page-head"><div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>COMPETITION</span><h2>{l.name}</h2></div></div><div className="transfer-tabs">{(['table','goals','assists'] as const).map(t=><button className={tab===t?'active':''} key={t} onClick={()=>setTab(t)}>{t==='table'?'TABLE':t==='goals'?'SCORERS':'ASSISTS'}</button>)}</div></div>
   {tab==='table'?<div className="league-table"><div className="table-head"><span>#</span><span>CLUB</span><span>P</span><span>W</span><span>D</span><span>L</span><span>GF</span><span>GA</span><span>GD</span><span>PTS</span></div>{rows.map((r,i)=>{const c=game.clubs[r.teamId];return <div className={r.teamId===game.clubId?'table-row yours':'table-row'} key={r.teamId}><b>{i+1}</b><strong>{c.name}</strong><span>{r.played}</span><span>{r.wins}</span><span>{r.draws}</span><span>{r.losses}</span><span>{r.goalsFor}</span><span>{r.goalsAgainst}</span><span>{r.goalsFor-r.goalsAgainst}</span><b>{r.points}</b></div>})}</div>
   :<div className="leader-list">{top.map((p,i)=>{const c=Object.values(game.clubs).find(x=>x.playerIds.includes(p.id));return <div className="leader-row" key={p.id}><span>{i+1}</span><div><strong>{p.name}</strong><small>{c?.shortName??'—'} · {p.position} · {p.age}</small></div><b>{tab==='goals'?p.goals:p.assists}</b></div>})}</div>}</section>;
 }
 
-function NewsScreen({game}:{game:GameState}){
+function NewsScreen({game,onHome}:{game:GameState;onHome:()=>void}){
   const club=game.clubs[game.clubId],last=game.lastMatch;
   const stories=[
     {tag:'CLUB',title:last?'MATCH RESULT':'OPENING WEEK',body:last?resultText(last,game.clubs):'Your season is underway. Prepare the squad for the next round.'},
     {tag:'WORLD',title:isTransferWindow(game)?'TRANSFER WINDOW':'LEAGUE NEWS',body:isTransferWindow(game)?'The market is open and clubs are checking squad needs.':'Clubs across the league are preparing for the next round.'},
     {tag:'MANAGER',title:'CAREER',body:'Manager '+game.managerName+' has reputation '+game.managerReputation+' after '+game.season+' season(s).'},
   ];
-  return <section className="page"><div className="page-head"><div><span>NEWS</span><h2>NEWS ROOM</h2></div></div><div className="news-screen-grid">{stories.map(s=><article key={s.tag}><span>{s.tag}</span><h3>{s.title}</h3><p>{s.body}</p></article>)}<article><span>CLUB</span><h3>{club.name}</h3><p>{getLeague(game).name} · Position {getPosition(game)} · Budget {money(club.budget)}</p></article></div></section>;
+  return <section className="page"><div className="page-head"><div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>NEWS</span><h2>NEWS ROOM</h2></div></div></div><div className="news-screen-grid">{stories.map(s=><article key={s.tag}><span>{s.tag}</span><h3>{s.title}</h3><p>{s.body}</p></article>)}<article><span>CLUB</span><h3>{club.name}</h3><p>{getLeague(game).name} · Position {getPosition(game)} · Budget {money(club.budget)}</p></article></div></section>;
 }
 
-function CoachRoom({game,onScreen}:{game:GameState;onScreen:(x:Screen)=>void}){
+function CoachRoom({game,onHome,onScreen}:{game:GameState;onHome:()=>void;onScreen:(x:Screen)=>void}){
   const club=game.clubs[game.clubId],table=game.tables[club.leagueId]?.find(r=>r.teamId===club.id);
-  return <section className="page"><div className="page-head"><div><span>MANAGER</span><h2>COACH ROOM</h2></div></div><div className="coach-room-grid">
+  return <section className="page"><div className="page-head"><div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>MANAGER</span><h2>COACH ROOM</h2></div></div></div><div className="coach-room-grid">
     <section className="coach-profile"><div className="coach-avatar">DT</div><div><small>MANAGER</small><strong>{game.managerName}</strong><span>Reputation {game.managerReputation}</span></div></section>
     <section className="coach-note"><span>CLUB OBJECTIVE</span><strong>Keep improving the squad</strong><p>Current position {getPosition(game)} · {table?.points??0} points · Year {game.season}</p></section>
     <button className="coach-action" onClick={()=>onScreen('squad')}><span>TEAM</span><strong>OPEN SQUAD</strong><small>MANAGE FORMATION</small></button>
@@ -351,9 +354,9 @@ function CoachRoom({game,onScreen}:{game:GameState;onScreen:(x:Screen)=>void}){
   </div></section>;
 }
 
-function Trophies({game}:{game:GameState}){
+function Trophies({game,onHome}:{game:GameState;onHome:()=>void}){
   const club=game.clubs[game.clubId];
-  return <section className="page"><div className="page-head"><div><span>CAREER</span><h2>HONOURS & HISTORY</h2></div></div><div className="honours"><div className="honour-box"><strong>{club.trophies}</strong><span>LEAGUE TROPHIES</span></div><div className="honour-box"><strong>{game.history.length}</strong><span>SEASONS COMPLETED</span></div><div className="honour-box"><strong>{game.managerReputation}</strong><span>MANAGER REP</span></div></div><div className="history">{game.history.length?game.history.slice().reverse().map(h=><div key={h.season}><b>YEAR {h.season}</b><span>{h.clubName}</span><small>{h.leagueName} · {h.position} PLACE</small></div>):<div className="empty">Your career history will appear here.</div>}</div></section>;
+  return <section className="page"><div className="page-head"><div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>CAREER</span><h2>HONOURS & HISTORY</h2></div></div></div><div className="honours"><div className="honour-box"><strong>{club.trophies}</strong><span>LEAGUE TROPHIES</span></div><div className="honour-box"><strong>{game.history.length}</strong><span>SEASONS COMPLETED</span></div><div className="honour-box"><strong>{game.managerReputation}</strong><span>MANAGER REP</span></div></div><div className="history">{game.history.length?game.history.slice().reverse().map(h=><div key={h.season}><b>YEAR {h.season}</b><span>{h.clubName}</span><small>{h.leagueName} · {h.position} PLACE</small></div>):<div className="empty">Your career history will appear here.</div>}</div></section>;
 }
 
 function LiveMatch({state,minute,onClose}:{state:GameState;minute:number;onClose:()=>void}){
@@ -363,9 +366,17 @@ function LiveMatch({state,minute,onClose}:{state:GameState;minute:number;onClose
   return <div className="live-screen"><header><span>LIVE MATCH</span><strong>YEAR {state.season} · ROUND {Math.max(1,state.week-1)}</strong></header><main><div className="score"><div><span>{home.name}</span><b>{shownHome}</b></div><em>{minute}'</em><div><span>{away.name}</span><b>{shownAway}</b></div></div><div className="live-progress"><i style={{width:(minute/90*100)+'%'}}/></div><div className="live-minute">{minute}'</div><div className="events">{result.events.filter(e=>e.type==='goal'&&e.minute<=minute).map((e,i)=><div key={i}><b>{e.minute}'</b><span>⚽ {e.teamId===home.id?home.shortName:away.shortName} · {state.players[e.playerId??'']?.name??'Goal'}</span></div>)}</div>{minute>=90&&<button className="primary close-live" onClick={onClose}>CONTINUE</button>}</main></div>;
 }
 
-function SideMenu({game,screen,setScreen,close,onCareer}:{game:GameState;screen:Screen;setScreen:(s:Screen)=>void;close:()=>void;onCareer:()=>void}){
-  const item=(s:Screen,label:string,icon:string)=><button className={screen===s?'active':''} onClick={()=>{setScreen(s);close()}}><i>{icon}</i><strong>{label}</strong><b>›</b></button>;
-  return <div className="side-backdrop" onClick={close}><aside className="side-menu" onClick={e=>e.stopPropagation()}><header><div><span>CAREER</span><strong>{game.clubs[game.clubId].shortName}</strong></div><button onClick={close}>×</button></header><nav>{item('home','MAIN SCREEN','⌂')}{item('squad','TEAM MANAGEMENT','♟')}{item('transfers','TRANSFERS','↗')}{item('competition','COMPETITION','▤')}{item('news','NEWS','▤')}{item('coach','COACH ROOM','□')}{item('trophies','HONOURS','★')}</nav><footer><button onClick={onCareer}>CAREER SELECTION</button></footer></aside></div>;
+function CareerExitMenu({club,close,onCareer}:{club:Club;close:()=>void;onCareer:()=>void}){
+  return <div className="career-exit-backdrop" onClick={close}>
+    <aside className="career-exit-menu" onClick={e=>e.stopPropagation()}>
+      <header><div><span>CAREER MENU</span><strong>{club.shortName}</strong></div><button onClick={close}>×</button></header>
+      <div className="career-exit-body">
+        <p>Leave this career and return to your saved careers.</p>
+        <button className="career-exit-action" onClick={onCareer}><span>▣</span><strong>CAREER SELECTION</strong><small>BACK TO SAVES</small><b>›</b></button>
+        <button className="career-exit-cancel" onClick={close}>CANCEL</button>
+      </div>
+    </aside>
+  </div>;
 }
 
 function JobOffers({game,onTake}:{game:GameState;onTake:(id:string)=>void}){
