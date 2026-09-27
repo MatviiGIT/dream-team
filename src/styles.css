@@ -6510,3 +6510,351 @@ select optgroup {
     font-size: 31px;
   }
 }
+
+/* 2026-09-27 — Finance compact round and global readable UI pass. */
+/* Finance: keep the round summary compact and fully inside the section. */
+.finance-page {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+.finance-page > .section-title-row h2 {
+  font-size: 34px;
+  line-height: 1.04;
+  font-weight: 950;
+}
+.finance-page .finance-round-card.finance-section {
+  margin-top: 18px;
+  padding-top: 4px;
+}
+.finance-page .finance-section .finance-round-header {
+  margin-bottom: 11px;
+}
+.finance-page .finance-section .finance-round-header h2 {
+  font-size: 23px;
+  line-height: 1.05;
+  font-weight: 950;
+}
+.finance-page .finance-section .finance-ledger-round {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  overflow: visible;
+}
+.finance-page .finance-section .finance-ledger-round .finance-ledger-card {
+  min-width: 0;
+  width: 100%;
+  min-height: 188px;
+  padding: 22px;
+  border-radius: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.finance-page .finance-section .finance-ledger-total {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.finance-page .finance-section .finance-ledger-total > div {
+  min-width: 0;
+}
+.finance-page .finance-section .finance-ledger-total span {
+  display: block;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.finance-page .finance-section .finance-ledger-total strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 34px;
+  font-weight: 950;
+  line-height: .98;
+  font-variant-numeric: tabular-nums;
+}
+.finance-page .finance-section .finance-ledger-card.income .finance-ledger-total strong {
+  color: #86e7ce;
+}
+.finance-page .finance-section .finance-ledger-card.expenses .finance-ledger-total strong {
+  color: #ff9aad;
+}
+.finance-page .finance-section .finance-ledger-card .finance-season-badge {
+  width: 42px;
+  height: 42px;
+  flex-basis: 42px;
+  font-size: 23px;
+}
+.finance-page .finance-section .finance-ledger-rows {
+  display: grid;
+  margin-top: 17px;
+}
+.finance-page .finance-section .finance-ledger-rows > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 11px 0;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+.finance-page .finance-section .finance-ledger-rows > div span {
+  min-width: 0;
+  color: #b7c5cf;
+  font-size: 15px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+.finance-page .finance-section .finance-ledger-rows > div strong {
+  flex: 0 0 auto;
+  font-size: 21px;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
+.finance-page .finance-section .finance-ledger-card.income .finance-ledger-rows strong {
+  color: #86e7ce;
+}
+.finance-page .finance-section .finance-ledger-card.expenses .finance-ledger-rows strong {
+  color: #ff9aad;
+}
+.finance-page .finance-section .finance-ledger-card.result {
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.finance-page .finance-section .finance-ledger-card.result .finance-ledger-result-inner {
+  min-width: 0;
+}
+.finance-page .finance-section .finance-ledger-card.result span {
+  display: block;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.finance-page .finance-section .finance-ledger-card.result strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 48px;
+  font-weight: 950;
+  line-height: .95;
+  font-variant-numeric: tabular-nums;
+}
+.finance-page .finance-section .finance-ledger-card.result.positive {
+  border-color: rgba(85,214,180,.28);
+  background: linear-gradient(145deg, rgba(85,214,180,.13), rgba(85,214,180,.035));
+}
+.finance-page .finance-section .finance-ledger-card.result.positive span,
+.finance-page .finance-section .finance-ledger-card.result.positive strong {
+  color: #86e7ce;
+}
+.finance-page .finance-section .finance-ledger-card.result.negative {
+  border-color: rgba(239,113,136,.32);
+  background: linear-gradient(145deg, rgba(239,113,136,.15), rgba(239,113,136,.04));
+}
+.finance-page .finance-section .finance-ledger-card.result.negative span,
+.finance-page .finance-section .finance-ledger-card.result.negative strong {
+  color: #ff9aad;
+}
+
+/* Global readable in-game scale: larger text, but with overflow protection. */
+.workspace-main .section-title-row > div,
+.workspace-main .section-title-row h2 {
+  min-width: 0;
+}
+.workspace-main .section-title-row h2,
+.workspace-main .section-title-row p {
+  overflow-wrap: anywhere;
+}
+.workspace-main .section-title-row .eyebrow {
+  font-size: 14px;
+  font-weight: 900;
+}
+.workspace-nav-label {
+  font-size: 15px;
+}
+.workspace-nav-item {
+  min-height: 54px;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+/* Overview */
+.workspace-grid-overview .dashboard-grid {
+  grid-template-rows: minmax(0, 1.12fr) minmax(0, .88fr);
+}
+.workspace-grid-overview .dashboard-grid > .card {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.workspace-grid-overview .dashboard-grid .section-title-row h2 {
+  font-size: 30px;
+}
+.workspace-grid-overview .next-match-progress,
+.workspace-grid-overview .match-tag {
+  font-size: 13px;
+}
+.workspace-grid-overview .team-side strong {
+  font-size: 18px;
+}
+.workspace-grid-overview .latest-result > div {
+  font-size: 17px;
+}
+.workspace-grid-overview .latest-result strong {
+  font-size: 38px;
+}
+.workspace-grid-overview .mini-stats {
+  font-size: 14px;
+}
+.workspace-grid-overview .timeline-item {
+  font-size: 15px;
+}
+.workspace-grid-overview .minute {
+  font-size: 14px;
+}
+.workspace-grid-overview .manager-profile strong {
+  font-size: 18px;
+}
+.workspace-grid-overview .manager-profile span {
+  font-size: 14px;
+}
+
+/* Squad */
+.squad-panel > .section-title-row h2 {
+  font-size: 32px;
+}
+.squad-formation-pill span {
+  font-size: 13px;
+}
+.squad-formation-pill strong {
+  font-size: 18px;
+}
+.squad-roster-header > div > strong {
+  font-size: 17px;
+}
+.squad-selection-card strong {
+  font-size: 18px;
+}
+.squad-selection-card small {
+  font-size: 13px;
+}
+.squad-roster-main strong {
+  font-size: 16px;
+}
+.squad-roster-main small {
+  font-size: 13px;
+}
+.squad-roster-stat small {
+  font-size: 10px;
+}
+.squad-roster-stat strong {
+  font-size: 18px;
+}
+.squad-roster-fit {
+  font-size: 11px;
+}
+.squad-player-rating {
+  font-size: 13px;
+}
+.squad-player-marker strong {
+  font-size: 11px;
+}
+.squad-player-marker small {
+  font-size: 10px;
+}
+
+/* Tactics */
+.tactics-panel .section-title-row h2 {
+  font-size: 32px;
+}
+.tactics-panel .formation-heading span {
+  font-size: 17px;
+}
+.tactics-panel .formation-heading > strong {
+  font-size: 18px;
+}
+.tactics-panel .formation-select-button {
+  min-height: 58px;
+  font-size: 17px;
+}
+.tactics-panel .tactic-field {
+  font-size: 17px;
+}
+.tactics-panel .tactic-choice strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 17px;
+}
+.tactics-panel .tactic-option {
+  font-size: 16px;
+}
+
+/* Table */
+.content-table .table-page-header h2 {
+  font-size: 32px;
+}
+.content-table th,
+.content-table td {
+  min-width: 0;
+}
+
+/* Finance */
+.finance-page .finance-hero span,
+.finance-page .finance-summary-card span {
+  font-size: 15px;
+}
+.finance-page .finance-summary-card strong {
+  font-size: 36px;
+}
+.finance-page .finance-season-card-header > div > span {
+  font-size: 17px;
+}
+.finance-page .finance-season-card-header strong {
+  font-size: 44px;
+}
+.finance-page .finance-season-rows span {
+  font-size: 18px;
+}
+.finance-page .finance-season-rows strong {
+  font-size: 26px;
+}
+.finance-page .finance-season-balance span {
+  font-size: 17px;
+}
+.finance-page .finance-season-balance strong {
+  font-size: 40px;
+}
+
+@media (max-width: 900px) {
+  .finance-page .finance-section .finance-ledger-round {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .workspace-nav-item {
+    min-height: 54px;
+    font-size: 15px;
+  }
+  .workspace-grid-overview .dashboard-grid {
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .finance-page .finance-section .finance-ledger-round {
+    grid-template-columns: 1fr;
+  }
+  .finance-page .finance-section .finance-ledger-round .finance-ledger-card {
+    min-height: 0;
+  }
+}
+@media (max-width: 620px) {
+  .workspace-grid-overview .dashboard-grid > .card {
+    padding: 18px;
+  }
+  .workspace-grid-overview .dashboard-grid .section-title-row h2 {
+    font-size: 25px;
+  }
+}
