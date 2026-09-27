@@ -358,3 +358,70 @@ html:fullscreen .app,html:fullscreen .start{position:absolute;inset:0;width:100%
   .player-dot-wsc span{top:45px;font-size:8px}
   .player-dot-wsc.gk span{top:auto;bottom:44px}
 }
+
+
+/* WSC squad details + substitute bench */
+.squad-side-wsc{
+  min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;overflow:hidden;
+}
+.player-focus-wsc,.bench-wsc{
+  flex:0 0 auto;background:#4a4b5f;color:#fff;border:0;min-height:0;
+}
+.focus-title,.bench-title{
+  height:29px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 10px;background:#292b40;color:#fff;font-size:9px;font-weight:900;letter-spacing:.05em;
+}
+.focus-card-wsc{
+  min-height:70px;display:grid;grid-template-columns:58px minmax(0,1fr);
+  gap:9px;align-items:center;padding:7px 10px;
+}
+.focus-avatar{
+  width:50px;height:50px;border-radius:50%;display:grid;place-items:center;
+  background:#c94052;color:#fff;border:3px solid #fff;font-size:16px;font-weight:900;
+}
+.focus-card-wsc>div:last-child{min-width:0;display:flex;flex-direction:column}
+.focus-card-wsc strong{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.focus-card-wsc span{font-size:8px;color:#d2d4de;margin-top:2px}
+.focus-card-wsc small{font-size:8px;color:#fff;margin-top:3px}
+.focus-empty{padding:13px 10px;color:#c8cad4;font-size:9px;line-height:1.35;min-height:45px}
+.bench-wsc{background:#eef0ee;color:#17204e}
+.bench-title{background:#333546}
+.bench-title span{font-size:9px}
+.bench-title b{font-size:10px;color:#e1b45a}
+.bench-grid-wsc{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:6px;
+}
+.bench-player-wsc{
+  min-width:0;height:51px;border:0;background:#c9cbd0;color:#17204e;
+  display:grid;grid-template-columns:27px minmax(0,1fr);grid-template-rows:1fr 1fr;
+  align-items:center;padding:4px;text-align:left;
+}
+.bench-player-wsc>b{
+  grid-row:1 / span 2;width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;background:#c94052;color:#fff;font-size:9px;
+}
+.bench-player-wsc span{
+  min-width:0;font-size:9px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.bench-player-wsc small{font-size:7px;color:#6c7385}
+.bench-player-wsc.picked{background:#e1b450}
+.bench-player-wsc:hover{background:#dfe1e5}
+.roster-table-wsc{flex:1;min-height:0}
+.tactic-control-wsc{
+  min-width:105px;height:30px;border:0;background:rgba(255,255,255,.08);
+  color:#fff;display:flex;flex-direction:column;justify-content:center;text-align:left;
+  padding:0 8px;
+}
+.tactic-control-wsc span{font-size:7px;color:#bfc3d2;font-weight:900}
+.tactic-control-wsc b{font-size:9px;margin-top:1px}
+.tactic-control-wsc:hover{background:rgba(255,255,255,.14)}
+
+@media (max-height:720px) and (min-width:921px){
+  .player-focus-wsc .focus-title,.bench-title{height:25px}
+  .focus-card-wsc{min-height:61px;padding:5px 8px}
+  .focus-avatar{width:44px;height:44px;font-size:14px}
+  .bench-grid-wsc{gap:4px;padding:4px}
+  .bench-player-wsc{height:45px;padding:3px}
+  .bench-player-wsc>b{width:21px;height:21px;font-size:8px}
+  .tactic-control-wsc{min-width:92px;height:28px}
+}
