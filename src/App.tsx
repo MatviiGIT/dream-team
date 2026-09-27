@@ -592,7 +592,7 @@ function Overview({
   const opponent = opponentId ? game.clubs[opponentId] : undefined;
   const home = nextFixture?.homeTeamId === game.clubId;
 
-  const sectionCards: Array<{
+  const menuCards: Array<{
     id: Exclude<Tab, 'overview'>;
     title: string;
     description: string;
@@ -649,6 +649,8 @@ function Overview({
           </div>
         </section>
 
+        <UpcomingCalendar game={game} />
+
         <section className="card last-match-card">
           <div className="eyebrow">{ru.overview.latestResult}</div>
           {lastMatch ? (
@@ -658,73 +660,32 @@ function Overview({
               <div>{game.clubs[lastMatch.awayTeamId]?.shortName}</div>
             </div>
           ) : <div className="empty-state">{ru.overview.firstMatch}</div>}
+
           {lastMatch && (
             <div className="mini-stats">
-              <span>xG {lastMatch.homeXg.toFixed(2)} — {lastMatch.awayXg.toFixed(2)}</span>
-              <span>{ru.overview.possession} {lastMatch.homePossession}% — {lastMatch.awayPossession}%</span>
               <span>{ru.overview.shots} {lastMatch.homeShots} — {lastMatch.awayShots}</span>
             </div>
           )}
         </section>
-
-        <section className="card events-card">
-          <div className="section-title-row">
-            <div>
-              <div className="eyebrow">{ru.overview.events}</div>
-              <h2>{ru.overview.timeline}</h2>
-            </div>
-          </div>
-          {lastMatch ? <EventTimeline game={game} /> : <div className="empty-state">{ru.overview.timelineEmpty}</div>}
-        </section>
-
-        <UpcomingCalendar game={game} />
-
-        <section className="card manager-card">
-          <div className="section-title-row">
-            <div>
-              <div className="eyebrow">{ru.overview.managerPanel}</div>
-              <h2>{ru.overview.managerTitle}</h2>
-            </div>
-            <span className="future-tag">{ru.overview.futureTag}</span>
-          </div>
-          <div className="manager-profile">
-            <div className="manager-avatar">{game.managerName.slice(0, 1).toUpperCase()}</div>
-            <div>
-              <strong>{game.managerName}</strong>
-              <span>{ru.overview.managerRole}</span>
-            </div>
-          </div>
-          <div className="manager-stats">
-            <div><span>{ru.overview.managerReputation}</span><strong>—</strong></div>
-            <div><span>{ru.overview.seasons}</span><strong>{Math.max(0, game.season - 1)}</strong></div>
-          </div>
-        </section>
       </div>
 
-      <section className="overview-section-index card">
-        <div className="overview-section-heading">
-          <div>
-            <div className="eyebrow">{ru.overview.sectionsLabel}</div>
-            <h2>{ru.overview.sectionsTitle}</h2>
-          </div>
-          <span>{ru.overview.sectionsHint}</span>
-        </div>
-
-        <div className="section-card-grid">
-          {sectionCards.map((section) => (
-            <button
-              key={section.id}
-              className={`section-card section-card-${section.accent}`}
-              type="button"
-              onClick={() => onOpenSection(section.id)}
-            >
-              <span className="section-card-title">{section.title}</span>
-              <span className="section-card-description">{section.description}</span>
-              <span className="section-card-arrow" aria-hidden="true">→</span>
-            </button>
-          ))}
-        </div>
-      </section>
+      <div className="overview-menu-grid">
+        {menuCards.map((item) => (
+          <button
+            key={item.id}
+            className={`card overview-menu-card overview-menu-card-${item.accent}`}
+            type="button"
+            onClick={() => onOpenSection(item.id)}
+          >
+            <div className="overview-menu-card-top">
+              <div className="eyebrow">{ru.overview.menuLabel}</div>
+              <span aria-hidden="true">→</span>
+            </div>
+            <strong>{item.title}</strong>
+            <small>{item.description}</small>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
