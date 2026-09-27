@@ -733,3 +733,8 @@ Then:
 - Disabled the two continuously animated fullscreen ambient background layers; the static gradients remain, avoiding constant large-surface transform animation during normal gameplay.
 - Added a compact six-item «Разделы» navigator to Overview for Squad, Transfers, Contracts, Tactics, Table and Finance.
 - Each Overview section item is clickable and switches directly to the selected game section.
+
+
+### 2026-09-27 — Revert Overview section navigator
+- Removed the six large «Разделы» cards from Overview after review; Overview returns to its previous dashboard presentation.
+- Kept the performance optimizations from the same pass: debounced game saves and disabled continuously animated ambient background layers.
