@@ -6138,3 +6138,375 @@ select optgroup {
     min-height: 0;
   }
 }
+
+/* 2026-09-27 — Finance Club two-column flow + Overview readability pass. */
+/* Finance Club: large, scan-friendly income/expense columns. */
+.finance-page .finance-season-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+.finance-page .finance-season-card {
+  min-width: 0;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  box-sizing: border-box;
+}
+.finance-page .finance-season-card.income {
+  border-color: rgba(85,214,180,.28);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(85,214,180,.10), transparent 45%),
+    linear-gradient(145deg, rgba(20,47,45,.96), rgba(13,26,32,.99));
+}
+.finance-page .finance-season-card.expenses {
+  border-color: rgba(239,113,136,.30);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(239,113,136,.10), transparent 45%),
+    linear-gradient(145deg, rgba(51,27,36,.96), rgba(21,24,31,.99));
+}
+.finance-page .finance-season-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.finance-page .finance-season-card-header > div {
+  min-width: 0;
+}
+.finance-page .finance-season-card-header > div > span {
+  display: block;
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.finance-page .finance-season-card-header strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 42px;
+  line-height: .98;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
+.finance-page .finance-season-card.income .finance-season-card-header strong {
+  color: #86e7ce;
+}
+.finance-page .finance-season-card.expenses .finance-season-card-header strong {
+  color: #ff9aad;
+}
+.finance-page .finance-season-badge {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  font-size: 27px;
+  font-weight: 950;
+}
+.finance-page .finance-season-card.income .finance-season-badge {
+  color: #86e7ce;
+  background: rgba(85,214,180,.12);
+  border: 1px solid rgba(85,214,180,.20);
+}
+.finance-page .finance-season-card.expenses .finance-season-badge {
+  color: #ff9aad;
+  background: rgba(239,113,136,.12);
+  border: 1px solid rgba(239,113,136,.21);
+}
+.finance-page .finance-season-rows {
+  display: grid;
+  gap: 0;
+  margin-top: 22px;
+}
+.finance-page .finance-season-rows > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-width: 0;
+  padding: 14px 0;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+.finance-page .finance-season-rows > div:first-child {
+  border-top: 0;
+}
+.finance-page .finance-season-rows span {
+  min-width: 0;
+  color: #b7c5cf;
+  font-size: 17px;
+  font-weight: 800;
+}
+.finance-page .finance-season-rows strong {
+  flex: 0 0 auto;
+  font-size: 25px;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
+.finance-page .finance-season-card.income .finance-season-rows strong {
+  color: #86e7ce;
+}
+.finance-page .finance-season-card.expenses .finance-season-rows strong {
+  color: #ff9aad;
+}
+.finance-page .finance-season-balance {
+  margin-top: 14px;
+  padding: 22px 26px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+.finance-page .finance-season-balance > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.finance-page .finance-season-balance span {
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.finance-page .finance-season-balance strong {
+  font-size: 38px;
+  font-weight: 950;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.finance-page .finance-season-balance.positive {
+  border-color: rgba(85,214,180,.24);
+  background: linear-gradient(145deg, rgba(85,214,180,.10), rgba(255,255,255,.025));
+}
+.finance-page .finance-season-balance.positive span,
+.finance-page .finance-season-balance.positive strong {
+  color: #86e7ce;
+}
+.finance-page .finance-season-balance.negative {
+  border-color: rgba(239,113,136,.30);
+  background: linear-gradient(145deg, rgba(239,113,136,.12), rgba(255,255,255,.02));
+}
+.finance-page .finance-season-balance.negative span,
+.finance-page .finance-season-balance.negative strong {
+  color: #ff9aad;
+}
+
+/* Keep the hero's wages card the same footprint as the previous one-third summary card. */
+.finance-page .finance-hero {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px;
+}
+.finance-page .finance-hero > div {
+  min-height: 134px;
+  padding: 24px 26px;
+  border-radius: 16px;
+}
+.finance-page .finance-hero-wages {
+  width: 100%;
+}
+.finance-page .finance-hero-wages strong {
+  font-size: 34px;
+}
+
+/* Overview: reclaim the unused right rail and use the freed width for readable dashboard cards. */
+.workspace-grid-overview {
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+.workspace-grid-overview .dashboard-grid {
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+.workspace-grid-overview .dashboard-grid > .card {
+  padding: 28px;
+}
+.workspace-grid-overview .dashboard-grid .eyebrow {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .10em;
+}
+.workspace-grid-overview .dashboard-grid .section-title-row h2 {
+  font-size: 27px;
+  line-height: 1.05;
+}
+.workspace-grid-overview .next-match-progress,
+.workspace-grid-overview .match-tag {
+  font-size: 12px;
+  padding: 8px 10px;
+}
+.workspace-grid-overview .fixture-line {
+  gap: 18px;
+  margin: 30px 0 25px;
+}
+.workspace-grid-overview .team-side {
+  gap: 12px;
+}
+.workspace-grid-overview .team-side strong {
+  font-size: 17px;
+  line-height: 1.25;
+}
+.workspace-grid-overview .team-badge {
+  width: 68px;
+  height: 68px;
+  border-radius: 19px;
+  font-size: 12px;
+}
+.workspace-grid-overview .stat-grid {
+  margin-top: 20px;
+}
+.workspace-grid-overview .big-stat {
+  padding: 18px 8px;
+}
+.workspace-grid-overview .big-stat span {
+  font-size: 14px;
+  font-weight: 850;
+}
+.workspace-grid-overview .big-stat strong {
+  margin-top: 7px;
+  font-size: 35px;
+  font-weight: 950;
+}
+.workspace-grid-overview .big-stat small {
+  font-size: 13px;
+}
+.workspace-grid-overview .latest-result {
+  gap: 22px;
+  margin: 30px 0 20px;
+}
+.workspace-grid-overview .latest-result > div {
+  font-size: 16px;
+  font-weight: 850;
+}
+.workspace-grid-overview .latest-result strong {
+  min-width: 100px;
+  font-size: 36px;
+  font-weight: 950;
+}
+.workspace-grid-overview .mini-stats {
+  gap: 9px;
+  font-size: 13px;
+}
+.workspace-grid-overview .mini-stats span {
+  padding: 8px 10px;
+}
+.workspace-grid-overview .timeline {
+  margin-top: 18px;
+  gap: 4px;
+}
+.workspace-grid-overview .timeline-item {
+  grid-template-columns: 40px 10px 1fr;
+  gap: 12px;
+  padding: 11px 0;
+  font-size: 14px;
+}
+.workspace-grid-overview .minute {
+  font-size: 13px;
+}
+.workspace-grid-overview .calendar-preview-list {
+  gap: 10px;
+  margin-top: 18px;
+}
+.workspace-grid-overview .calendar-row.compact {
+  min-height: 54px;
+  padding: 10px;
+}
+.workspace-grid-overview .calendar-round {
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+}
+.workspace-grid-overview .calendar-venue {
+  font-size: 12px;
+}
+.workspace-grid-overview .calendar-opponent {
+  font-size: 14px;
+  font-weight: 800;
+}
+.workspace-grid-overview .calendar-badge {
+  width: 38px;
+  height: 38px;
+  font-size: 9px;
+}
+.workspace-grid-overview .calendar-footer {
+  margin-top: 14px;
+  font-size: 12px;
+}
+.workspace-grid-overview .manager-profile {
+  margin-top: 18px;
+  padding: 14px;
+  gap: 14px;
+}
+.workspace-grid-overview .manager-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  font-size: 18px;
+}
+.workspace-grid-overview .manager-profile strong {
+  font-size: 17px;
+}
+.workspace-grid-overview .manager-profile span {
+  margin-top: 4px;
+  font-size: 13px;
+}
+.workspace-grid-overview .manager-stats {
+  gap: 9px;
+  margin-top: 12px;
+}
+.workspace-grid-overview .manager-stats div {
+  padding: 12px;
+}
+.workspace-grid-overview .manager-stats span {
+  font-size: 12px;
+}
+.workspace-grid-overview .manager-stats strong {
+  margin-top: 5px;
+  font-size: 22px;
+}
+
+@media (max-width: 1199px) {
+  .workspace-grid-overview {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .finance-page .finance-season-grid {
+    grid-template-columns: 1fr;
+  }
+  .finance-page .finance-season-card-header strong {
+    font-size: 37px;
+  }
+  .finance-page .finance-season-rows span {
+    font-size: 15px;
+  }
+  .finance-page .finance-season-rows strong {
+    font-size: 22px;
+  }
+  .workspace-grid-overview {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 620px) {
+  .finance-page .finance-hero {
+    grid-template-columns: 1fr;
+  }
+  .finance-page .finance-hero > div {
+    min-height: 0;
+    padding: 22px;
+  }
+  .workspace-grid-overview .dashboard-grid > .card {
+    padding: 20px;
+  }
+  .workspace-grid-overview .dashboard-grid .section-title-row h2 {
+    font-size: 24px;
+  }
+  .workspace-grid-overview .big-stat strong {
+    font-size: 31px;
+  }
+  .workspace-grid-overview .latest-result strong {
+    font-size: 31px;
+  }
+}
