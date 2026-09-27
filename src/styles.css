@@ -10333,3 +10333,850 @@ select optgroup {
     grid-column: auto;
   }
 }
+
+
+/* =========================================================
+   FINAL UI RESET — WSC-inspired visual layer
+   ========================================================= */
+
+:root {
+  --wsc-blue: #10154b;
+  --wsc-blue-deep: #090d35;
+  --wsc-blue-mid: #171d61;
+  --wsc-cyan: #79d2d2;
+  --wsc-gold: #e1b75b;
+  --wsc-panel: #d8d8e0;
+  --wsc-panel-dark: #c4c5cf;
+  --wsc-panel-light: #eeeeF1;
+  --wsc-ink: #14194c;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: var(--wsc-blue-deep);
+}
+
+/* Application shell */
+.wsc-app-shell {
+  width: 100%;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: 64px minmax(0, 1fr);
+  overflow: hidden;
+  color: #f7f7fb;
+  background:
+    repeating-linear-gradient(135deg, transparent 0 34px, rgba(255,255,255,.025) 34px 36px, transparent 36px 88px),
+    radial-gradient(circle at 85% 15%, rgba(117,167,255,.08), transparent 25%),
+    linear-gradient(180deg, #171d5b 0%, #0b1038 100%);
+}
+
+.wsc-app-header {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 44px auto minmax(0,1fr) auto auto;
+  align-items: center;
+  gap: 11px;
+  padding: 0 15px;
+  background: linear-gradient(180deg, #87d5d4 0%, #64c3c2 100%);
+  color: var(--wsc-ink);
+  box-shadow: 0 5px 0 rgba(5,8,35,.26);
+  position: relative;
+  z-index: 30;
+}
+
+.wsc-app-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--wsc-gold);
+}
+
+.wsc-header-menu,
+.wsc-header-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(245,245,248,.94);
+  color: var(--wsc-ink);
+  box-shadow: 0 3px 7px rgba(6,10,45,.15);
+}
+
+.wsc-header-menu {
+  align-content: center;
+  gap: 4px;
+  padding: 9px;
+}
+
+.wsc-header-menu span {
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.wsc-header-menu:hover,
+.wsc-header-icon:hover {
+  transform: translateY(-1px);
+}
+
+.wsc-header-club {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.wsc-header-crest {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(255,255,255,.9);
+  border-radius: 50%;
+  color: #071018;
+  font-size: 8px;
+  font-weight: 1000;
+}
+
+.wsc-header-club-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.wsc-header-club-copy strong {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #101547;
+  font-size: 15px;
+  font-weight: 1000;
+}
+
+.wsc-header-club-copy span {
+  color: #4d5376;
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.wsc-app-header .fullscreen-button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(245,245,248,.9);
+  color: var(--wsc-ink);
+}
+
+.wsc-app-content {
+  min-height: 0;
+  overflow: auto;
+  padding: 12px 14px 16px;
+}
+
+/* Section screens */
+.wsc-section {
+  min-height: calc(100dvh - 94px);
+  display: grid;
+  grid-template-rows: 54px minmax(0,1fr);
+  gap: 10px;
+}
+
+.wsc-section-topline {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.wsc-back-button {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #f4f4f6;
+  color: var(--wsc-ink);
+  font-size: 25px;
+  box-shadow: 0 3px 7px rgba(4,7,34,.18);
+}
+
+.wsc-back-button:hover {
+  transform: translateX(-2px);
+}
+
+.wsc-section-topline > div {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.wsc-section-topline span {
+  color: #9ca6d4;
+  font-size: 8px;
+  font-weight: 1000;
+  letter-spacing: .13em;
+}
+
+.wsc-section-topline h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 25px;
+  font-weight: 1000;
+  line-height: 1;
+  letter-spacing: -.03em;
+}
+
+.wsc-section-body {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Make every existing management component use the WSC panel language. */
+.wsc-section-body .content-card,
+.wsc-section-body .transfers-panel {
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--wsc-ink);
+  background: var(--wsc-panel);
+  box-shadow: 0 6px 0 rgba(5,8,35,.25);
+  clip-path: polygon(1.1% 0,100% 0,98.9% 100%,0 100%);
+}
+
+.wsc-section-body .content-card > .section-title-row,
+.wsc-section-body .transfers-header {
+  border: 0;
+}
+
+.wsc-section-body .content-card h2,
+.wsc-section-body .transfers-header h2 {
+  color: var(--wsc-ink);
+  font-size: 24px;
+  font-weight: 1000;
+}
+
+.wsc-section-body .eyebrow,
+.wsc-section-body .transfers-header p {
+  color: #555b7e;
+}
+
+/* Squad */
+.wsc-section-squad .content-card {
+  padding: 13px;
+  overflow: hidden;
+}
+
+.wsc-section-squad .squad-panel > .section-title-row {
+  padding: 0 5px 10px;
+}
+
+.wsc-section-squad .squad-formation-pill {
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--wsc-ink);
+}
+
+.wsc-section-squad .team-sheet {
+  min-height: 0;
+  height: calc(100% - 50px);
+  grid-template-columns: minmax(0,1fr) 310px;
+  gap: 11px;
+}
+
+.wsc-section-squad .squad-pitch-wrap {
+  min-height: 0;
+  padding: 0;
+}
+
+.wsc-section-squad .squad-pitch {
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.08) 0 50%, transparent 50% 100%),
+    repeating-linear-gradient(90deg, #4eae54 0 10%, #55b65a 10% 20%);
+  clip-path: polygon(1.2% 0,100% 0,98.8% 100%,0 100%);
+  box-shadow: 0 5px 0 rgba(18,64,24,.3);
+}
+
+.wsc-section-squad .squad-pitch::after {
+  content: "";
+  position: absolute;
+  inset: 2%;
+  border: 2px solid rgba(255,255,255,.75);
+  pointer-events: none;
+}
+
+.wsc-section-squad .squad-player-marker {
+  width: 72px;
+  min-height: 58px;
+  padding: 4px 4px 5px;
+  border: 0;
+  border-radius: 999px 999px 12px 12px;
+  background: #c9363e;
+  color: #fff;
+  box-shadow: 0 4px 0 rgba(112,18,25,.30);
+}
+
+.wsc-section-squad .squad-player-marker::before {
+  border: 3px solid #fff;
+}
+
+.wsc-section-squad .squad-player-rating {
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #bd2e36;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 1000;
+}
+
+.wsc-section-squad .squad-player-marker strong {
+  max-width: 62px;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 1000;
+}
+
+.wsc-section-squad .squad-player-marker small {
+  color: #e8f3e8;
+  font-size: 7px;
+  font-weight: 1000;
+}
+
+.wsc-section-squad .squad-player-marker.selected {
+  outline: 3px solid #e1b75b;
+  outline-offset: 2px;
+}
+
+.wsc-section-squad .squad-roster {
+  min-height: 0;
+  padding: 10px;
+  border: 0;
+  border-radius: 0;
+  background: #bfc0ca;
+  color: var(--wsc-ink);
+  clip-path: polygon(3% 0,100% 0,97% 100%,0 100%);
+}
+
+.wsc-section-squad .squad-roster-header strong {
+  color: var(--wsc-ink);
+  font-size: 13px;
+}
+
+.wsc-section-squad .squad-roster-list {
+  scrollbar-color: #7f849a transparent;
+}
+
+.wsc-section-squad .squad-roster-card {
+  border: 0;
+  border-radius: 0;
+  background: #dedeE4;
+  color: var(--wsc-ink);
+  clip-path: polygon(2% 0,100% 0,98% 100%,0 100%);
+}
+
+.wsc-section-squad .squad-roster-card:hover,
+.wsc-section-squad .squad-roster-card.good {
+  background: #ececef;
+}
+
+.wsc-section-squad .squad-roster-avatar {
+  background: #fff;
+  color: #252b60;
+}
+
+.wsc-section-squad .squad-roster-main strong,
+.wsc-section-squad .squad-roster-stat strong {
+  color: var(--wsc-ink);
+}
+
+.wsc-section-squad .squad-roster-main small,
+.wsc-section-squad .squad-roster-stat small {
+  color: #626884;
+}
+
+/* Tactics */
+.wsc-section-tactics .tactics-panel {
+  padding: 13px 15px;
+  overflow: auto;
+}
+
+.wsc-section-tactics .formation-block {
+  border: 0;
+  border-radius: 0;
+  background: #c2c3cc;
+  color: var(--wsc-ink);
+  clip-path: polygon(2% 0,100% 0,98% 100%,0 100%);
+}
+
+.wsc-section-tactics .formation-heading span {
+  color: #5b607c;
+}
+
+.wsc-section-tactics .formation-heading strong {
+  color: var(--wsc-ink);
+  font-size: 19px;
+}
+
+.wsc-section-tactics .formation-select-button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 0;
+  background: #eeeef1;
+  color: #252958;
+  clip-path: polygon(4% 0,100% 0,96% 100%,0 100%);
+}
+
+.wsc-section-tactics .formation-select-button.active {
+  background: #6dce78;
+  color: #0d3d1e;
+}
+
+.wsc-section-tactics .tactic-grid {
+  gap: 8px;
+}
+
+.wsc-section-tactics .tactic-field {
+  border: 0;
+  border-radius: 0;
+  background: #d0d0d8;
+  color: var(--wsc-ink);
+  clip-path: polygon(3% 0,100% 0,97% 100%,0 100%);
+}
+
+.wsc-section-tactics .tactic-field > span {
+  color: #555b7c;
+}
+
+.wsc-section-tactics .tactic-choice {
+  border: 0;
+  border-radius: 0;
+  background: #f0f0f2;
+  color: var(--wsc-ink);
+}
+
+.wsc-section-tactics .tactic-menu {
+  background: #e6e6ea;
+  border: 0;
+  border-radius: 0;
+  box-shadow: 0 9px 20px rgba(8,11,47,.24);
+}
+
+.wsc-section-tactics .tactic-menu button {
+  color: #202657;
+}
+
+.wsc-section-tactics .tactic-menu button:hover,
+.wsc-section-tactics .tactic-menu button.active {
+  background: #6dce78;
+  color: #103b1a;
+}
+
+/* League table */
+.wsc-section-table .content-table {
+  padding: 13px;
+  overflow: auto;
+}
+
+.wsc-section-table .table-overview {
+  gap: 8px;
+}
+
+.wsc-section-table .table-overview-card {
+  border: 0;
+  border-radius: 0;
+  background: #c5c6cf;
+  color: var(--wsc-ink);
+  clip-path: polygon(4% 0,100% 0,96% 100%,0 100%);
+}
+
+.wsc-section-table .table-overview-card span {
+  color: #5b607d;
+}
+
+.wsc-section-table .table-overview-card strong {
+  color: var(--wsc-ink);
+}
+
+.wsc-section-table .table-wrap {
+  border: 0;
+  border-radius: 0;
+  background: #bfc0ca;
+  clip-path: polygon(1% 0,100% 0,99% 100%,0 100%);
+}
+
+.wsc-section-table table {
+  color: var(--wsc-ink);
+}
+
+.wsc-section-table th {
+  background: #9fa2b2;
+  color: #32375f;
+  border-bottom: 0;
+  font-size: 10px;
+  font-weight: 1000;
+}
+
+.wsc-section-table td {
+  border-bottom: 1px solid rgba(20,25,76,.08);
+  color: #2a2f5d;
+  font-size: 12px;
+}
+
+.wsc-section-table tbody tr {
+  background: #dedee4;
+}
+
+.wsc-section-table tbody tr:nth-child(even) {
+  background: #d1d1d9;
+}
+
+.wsc-section-table tbody tr.your-club {
+  background: #77d1ce;
+  color: var(--wsc-ink);
+}
+
+.wsc-section-table .table-rank {
+  color: #41476d;
+}
+
+.wsc-section-table .table-club-cell strong {
+  color: #171b50;
+}
+
+/* Finance */
+.wsc-section-finances .finance-page {
+  padding: 14px;
+  overflow: auto;
+}
+
+.wsc-section-finances .finance-hero {
+  border: 0;
+  border-radius: 0;
+  background: #bfc0ca;
+  color: var(--wsc-ink);
+  clip-path: polygon(2% 0,100% 0,98% 100%,0 100%);
+}
+
+.wsc-section-finances .finance-hero span,
+.wsc-section-finances .finance-season-card span,
+.wsc-section-finances .finance-ledger-card span {
+  color: #5d6381;
+}
+
+.wsc-section-finances .finance-hero strong,
+.wsc-section-finances .finance-season-card strong,
+.wsc-section-finances .finance-ledger-card strong {
+  color: var(--wsc-ink);
+}
+
+.wsc-section-finances .finance-season-card,
+.wsc-section-finances .finance-round-card,
+.wsc-section-finances .finance-ledger-card,
+.wsc-section-finances .finance-season-balance {
+  border: 0;
+  border-radius: 0;
+  color: var(--wsc-ink);
+  background: #d7d7df;
+  clip-path: polygon(2% 0,100% 0,98% 100%,0 100%);
+}
+
+.wsc-section-finances .finance-round-card {
+  padding: 12px;
+}
+
+.wsc-section-finances .finance-ledger-card.result.positive {
+  background: #b9dfbd;
+}
+
+.wsc-section-finances .finance-ledger-card.result.negative {
+  background: #e0b4bd;
+}
+
+.wsc-section-finances .finance-empty {
+  color: #606680;
+}
+
+/* Settings modal uses the same interface language. */
+.settings-backdrop {
+  background: rgba(8,11,45,.78);
+}
+
+.settings-modal {
+  border: 0;
+  border-radius: 0;
+  background: #d8d8e0;
+  color: var(--wsc-ink);
+  clip-path: polygon(2% 0,100% 0,98% 100%,0 100%);
+  box-shadow: 0 28px 80px rgba(4,7,34,.40);
+}
+
+.settings-modal .modal-header h2 {
+  color: var(--wsc-ink);
+}
+
+.settings-modal .eyebrow {
+  color: #555b7c;
+}
+
+.settings-modal .modal-close {
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--wsc-ink);
+}
+
+.settings-modal-group {
+  border: 0;
+  border-radius: 0;
+  background: #c5c6cf;
+  color: var(--wsc-ink);
+  clip-path: polygon(2% 0,100% 0,98% 100%,0 100%);
+}
+
+.settings-modal-group .settings-label {
+  color: #4d5375;
+}
+
+.setting-option {
+  border: 0;
+  border-radius: 0;
+  background: #ececf0;
+  color: var(--wsc-ink);
+  clip-path: polygon(5% 0,100% 0,95% 100%,0 100%);
+}
+
+.setting-option.active {
+  background: #75d1cf;
+}
+
+.setting-option.disabled {
+  opacity: .4;
+}
+
+/* Make old global buttons look like WSC buttons whenever they remain in inner components. */
+.wsc-section-body .primary-button,
+.wsc-section-body .secondary-button,
+.wsc-section-body .ghost-button,
+.wsc-section-body button:not(.squad-player-marker):not(.squad-roster-card):not(.formation-select-button) {
+  font-weight: 1000;
+}
+
+.wsc-section-body .primary-button {
+  border: 0;
+  border-radius: 0;
+  background: #6dce78;
+  color: #0d3d1e;
+  clip-path: polygon(3% 0,100% 0,97% 100%,0 100%);
+}
+
+.wsc-section-body .secondary-button,
+.wsc-section-body .ghost-button {
+  border: 0;
+  border-radius: 0;
+  background: #eeeef1;
+  color: var(--wsc-ink);
+  clip-path: polygon(4% 0,100% 0,96% 100%,0 100%);
+}
+
+.wsc-section-body input,
+.wsc-section-body select {
+  border: 1px solid rgba(20,25,76,.16);
+  border-radius: 0;
+  background: #f1f1f3;
+  color: var(--wsc-ink);
+}
+
+/* TransferMarket lives in its own stylesheet, so give its cards the same visual treatment. */
+.wsc-section-transfers .transfers-panel {
+  padding: 13px;
+  overflow: hidden;
+}
+
+.wsc-section-transfers .transfers-budget {
+  border: 0;
+  border-radius: 0;
+  background: #bfc0ca;
+  color: var(--wsc-ink);
+  clip-path: polygon(4% 0,100% 0,96% 100%,0 100%);
+}
+
+.wsc-section-transfers .transfers-budget span,
+.wsc-section-transfers .transfers-budget small {
+  color: #595f7c;
+}
+
+.wsc-section-transfers .transfers-budget strong {
+  color: var(--wsc-ink);
+}
+
+.wsc-section-transfers .transfer-toolbar {
+  margin-top: 12px;
+}
+
+.wsc-section-transfers .transfer-search input,
+.wsc-section-transfers .transfer-choice,
+.wsc-section-transfers .transfer-filter-trigger {
+  border: 0;
+  border-radius: 0;
+  background: #ededf0;
+  color: var(--wsc-ink);
+  clip-path: polygon(3% 0,100% 0,97% 100%,0 100%);
+}
+
+.wsc-section-transfers .transfer-filter-trigger {
+  background: #c1c2cb;
+}
+
+.wsc-section-transfers .transfer-filter-panel {
+  border: 0;
+  border-radius: 0;
+  background: #c5c6cf;
+  color: var(--wsc-ink);
+  clip-path: polygon(2% 0,100% 0,98% 100%,0 100%);
+}
+
+.wsc-section-transfers .transfer-filter-chip {
+  border: 0;
+  border-radius: 999px;
+  background: #ededf0;
+  color: var(--wsc-ink);
+}
+
+.wsc-section-transfers .transfer-filter-chip.active {
+  background: #6dce78;
+  color: #0d3d1e;
+}
+
+.wsc-section-transfers .transfer-player-card {
+  border: 0;
+  border-radius: 0;
+  background: #dedee4;
+  color: var(--wsc-ink);
+  clip-path: polygon(1.5% 0,100% 0,98.5% 100%,0 100%);
+}
+
+.wsc-section-transfers .transfer-player-avatar {
+  background: #fff;
+  color: var(--wsc-ink);
+}
+
+.wsc-section-transfers .transfer-player-main strong,
+.wsc-section-transfers .transfer-player-role strong,
+.wsc-section-transfers .transfer-player-stat strong,
+.wsc-section-transfers .transfer-player-finance strong {
+  color: var(--wsc-ink);
+}
+
+.wsc-section-transfers .transfer-player-main > span,
+.wsc-section-transfers .transfer-player-role small,
+.wsc-section-transfers .transfer-player-stat small,
+.wsc-section-transfers .transfer-player-finance span {
+  color: #626883;
+}
+
+.wsc-section-transfers .transfer-market-badge {
+  background: #77d1cf;
+  border: 0;
+  color: #15204d;
+}
+
+.wsc-section-transfers .transfer-buy-button {
+  border: 0;
+  border-radius: 0;
+  background: #6dce78;
+  color: #0d3d1e;
+  clip-path: polygon(5% 0,100% 0,95% 100%,0 100%);
+}
+
+.wsc-section-transfers .transfer-choice-menu {
+  border: 0;
+  border-radius: 0;
+  background: #d7d7df;
+}
+
+.wsc-section-transfers .transfer-choice-option:hover,
+.wsc-section-transfers .transfer-choice-option.active {
+  background: #75d1cf;
+  color: var(--wsc-ink);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .wsc-app-shell {
+    grid-template-rows: 58px minmax(0,1fr);
+  }
+
+  .wsc-header-club-copy strong {
+    max-width: 210px;
+  }
+
+  .wsc-section-squad .team-sheet {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(360px,1fr) 240px;
+    overflow: auto;
+    height: auto;
+  }
+
+  .wsc-section-squad .squad-pitch {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 680px) {
+  .wsc-app-content {
+    padding: 8px 8px 12px;
+  }
+
+  .wsc-header-club-copy strong {
+    max-width: 150px;
+    font-size: 13px;
+  }
+
+  .wsc-header-club-copy span {
+    display: none;
+  }
+
+  .wsc-section {
+    min-height: calc(100dvh - 80px);
+    grid-template-rows: 48px minmax(0,1fr);
+  }
+
+  .wsc-section-topline h1 {
+    font-size: 21px;
+  }
+
+  .wsc-menu-entry {
+    min-height: 50px;
+  }
+
+  .wsc-info-row {
+    grid-template-columns: 1fr;
+  }
+
+  .wsc-play-panel {
+    min-height: 300px;
+  }
+}
