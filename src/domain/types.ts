@@ -47,6 +47,7 @@ export interface Player {
   goals: number;
   assists: number;
   appearances: number;
+  developmentXp?: number;
 }
 
 export interface Tactics {
@@ -158,4 +159,5 @@ export interface GameState {
   lastMatch?: MatchResult;
   createdAt: string;
   updatedAt: string;
+  trainingUsed?: boolean;
 }
