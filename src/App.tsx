@@ -1621,92 +1621,129 @@ function TableForm({ results }: { results: TableFormResult[] }) {
 }
 
 function LeagueTable({ game }: { game: GameState }) {
+  const [view, setView] = useState<'table' | 'scorers' | 'assists'>('table');
   const rows = useMemo(() => [...game.table], [game.table]);
   const userRow = rows.find((row) => row.teamId === game.clubId);
   const userPosition = userRow ? rows.findIndex((row) => row.teamId === game.clubId) + 1 : 0;
   const userForm = useMemo(() => getClubForm(game, game.clubId), [game]);
+
+  const leaders = useMemo(
+    () => Object.values(game.players)
+      .filter((player) => game.clubs[game.clubId]?.playerIds.includes(player.id) || player.appearances > 0)
+      .sort((a, b) => (view === 'scorers' ? b.goals - a.goals : b.assists - a.assists) || b.overall - a.overall)
+      .slice(0, 12),
+    [game, view],
+  );
+
   return (
     <section className="card content-card content-table">
       <div className="section-title-row table-page-header">
         <div>
-          <h2>{ru.tabs.table}</h2>
+          <h2>СОРЕВНОВАНИЕ</h2>
+          <span className="wsc-screen-caption">Сезон {game.season} · Тур {Math.min(game.currentRound, 14)} / 14</span>
+        </div>
+        <div className="wsc-competition-tabs">
+          <button type="button" className={view === 'table' ? 'active' : ''} onClick={() => setView('table')}>ТАБЛИЦА</button>
+          <button type="button" className={view === 'scorers' ? 'active' : ''} onClick={() => setView('scorers')}>БОМБАРДИРЫ</button>
+          <button type="button" className={view === 'assists' ? 'active' : ''} onClick={() => setView('assists')}>АССИСТЫ</button>
         </div>
       </div>
 
-      <div className="table-overview">
-        <div className="table-overview-card position">
-          <span>{ru.table.position}</span>
-          <strong>{userPosition || '—'}<small>{userPosition ? ru.table.placeSuffix : ''}</small></strong>
-        </div>
-        <div className="table-overview-card points">
-          <span>{ru.table.points}</span>
-          <strong>{userRow?.points ?? 0}</strong>
-        </div>
-        <div className="table-overview-card matches">
-          <span>{ru.table.played}</span>
-          <strong>{userRow?.played ?? 0}<small>/ 14</small></strong>
-        </div>
-        <div className="table-overview-card goal-difference">
-          <span>{ru.table.goalDifference}</span>
-          <strong>{(userRow ? userRow.goalsFor - userRow.goalsAgainst : 0) > 0 ? '+' : ''}{userRow ? userRow.goalsFor - userRow.goalsAgainst : 0}</strong>
-        </div>
-        <div className="table-overview-card form">
-          <span>{ru.table.form}</span>
-          <TableForm results={userForm} />
-        </div>
-      </div>
+      {view === 'table' ? (
+        <>
+          <div className="table-overview">
+            <div className="table-overview-card position">
+              <span>{ru.table.position}</span>
+              <strong>{userPosition || '—'}<small>{userPosition ? ru.table.placeSuffix : ''}</small></strong>
+            </div>
+            <div className="table-overview-card points">
+              <span>{ru.table.points}</span>
+              <strong>{userRow?.points ?? 0}</strong>
+            </div>
+            <div className="table-overview-card matches">
+              <span>{ru.table.played}</span>
+              <strong>{userRow?.played ?? 0}<small>/ 14</small></strong>
+            </div>
+            <div className="table-overview-card goal-difference">
+              <span>{ru.table.goalDifference}</span>
+              <strong>{(userRow ? userRow.goalsFor - userRow.goalsAgainst : 0) > 0 ? '+' : ''}{userRow ? userRow.goalsFor - userRow.goalsAgainst : 0}</strong>
+            </div>
+            <div className="table-overview-card form">
+              <span>{ru.table.form}</span>
+              <TableForm results={userForm} />
+            </div>
+          </div>
 
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th aria-label={ru.table.position}></th>
-              <th>{ru.table.club}</th>
-              <th>{ru.table.form}</th>
-              <th>{ru.table.played}</th>
-              <th>{ru.table.wins}</th>
-              <th>{ru.table.draws}</th>
-              <th>{ru.table.losses}</th>
-              <th>{ru.table.goalsFor}</th>
-              <th>{ru.table.goalsAgainst}</th>
-              <th>{ru.table.goalDifference}</th>
-              <th>{ru.table.points}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, index) => {
-              const rowClub = game.clubs[row.teamId];
-              const form = getClubForm(game, row.teamId);
-              const goalDifference = row.goalsFor - row.goalsAgainst;
-              return (
-                <tr className={row.teamId === game.clubId ? 'your-club' : ''} key={row.teamId}>
-                  <td>
-                    <span className={index === 0 ? 'table-rank top' : index < 4 ? 'table-rank upper' : 'table-rank'}>
-                      {index + 1}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="table-club-cell">
-                      <strong>{rowClub.name}</strong>
-                    </div>
-                  </td>
-                  <td><TableForm results={form} /></td>
-                  <td>{row.played}</td>
-                  <td>{row.wins}</td>
-                  <td>{row.draws}</td>
-                  <td>{row.losses}</td>
-                  <td>{row.goalsFor}</td>
-                  <td>{row.goalsAgainst}</td>
-                  <td className={goalDifference > 0 ? 'goal-positive' : goalDifference < 0 ? 'goal-negative' : ''}>
-                    {goalDifference > 0 ? '+' : ''}{goalDifference}
-                  </td>
-                  <td><strong>{row.points}</strong></td>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>{ru.table.club}</th>
+                  <th>{ru.table.form}</th>
+                  <th>{ru.table.played}</th>
+                  <th>{ru.table.wins}</th>
+                  <th>{ru.table.draws}</th>
+                  <th>{ru.table.losses}</th>
+                  <th>{ru.table.goalsFor}</th>
+                  <th>{ru.table.goalsAgainst}</th>
+                  <th>{ru.table.goalDifference}</th>
+                  <th>{ru.table.points}</th>
                 </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, index) => {
+                  const rowClub = game.clubs[row.teamId];
+                  const form = getClubForm(game, row.teamId);
+                  const goalDifference = row.goalsFor - row.goalsAgainst;
+                  return (
+                    <tr className={row.teamId === game.clubId ? 'your-club' : ''} key={row.teamId}>
+                      <td><span className={index === 0 ? 'table-rank top' : index < 4 ? 'table-rank upper' : 'table-rank'}>{index + 1}</span></td>
+                      <td><div className="table-club-cell"><strong>{rowClub.name}</strong></div></td>
+                      <td><TableForm results={form} /></td>
+                      <td>{row.played}</td>
+                      <td>{row.wins}</td>
+                      <td>{row.draws}</td>
+                      <td>{row.losses}</td>
+                      <td>{row.goalsFor}</td>
+                      <td>{row.goalsAgainst}</td>
+                      <td className={goalDifference > 0 ? 'goal-positive' : goalDifference < 0 ? 'goal-negative' : ''}>{goalDifference > 0 ? '+' : ''}{goalDifference}</td>
+                      <td><strong>{row.points}</strong></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : (
+        <div className="wsc-leaders-screen">
+          <div className="wsc-leaders-head">
+            <div>
+              <strong>{view === 'scorers' ? 'Лучшие бомбардиры' : 'Лучшие ассистенты'}</strong>
+              <span>Игроки с наибольшим количеством результативных действий в текущей карьере</span>
+            </div>
+          </div>
+          <div className="wsc-leaders-list">
+            {leaders.length ? leaders.map((player, index) => {
+              const stat = view === 'scorers' ? player.goals : player.assists;
+              const playerClub = Object.values(game.clubs).find((club) => club.playerIds.includes(player.id));
+              return (
+                <div className="wsc-leader-row" key={player.id}>
+                  <span className="wsc-leader-rank">{index + 1}</span>
+                  <div className="wsc-leader-avatar">{player.name.slice(0, 1)}</div>
+                  <div className="wsc-leader-player">
+                    <strong>{player.name}</strong>
+                    <span>{playerClub?.shortName ?? '—'} · {positionLabel(player.position)} · {player.age}</span>
+                  </div>
+                  <span className="wsc-leader-ovr">{player.overall}</span>
+                  <strong className="wsc-leader-stat">{stat}</strong>
+                </div>
               );
-            })}
-          </tbody>
-        </table>
-      </div>
+            }) : <div className="modal-empty">Статистика появится после сыгранных матчей.</div>}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
