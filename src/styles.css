@@ -159,3 +159,202 @@ html:fullscreen .app,html:fullscreen .start{position:absolute;inset:0;width:100%
   .board-grid-wsc{grid-template-columns:1fr;grid-template-rows:auto}.board-grid-wsc>.next,.board-grid-wsc>.team,.board-grid-wsc>.schedule,.board-grid-wsc>.news-board,.board-grid-wsc>.market-mini,.board-grid-wsc>.bottom-mini{grid-column:1;grid-row:auto}.board-grid-wsc{overflow:auto}.home-board{overflow:auto}
   .squad-layout-wsc{grid-template-columns:1fr;overflow:auto}.pitch-wsc{min-height:430px}.roster-table-wsc{min-height:350px}.squad-page{overflow:auto}
 }
+
+
+/* ============================================================
+   FINAL WSC DESKTOP PASS: stable viewport + real vertical pitch
+   ============================================================ */
+
+/* Every in-career page owns its viewport. Internal lists scroll instead
+   of pushing panels below the laptop screen. */
+.content{min-height:0;overflow:hidden}
+.page{height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.page-head{flex:0 0 66px;min-height:66px;box-sizing:border-box}
+.page-head>div:first-child{display:flex;align-items:center;gap:11px;min-width:0}
+.page-head>div:first-child>div{min-width:0}
+.page-home-btn{
+  flex:0 0 auto;height:34px;padding:0 11px;border:1px solid #c4c8cf;
+  background:#fff;color:#1a214d;font-size:10px;font-weight:900;letter-spacing:.04em;
+}
+.page-home-btn:hover{background:#e8eaed}
+.transfer-bar{flex:0 0 44px;min-height:44px;box-sizing:border-box}
+.transfer-list,.league-table,.leader-list,.news-screen-grid,.history{
+  min-height:0;overflow:auto;
+}
+.transfer-list{flex:1}
+.league-table,.leader-list{flex:1}
+.news-screen-grid{flex:1}
+.history{flex:1}
+.coach-room-grid{flex:1;min-height:0;overflow:auto}
+.honours{flex:0 0 auto}
+
+/* WSC formation field: vertical pitch, own goal at the bottom,
+   attack directed toward the top. */
+.squad-page{height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#dfe1e1}
+.squad-head{flex-basis:62px;min-height:62px}
+.formation-strip{flex:0 0 38px;min-height:38px}
+.squad-layout-wsc{
+  flex:1;min-height:0;display:grid;
+  grid-template-columns:minmax(470px,46%) minmax(0,54%);
+  gap:12px;padding:10px 14px 8px;box-sizing:border-box;overflow:hidden;
+}
+.pitch-wsc{
+  position:relative;min-width:0;min-height:0;height:100%;overflow:hidden;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      #1d6d38 0,#1d6d38 8%,
+      #227741 8.2%,#227741 16%
+    );
+  clip-path:polygon(1.5% 0,98.5% 0,92% 100%,8% 100%);
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.12),0 7px 0 #154b2b;
+}
+.pitch-wsc:before{
+  content:"";position:absolute;inset:4.5% 5.2%;
+  border:3px solid rgba(255,255,255,.62);pointer-events:none;
+}
+.pitch-wsc:after{
+  content:"";position:absolute;left:5.2%;right:5.2%;top:50%;
+  height:2px;background:rgba(255,255,255,.62);pointer-events:none;
+}
+.pitch-box-lines{
+  position:absolute;inset:4.5% 5.2%;border:0;pointer-events:none;
+}
+.pitch-box-lines:before{
+  content:"";position:absolute;left:25%;right:25%;top:0;height:17%;
+  border:3px solid rgba(255,255,255,.62);border-top:0;
+}
+.pitch-box-lines:after{
+  content:"";position:absolute;left:25%;right:25%;bottom:0;height:17%;
+  border:3px solid rgba(255,255,255,.62);border-bottom:0;
+}
+.pitch-centre-circle{
+  position:absolute;left:50%;top:50%;width:15%;aspect-ratio:1;
+  border:3px solid rgba(255,255,255,.62);border-radius:50%;
+  transform:translate(-50%,-50%);pointer-events:none;
+}
+.pitch-centre-circle:after{
+  content:"";position:absolute;left:50%;top:50%;width:7px;height:7px;
+  border-radius:50%;background:rgba(255,255,255,.85);transform:translate(-50%,-50%);
+}
+.pitch-goal{
+  position:absolute;left:39%;width:22%;height:4.5%;
+  border:3px solid rgba(255,255,255,.78);box-sizing:border-box;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 5px,transparent 5px 10px);
+}
+.pitch-goal.goal-top{top:0;border-top:0}
+.pitch-goal.goal-bottom{bottom:0;border-bottom:0}
+
+.player-dot-wsc{
+  width:48px;height:48px;min-width:48px;min-height:48px;
+  border:3px solid #fff;border-radius:50%;
+  background:#c94052;color:#fff;
+  transform:translate(-50%,-50%);display:grid;place-items:center;
+  box-shadow:0 3px 0 rgba(0,0,0,.24),0 0 0 1px rgba(0,0,0,.13);
+  z-index:6;
+}
+.player-dot-wsc b{font-size:13px;line-height:1}
+.player-dot-wsc span{
+  position:absolute;top:49px;left:50%;transform:translateX(-50%);
+  white-space:nowrap;color:#fff;font-size:9px;font-weight:900;
+  text-shadow:0 1px 3px #061b0c;pointer-events:none;
+}
+.player-dot-wsc.gk span{top:auto;bottom:48px}
+.player-dot-wsc.picked{background:#e2b451;border-color:#17204e;color:#17204e}
+.player-dot-wsc:hover{filter:brightness(1.06);z-index:8}
+
+.roster-table-wsc{
+  min-width:0;min-height:0;height:100%;background:#eef0ee;
+  border:1px solid #bcc0c7;overflow:auto;
+}
+.roster-head-wsc{position:sticky;top:0}
+.roster-row-wsc{min-height:53px}
+
+.squad-bottom-controls{
+  flex:0 0 38px;height:38px;min-height:38px;box-sizing:border-box;
+}
+
+/* The hamburger is a career/exit button only.
+   It does not duplicate the in-game navigation. */
+.career-exit-backdrop{
+  position:fixed;inset:0;z-index:60;background:rgba(5,8,35,.64);
+  display:flex;align-items:stretch;
+}
+.career-exit-menu{
+  width:min(390px,88vw);height:100%;background:#171b56;color:#fff;
+  border-right:7px solid var(--gold);box-shadow:12px 0 0 rgba(0,0,0,.16);
+  display:flex;flex-direction:column;
+}
+.career-exit-menu header{
+  height:66px;flex:0 0 66px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;background:var(--gold);color:#171b56;
+}
+.career-exit-menu header span{display:block;font-size:8px;font-weight:900;letter-spacing:.08em}
+.career-exit-menu header strong{display:block;font-size:18px;margin-top:2px}
+.career-exit-menu header button{
+  width:34px;height:34px;border:0;background:#171b56;color:var(--gold);
+  font-size:23px;font-weight:900;
+}
+.career-exit-body{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  gap:10px;padding:24px;
+}
+.career-exit-body p{
+  margin:0 0 8px;color:#c9cbd7;font-size:12px;line-height:1.45;
+}
+.career-exit-action{
+  min-height:72px;border:0;background:#e1e2e4;color:#181e52;
+  display:grid;grid-template-columns:44px minmax(0,1fr) 24px;
+  grid-template-rows:1fr 1fr;align-items:center;column-gap:9px;
+  padding:0 12px;text-align:left;
+}
+.career-exit-action span{
+  grid-row:1 / span 2;width:34px;height:34px;border-radius:50%;
+  display:grid;place-items:center;background:#fff;font-size:15px;font-weight:900;
+}
+.career-exit-action strong{font-size:14px;align-self:end}
+.career-exit-action small{font-size:9px;color:#687086;align-self:start}
+.career-exit-action b{grid-column:3;grid-row:1 / span 2;text-align:right;font-size:22px}
+.career-exit-action:hover{background:#f0f1f2}
+.career-exit-cancel{
+  min-height:42px;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.06);color:#fff;font-size:10px;font-weight:900;
+}
+.career-exit-cancel:hover{background:rgba(255,255,255,.11)}
+
+/* Keep the desktop WSC composition intact around 1000px laptop widths.
+   Only genuinely narrow windows collapse the two-column squad page. */
+@media (min-width:921px){
+  .board-grid-wsc{
+    grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);
+    grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(92px,.58fr);
+    overflow:hidden;
+  }
+  .squad-layout-wsc{
+    grid-template-columns:minmax(470px,46%) minmax(0,54%);
+    overflow:hidden;
+  }
+  .squad-page{overflow:hidden}
+}
+@media (max-width:920px){
+  body{min-width:0}
+  .squad-layout-wsc{grid-template-columns:1fr;overflow:auto}
+  .pitch-wsc{min-height:430px;height:430px}
+  .roster-table-wsc{height:420px;min-height:420px}
+  .squad-page{overflow:auto}
+  .career-exit-menu{width:min(360px,92vw)}
+}
+@media (max-height:720px) and (min-width:921px){
+  .topbar{height:58px;flex-basis:58px}
+  .content{padding:9px 14px 10px}
+  .weekbar{height:34px;margin-bottom:7px;font-size:11px}
+  .board-grid-wsc{gap:8px;grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(82px,.52fr)}
+  .panel{padding:9px 11px}
+  .squad-head{flex-basis:56px;min-height:56px}
+  .formation-strip{flex-basis:34px;min-height:34px}
+  .squad-layout-wsc{padding:8px 11px 6px;gap:9px}
+  .squad-bottom-controls{flex-basis:34px;height:34px}
+  .player-dot-wsc{width:44px;height:44px;min-width:44px;min-height:44px}
+  .player-dot-wsc span{top:45px;font-size:8px}
+  .player-dot-wsc.gk span{top:auto;bottom:44px}
+}
