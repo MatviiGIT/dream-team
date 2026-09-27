@@ -7091,3 +7091,288 @@ select optgroup {
   animation: none !important;
   will-change: auto;
 }
+
+
+/* 2026-09-27 — Training management screen. */
+.app-shell-training .workspace-main {
+  overflow: hidden;
+}
+
+.training-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.training-panel .section-title-row {
+  flex: 0 0 auto;
+}
+
+.training-panel .training-subtitle {
+  margin: 6px 0 0;
+  max-width: 760px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.training-round-badge {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 8px 11px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(163,139,255,.22);
+  border-radius: 10px;
+  color: #c9bcff;
+  background: rgba(163,139,255,.06);
+  font-size: 14px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.training-focus-grid {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.training-focus-card {
+  min-width: 0;
+  min-height: 120px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  text-align: left;
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+}
+
+.training-focus-card:hover,
+.training-focus-card:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(163,139,255,.30);
+}
+
+.training-focus-card.active {
+  border-color: rgba(163,139,255,.48);
+  background: linear-gradient(180deg, rgba(163,139,255,.12), rgba(163,139,255,.035));
+  box-shadow: inset 0 0 0 1px rgba(163,139,255,.10);
+}
+
+.training-focus-card strong {
+  font-size: 18px;
+  line-height: 1.05;
+}
+
+.training-focus-card span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.training-focus-card small {
+  margin-top: auto;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.training-action-row {
+  flex: 0 0 auto;
+  min-height: 58px;
+  padding: 11px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(255,255,255,.025);
+}
+
+.training-action-row > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.training-action-row strong {
+  font-size: 15px;
+}
+
+.training-action-row span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.training-action-row .primary-button:disabled {
+  cursor: not-allowed;
+  opacity: .48;
+  transform: none;
+}
+
+.training-roster {
+  min-height: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.training-roster-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.training-roster-header strong {
+  font-size: 20px;
+}
+
+.training-roster-header span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.training-player-list {
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  gap: 6px;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(163,139,255,.45) transparent;
+}
+
+.training-player-row {
+  min-width: 0;
+  min-height: 58px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: minmax(180px, 1.7fr) 52px 72px minmax(170px, 1.2fr);
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(255,255,255,.055);
+  border-radius: 11px;
+  background: rgba(255,255,255,.02);
+}
+
+.training-player-main {
+  min-width: 0;
+}
+
+.training-player-main strong {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+}
+
+.training-player-main span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.training-player-rating,
+.training-player-potential {
+  text-align: center;
+}
+
+.training-player-rating strong,
+.training-player-potential strong {
+  display: block;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.training-player-rating small,
+.training-player-potential small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.training-progress-wrap {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr 34px;
+  align-items: center;
+  gap: 8px;
+}
+
+.training-progress-track {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(255,255,255,.08);
+}
+
+.training-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a38bff, #75a7ff);
+  transition: width .2s ease;
+}
+
+.training-progress-wrap small {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .training-focus-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .training-player-row {
+    grid-template-columns: minmax(160px, 1.6fr) 48px 68px minmax(140px, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .training-panel {
+    overflow: auto;
+  }
+
+  .training-focus-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .training-action-row,
+  .training-roster-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .training-action-row .primary-button {
+    width: 100%;
+  }
+
+  .training-player-row {
+    grid-template-columns: minmax(0, 1fr) 48px 62px;
+  }
+
+  .training-progress-wrap {
+    grid-column: 1 / -1;
+  }
+}
