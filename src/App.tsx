@@ -243,7 +243,7 @@ function Transfers({game,onBuy,onSell}:{game:GameState;onBuy:(id:string)=>void;o
   const market=getMarketPlayers(game),club=game.clubs[game.clubId];
   const list=tab==='buy'?market.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())):club.playerIds.map(id=>game.players[id]).filter(Boolean);
   return <section className="page"><div className="page-head"><div><span>TRANSFERS</span><h2>{isTransferWindow(game)?'TRANSFER WINDOW OPEN':'MARKET CLOSED'}</h2></div><div className="transfer-tabs"><button className={tab==='buy'?'active':''} onClick={()=>setTab('buy')}>BUY</button><button className={tab==='sell'?'active':''} onClick={()=>setTab('sell')}>SELL</button></div></div>
-    <div className="transfer-bar"><span>FUNDS {money(club.budget)}</span><span>SQUAD {club.playerIds.length}/18</span>{tab==='buy'&&<input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search player"/></div>
+    <div className="transfer-bar"><span>FUNDS {money(club.budget)}</span><span>SQUAD {club.playerIds.length}/18</span>{tab==='buy'&&<input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search player"/>}</div>
     <div className="transfer-list">{list.map(p=><div className="transfer-row" key={p.id}><div className="transfer-player"><strong>{p.name}</strong><span>{p.position} · {p.age} · {p.nationality}</span></div><b>{p.overall}</b><span>{money(p.marketValue)}</span><span>{money(p.wage)}/week</span><button className={tab==='buy'?'action green':'action gray'} onClick={()=>tab==='buy'?onBuy(p.id):onSell(p.id)}>{tab==='buy'?'BUY':'SELL'}</button></div>)}{!list.length&&<div className="empty">No players available.</div>}</div>
   </section>;
 }
