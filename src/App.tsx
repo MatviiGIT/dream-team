@@ -601,91 +601,108 @@ function Overview({
   const menuCards: Array<{
     id: Exclude<Tab, 'overview'>;
     title: string;
-    description: string;
-    accent: string;
+    icon: string;
   }> = [
-    { id: 'squad', title: ru.tabs.squad, description: ru.overview.sectionDescriptions.squad, accent: 'squad' },
-    { id: 'transfers', title: ru.tabs.transfers, description: ru.overview.sectionDescriptions.transfers, accent: 'transfers' },
-    { id: 'tactics', title: ru.tabs.tactics, description: ru.overview.sectionDescriptions.tactics, accent: 'tactics' },
-    { id: 'table', title: ru.tabs.table, description: ru.overview.sectionDescriptions.table, accent: 'table' },
-    { id: 'finances', title: ru.tabs.finances, description: ru.overview.sectionDescriptions.finances, accent: 'finances' },
+    { id: 'squad', title: ru.tabs.squad, icon: '♟' },
+    { id: 'transfers', title: ru.tabs.transfers, icon: '↔' },
+    { id: 'tactics', title: ru.tabs.tactics, icon: '⚽' },
+    { id: 'table', title: ru.tabs.table, icon: '≡' },
+    { id: 'finances', title: ru.tabs.finances, icon: '€' },
   ];
 
   return (
-    <div className="overview-home">
-      <div className="overview-dashboard">
-        <section className="card next-match">
-          <div className="section-title-row next-match-header">
-            <div>
-              <div className="eyebrow">{ru.overview.nextMatch}</div>
-              <h2>{nextFixture ? `${ru.overview.matchday} ${game.currentRound}` : ru.overview.seasonComplete}</h2>
-            </div>
-            {nextFixture && (
-              <div className="next-match-meta">
-                <span className="next-match-progress">{ru.overview.matchdayProgress(game.currentRound)}</span>
-                <span className="match-tag">{home ? ru.overview.home : ru.overview.away}</span>
+    <div className="wsc-hub">
+      <section className="wsc-hub-header">
+        <div className="wsc-hub-club">
+          <div className="wsc-hub-crest" style={{ background: club.color }}>{club.shortName}</div>
+          <div>
+            <span>КЛУБ</span>
+            <strong>{club.name}</strong>
+            <small>{club.city} · {ru.app.season} {game.season} · {ru.app.round} {game.currentRound}</small>
+          </div>
+        </div>
+        <div className="wsc-hub-record">
+          <span>ПОЗИЦИЯ</span>
+          <strong>{position}<sup>{ru.overview.placeSuffix}</sup></strong>
+          <small>{row?.points ?? 0} очков</small>
+        </div>
+      </section>
+
+      <div className="wsc-hub-layout">
+        <main className="wsc-hub-main">
+          <section className="wsc-play-panel">
+            <div className="wsc-play-panel-head">
+              <div>
+                <span>СЛЕДУЮЩИЙ МАТЧ</span>
+                <strong>{nextFixture ? (ru.overview.matchday + ' ' + game.currentRound) : ru.overview.seasonComplete}</strong>
               </div>
+              {nextFixture && <span className="wsc-match-place">{home ? 'ДОМА' : 'В ГОСТЯХ'}</span>}
+            </div>
+
+            {opponent ? (
+              <>
+                <div className="wsc-matchup">
+                  <div className="wsc-match-team">
+                    <div className="wsc-team-round" style={{ background: club.color }}>{club.shortName}</div>
+                    <strong>{club.name}</strong>
+                  </div>
+                  <div className="wsc-match-vs">
+                    <small>VS</small>
+                    <strong>{game.currentRound}</strong>
+                  </div>
+                  <div className="wsc-match-team away">
+                    <div className="wsc-team-round" style={{ background: opponent.color }}>{opponent.shortName}</div>
+                    <strong>{opponent.name}</strong>
+                  </div>
+                </div>
+                <button className="wsc-play-button" type="button" onClick={onPlay}>
+                  <span>▶</span>
+                  ИГРАТЬ МАТЧ
+                </button>
+              </>
+            ) : (
+              <div className="wsc-no-fixture">{ru.overview.noMatch}</div>
             )}
-          </div>
-          {opponent ? (
-            <>
-              <div className="fixture-line">
-                <div className="team-side">
-                  <div className="team-badge" style={{ background: club.color }}>{club.shortName}</div>
-                  <strong>{club.name}</strong>
+          </section>
+
+          <div className="wsc-info-row">
+            <section className="wsc-info-panel">
+              <div className="wsc-info-title"><span>КАЛЕНДАРЬ</span><strong>›</strong></div>
+              <UpcomingCalendar game={game} />
+            </section>
+
+            <section className="wsc-info-panel">
+              <div className="wsc-info-title"><span>ПОСЛЕДНИЙ РЕЗУЛЬТАТ</span></div>
+              {lastMatch ? (
+                <div className="wsc-last-result">
+                  <span>{game.clubs[lastMatch.homeTeamId]?.shortName}</span>
+                  <strong>{lastMatch.homeGoals} : {lastMatch.awayGoals}</strong>
+                  <span>{game.clubs[lastMatch.awayTeamId]?.shortName}</span>
                 </div>
-                <div className="vs">VS</div>
-                <div className="team-side">
-                  <div className="team-badge" style={{ background: opponent.color }}>{opponent.shortName}</div>
-                  <strong>{opponent.name}</strong>
-                </div>
+              ) : <div className="wsc-empty-info">{ru.overview.firstMatch}</div>}
+            </section>
+
+            <section className="wsc-info-panel wsc-season-panel">
+              <div className="wsc-info-title"><span>СЕЗОН</span></div>
+              <div className="wsc-season-stats">
+                <div><small>И</small><strong>{row?.played ?? 0}</strong></div>
+                <div><small>В</small><strong>{row?.wins ?? 0}</strong></div>
+                <div><small>О</small><strong>{row?.points ?? 0}</strong></div>
               </div>
-              <button className="primary-button full" onClick={onPlay}>{ru.overview.playMatch}</button>
-            </>
-          ) : <div className="empty-state">{ru.overview.noMatch}</div>}
-        </section>
-
-        <section className="card stat-card">
-          <div className="eyebrow">{ru.overview.snapshot}</div>
-          <div className="stat-grid">
-            <Stat label={ru.overview.position} value={`${position}`} suffix={ru.overview.placeSuffix} />
-            <Stat label={ru.overview.played} value={`${row?.played ?? 0}`} />
-            <Stat label={ru.overview.wins} value={`${row?.wins ?? 0}`} />
-            <Stat label={ru.overview.points} value={`${row?.points ?? 0}`} />
+            </section>
           </div>
-        </section>
+        </main>
 
-        <UpcomingCalendar game={game} />
-
-        <section className="card last-match-card">
-          <div className="eyebrow">{ru.overview.latestResult}</div>
-          {lastMatch ? (
-            <div className="latest-result">
-              <div>{game.clubs[lastMatch.homeTeamId]?.shortName}</div>
-              <strong>{lastMatch.homeGoals} : {lastMatch.awayGoals}</strong>
-              <div>{game.clubs[lastMatch.awayTeamId]?.shortName}</div>
-            </div>
-          ) : <div className="empty-state">{ru.overview.firstMatch}</div>}
-
-        </section>
-      </div>
-
-      <div className="overview-menu-grid">
-        {menuCards.map((item) => (
-          <button
-            key={item.id}
-            className={`card overview-menu-card overview-menu-card-${item.accent}`}
-            type="button"
-            onClick={() => onOpenSection(item.id)}
-          >
-            <div className="overview-menu-card-top">
-              <div className="eyebrow">{ru.overview.menuLabel}</div>
-              <span aria-hidden="true">→</span>
-            </div>
-            <strong>{item.title}</strong>
-            <small>{item.description}</small>
-          </button>
-        ))}
+        <aside className="wsc-hub-menu">
+          <div className="wsc-menu-caption">МЕНЮ КЛУБА</div>
+          {menuCards.map((item) => (
+            <button className="wsc-menu-entry" type="button" key={item.id} onClick={() => onOpenSection(item.id)}>
+              <span className="wsc-menu-icon">{item.icon}</span>
+              <strong>{item.title}</strong>
+              <span className="wsc-menu-arrow">›</span>
+            </button>
+          ))}
+        </aside>
       </div>
     </div>
   );
