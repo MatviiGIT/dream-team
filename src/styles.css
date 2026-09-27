@@ -4696,6 +4696,11 @@ table th { font-size: 11px; }
   --section-accent-strong: #cd664d;
   --section-glow: rgba(233,143,115,.12);
 }
+.app-shell-training {
+  --section-accent: #9b8cff;
+  --section-accent-strong: #7768df;
+  --section-glow: rgba(155,140,255,.13);
+}
 
 .workspace-nav-item.active {
   border-color: color-mix(in srgb, var(--section-accent) 28%, transparent);
