@@ -227,19 +227,6 @@ function App() {
           </div>
         </div>
 
-        <nav className="wsc-header-nav" aria-label="Разделы">
-          {tabs.map((item) => (
-            <button
-              key={item}
-              type="button"
-              className={tab === item ? 'wsc-header-nav-item active' : 'wsc-header-nav-item'}
-              onClick={() => setTab(item)}
-            >
-              {ru.tabs[item]}
-            </button>
-          ))}
-        </nav>
-
         <div className="wsc-header-spacer" />
 
         <button className="wsc-header-icon" type="button" onClick={leaveToCareerMenu} aria-label={ru.app.careers}>
