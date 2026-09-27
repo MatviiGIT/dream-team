@@ -113,6 +113,7 @@ function App() {
   const [game, setGame] = useState<GameState | null>(null);
   const [careers, setCareers] = useState<StoredCareer[]>(() => loadCareers());
   const [tab, setTab] = useState<Tab>('overview');
+  const [menuOpen, setMenuOpen] = useState(false);
   const [matchCenter, setMatchCenter] = useState<{
     match: MatchResult;
     season: number;
@@ -211,8 +212,8 @@ function App() {
         <button
           className="wsc-header-menu"
           type="button"
-          onClick={() => setTab('overview')}
-          aria-label={ru.common.close}
+          onClick={() => setMenuOpen(true)}
+          aria-label="Игровое меню"
         >
           <span />
           <span />
@@ -285,6 +286,21 @@ function App() {
         )}
       </main>
 
+      {menuOpen && (
+        <ClubMenu
+          game={game}
+          tab={tab}
+          onNavigate={(nextTab) => {
+            setTab(nextTab);
+            setMenuOpen(false);
+          }}
+          onClose={() => setMenuOpen(false)}
+          onLeave={leaveToCareerMenu}
+          theme={theme}
+          onThemeChange={setTheme}
+        />
+      )}
+
       {matchCenter && (
         <LiveMatch
           game={game}
@@ -316,196 +332,156 @@ function StartScreen(props: {
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<StoredCareer | null>(null);
+  const [careerPickerOpen, setCareerPickerOpen] = useState(false);
   const [newCareerOpen, setNewCareerOpen] = useState(false);
+
+  const enterPlay = () => {
+    if (props.careers.length) setCareerPickerOpen(true);
+    else setNewCareerOpen(true);
+  };
 
   return (
     <div className="wsc-start-screen">
       <div className="wsc-start-stage">
         <header className="wsc-brand-bar">
           <div className="wsc-brand-lockup">
+            <button className="wsc-start-menu-button" type="button" aria-label="Игровое меню">☰</button>
             <div className="wsc-brand-wordmark">DREAM <span>TEAM</span></div>
             <div className="wsc-brand-ball">●</div>
           </div>
-
           <div className="wsc-start-actions">
-            <button className="wsc-round-button" type="button" onClick={() => setSettingsOpen(true)} aria-label={ru.settings.openButton}>
-              ⚙
-            </button>
+            <button className="wsc-round-button" type="button" onClick={() => setSettingsOpen(true)} aria-label={ru.settings.openButton}>⚙</button>
             <FullscreenButton compact />
           </div>
         </header>
 
-        <main className="wsc-start-main">
-          <section className="wsc-save-side">
-            <div className="wsc-section-ribbon">
-              <span>СОХРАНЕНИЯ</span>
-              <strong>{props.careers.length}</strong>
-            </div>
+        <main className="wsc-main-menu-screen">
+          <div className="wsc-main-menu-brand">
+            <span>BROWSER FOOTBALL MANAGEMENT</span>
+            <h1>DREAM<br /><em>TEAM</em></h1>
+            <p>Управляй клубом, меняй состав и проходи сезон за сезоном.</p>
+          </div>
 
-            {props.careers.length ? (
-              <div className="wsc-save-list">
-                {props.careers.map((career, index) => (
-                  <article className="wsc-save-slot" key={career.id}>
-                    <div className="wsc-slot-number">{index + 1}</div>
-                    <div
-                      className="wsc-slot-club"
-                      style={{ background: career.state.clubs[career.state.clubId]?.color ?? '#63d6c0' }}
-                    >
-                      {career.state.clubs[career.state.clubId]?.shortName ?? 'DT'}
-                    </div>
-                    <div className="wsc-slot-copy">
-                      <strong>{career.managerName}</strong>
-                      <span>{career.clubName}</span>
-                      <small>{ru.app.season} {career.state.season} · {ru.app.round} {career.state.currentRound}</small>
-                    </div>
-                    <div className="wsc-slot-actions">
-                      <button className="wsc-slot-play" type="button" onClick={() => props.onOpen(career)}>
-                        ▶
-                      </button>
-                      <button
-                        className="wsc-slot-delete"
-                        type="button"
-                        onClick={() => setDeleteTarget(career)}
-                        aria-label={ru.career.delete}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <div className="wsc-empty-slot">
-                <div className="wsc-empty-icon">＋</div>
-                <strong>НЕТ СОХРАНЕНИЙ</strong>
-                <span>Создай карьеру, чтобы она появилась здесь.</span>
-              </div>
-            )}
-
-            <button className="wsc-main-button secondary" type="button" onClick={() => setNewCareerOpen(true)}>
-              <span className="wsc-button-icon">＋</span>
-              НОВАЯ КАРЬЕРА
+          <div className="wsc-main-menu-actions">
+            <button className="wsc-menu-play" type="button" onClick={enterPlay}>
+              <span>▶</span>
+              ИГРАТЬ
             </button>
-          </section>
 
-          <section className="wsc-start-hero">
-            <div className="wsc-hero-kicker">БРАУЗЕРНЫЙ ФУТБОЛЬНЫЙ МЕНЕДЖЕР</div>
-            <h1>DREAM<br /><span>TEAM</span></h1>
-            <p>Одна футбольная вселенная. Сезоны идут, клубы меняются, молодые игроки приходят, ветераны уходят.</p>
-
-            <div className="wsc-hero-buttons">
-              {props.careers.length > 0 && (
-                <button className="wsc-main-button primary" type="button" onClick={() => props.onOpen(props.careers[0])}>
-                  <span className="wsc-button-icon">▶</span>
-                  ПРОДОЛЖИТЬ
-                </button>
-              )}
-              <button className="wsc-main-button ghost" type="button" onClick={() => setNewCareerOpen(true)}>
-                <span className="wsc-button-icon">＋</span>
-                НАЧАТЬ НОВУЮ
+            <div className="wsc-main-menu-grid">
+              <button className="wsc-menu-panel" type="button" onClick={() => setCareerPickerOpen(true)}>
+                <span className="wsc-menu-icon">▣</span>
+                <div><strong>КАРЬЕРА</strong><small>{props.careers.length ? props.careers.length + ' сохранений' : 'Новая карьера'}</small></div>
+              </button>
+              <button className="wsc-menu-panel" type="button" onClick={() => setSettingsOpen(true)}>
+                <span className="wsc-menu-icon">⚙</span>
+                <div><strong>НАСТРОЙКИ</strong><small>Экран и оформление</small></div>
               </button>
             </div>
+          </div>
 
-            <div className="wsc-hero-note">SEASON {props.careers[0]?.state.season ?? 1} · FOOTBALL WORLD</div>
-          </section>
+          <footer className="wsc-main-menu-footer">
+            <span>DREAM TEAM</span><span>·</span><span>FOOTBALL WORLD</span>
+          </footer>
         </main>
 
+        {careerPickerOpen && (
+          <div className="wsc-career-picker-backdrop" role="presentation" onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setCareerPickerOpen(false);
+          }}>
+            <section className="wsc-career-picker" role="dialog" aria-modal="true" aria-labelledby="career-picker-title">
+              <header>
+                <div><span>CAREER</span><h2 id="career-picker-title">ВЫБЕРИ КАРЬЕРУ</h2></div>
+                <button type="button" onClick={() => setCareerPickerOpen(false)} aria-label={ru.common.close}>×</button>
+              </header>
+              <div className="wsc-career-picker-list">
+                {props.careers.length ? props.careers.map((career, index) => (
+                  <article className="wsc-career-picker-row" key={career.id}>
+                    <span className="wsc-career-picker-index">{index + 1}</span>
+                    <span className="wsc-career-picker-crest" style={{ background: career.state.clubs[career.state.clubId]?.color ?? '#273064' }}>{career.state.clubs[career.state.clubId]?.shortName ?? 'DT'}</span>
+                    <div className="wsc-career-picker-copy">
+                      <strong>{career.clubName}</strong>
+                      <span>{career.managerName}</span>
+                      <small>Сезон {career.state.season} · Тур {career.state.currentRound}</small>
+                    </div>
+                    <button className="wsc-career-picker-play" type="button" onClick={() => { props.onOpen(career); setCareerPickerOpen(false); }}>▶</button>
+                    <button className="wsc-career-picker-delete" type="button" onClick={() => setDeleteTarget(career)} aria-label={ru.career.delete}>×</button>
+                  </article>
+                )) : (
+                  <div className="wsc-career-picker-empty"><strong>НЕТ СОХРАНЕНИЙ</strong><span>Создай первую карьеру.</span></div>
+                )}
+              </div>
+              <footer>
+                <button className="wsc-picker-secondary" type="button" onClick={() => setNewCareerOpen(true)}>＋ НОВАЯ КАРЬЕРА</button>
+                <button className="wsc-picker-secondary" type="button" onClick={() => setCareerPickerOpen(false)}>НАЗАД</button>
+              </footer>
+            </section>
+          </div>
+        )}
+
         {newCareerOpen && (
-          <div className="wsc-overlay">
+          <div className="wsc-career-picker-backdrop" role="presentation" onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setNewCareerOpen(false);
+          }}>
             <section className="wsc-new-career-panel" role="dialog" aria-modal="true" aria-labelledby="new-career-title">
               <div className="wsc-panel-title">
-                <div>
-                  <span>НОВАЯ КАРЬЕРА</span>
-                  <h2 id="new-career-title">Начни свой путь</h2>
-                </div>
+                <div><span>НОВАЯ КАРЬЕРА</span><h2 id="new-career-title">НАЧНИ СВОЮ КАРЬЕРУ</h2></div>
                 <button className="wsc-panel-close" type="button" onClick={() => setNewCareerOpen(false)} aria-label={ru.common.close}>×</button>
               </div>
-
               <div className="wsc-form">
-                <label>
-                  ИМЯ ТРЕНЕРА
-                  <input
-                    value={props.managerName}
-                    onChange={(event) => props.setManagerName(event.target.value)}
-                    placeholder={ru.career.namePlaceholder}
-                    maxLength={30}
-                    autoComplete="off"
-                    aria-invalid={Boolean(props.nameError)}
-                  />
-                  {props.nameError && <small className="form-error">{props.nameError}</small>}
-                </label>
-
-                <label>
-                  СТАРТОВЫЙ КЛУБ
-                  <select value={props.selectedClub} onChange={(event) => props.setSelectedClub(event.target.value)}>
-                    {clubOrder.map((id) => <option key={id} value={id}>{clubLabels[id]}</option>)}
-                  </select>
-                </label>
-
-                <button
-                  className="wsc-main-button primary"
-                  type="button"
-                  onClick={() => {
-                    props.onStart();
-                    setNewCareerOpen(false);
-                  }}
-                >
-                  <span className="wsc-button-icon">▶</span>
-                  {ru.career.startButton.toUpperCase()}
-                </button>
+                <label>ИМЯ ТРЕНЕРА<input value={props.managerName} onChange={(event) => props.setManagerName(event.target.value)} placeholder={ru.career.namePlaceholder} maxLength={30} autoComplete="off" aria-invalid={Boolean(props.nameError)} />{props.nameError && <small className="form-error">{props.nameError}</small>}</label>
+                <label>СТАРТОВЫЙ КЛУБ<select value={props.selectedClub} onChange={(event) => props.setSelectedClub(event.target.value)}>{clubOrder.map((id) => <option key={id} value={id}>{clubLabels[id]}</option>)}</select></label>
+                <button className="wsc-main-button primary" type="button" onClick={() => { props.onStart(); setNewCareerOpen(false); setCareerPickerOpen(false); }}><span className="wsc-button-icon">▶</span>НАЧАТЬ КАРЬЕРУ</button>
               </div>
             </section>
           </div>
         )}
 
         {deleteTarget && (
-          <div
-            className="wsc-overlay"
-            role="presentation"
-            onMouseDown={(event) => {
-              if (event.target === event.currentTarget) setDeleteTarget(null);
-            }}
-          >
+          <div className="wsc-career-picker-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setDeleteTarget(null); }}>
             <section className="wsc-confirm-panel" role="dialog" aria-modal="true" aria-labelledby="delete-career-title">
-              <div className="wsc-panel-title">
-                <div>
-                  <span>ПОДТВЕРЖДЕНИЕ</span>
-                  <h2 id="delete-career-title">Удалить сохранение?</h2>
-                </div>
-                <button className="wsc-panel-close" type="button" onClick={() => setDeleteTarget(null)} aria-label={ru.common.close}>×</button>
-              </div>
+              <div className="wsc-panel-title"><div><span>ПОДТВЕРЖДЕНИЕ</span><h2 id="delete-career-title">УДАЛИТЬ СОХРАНЕНИЕ?</h2></div><button className="wsc-panel-close" type="button" onClick={() => setDeleteTarget(null)} aria-label={ru.common.close}>×</button></div>
               <p>Удалить карьеру тренера «{deleteTarget.managerName}»?</p>
               <div className="wsc-confirm-actions">
-                <button className="wsc-main-button ghost" type="button" onClick={() => setDeleteTarget(null)}>
-                  ОТМЕНА
-                </button>
-                <button
-                  className="wsc-main-button danger"
-                  type="button"
-                  onClick={() => {
-                    props.onDelete(deleteTarget.id);
-                    setDeleteTarget(null);
-                  }}
-                >
-                  УДАЛИТЬ
-                </button>
+                <button className="wsc-main-button ghost" type="button" onClick={() => setDeleteTarget(null)}>ОТМЕНА</button>
+                <button className="wsc-main-button danger" type="button" onClick={() => { props.onDelete(deleteTarget.id); setDeleteTarget(null); }}>УДАЛИТЬ</button>
               </div>
             </section>
           </div>
         )}
 
-        {settingsOpen && (
-          <SettingsModal
-            theme={props.theme}
-            onThemeChange={props.onThemeChange}
-            onClose={() => setSettingsOpen(false)}
-          />
-        )}
+        {settingsOpen && <SettingsModal theme={props.theme} onThemeChange={props.onThemeChange} onClose={() => setSettingsOpen(false)} />}
       </div>
     </div>
   );
 }
 
+function ClubMenu({
+  game, tab, onNavigate, onClose, onLeave, theme, onThemeChange,
+}: {
+  game: GameState; tab: Tab; onNavigate: (nextTab: Tab) => void; onClose: () => void; onLeave: () => void; theme: Theme; onThemeChange: (theme: Theme) => void;
+}) {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  return (
+    <>
+      <div className="wsc-game-menu-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+        <aside className="wsc-game-menu" role="dialog" aria-modal="true" aria-label="Игровое меню">
+          <header><div><span>MENU</span><strong>{game.clubs[game.clubId]?.name ?? 'DREAM TEAM'}</strong></div><button type="button" onClick={onClose} aria-label={ru.common.close}>×</button></header>
+          <div className="wsc-game-menu-list">
+            <button type="button" onClick={() => onNavigate('overview')}><span>⌂</span><strong>ГЛАВНЫЙ ЭКРАН</strong><b>›</b></button>
+            <button type="button" onClick={() => onNavigate('squad')}><span>●</span><strong>СОСТАВ</strong><b>›</b></button>
+            <button type="button" onClick={() => onNavigate('transfers')}><span>↔</span><strong>ТРАНСФЕРЫ</strong><b>›</b></button>
+            <button type="button" onClick={() => onNavigate('table')}><span>▤</span><strong>СОРЕВНОВАНИЕ</strong><b>›</b></button>
+            <button type="button" onClick={() => onNavigate('finances')}><span>€</span><strong>ФИНАНСЫ</strong><b>›</b></button>
+            <button type="button" onClick={() => setSettingsOpen(true)}><span>⚙</span><strong>НАСТРОЙКИ</strong><b>›</b></button>
+          </div>
+          <footer><button type="button" onClick={() => document.documentElement.requestFullscreen().catch(() => undefined)}>⛶ ПОЛНЫЙ ЭКРАН</button><button type="button" onClick={onLeave}>↩ КАРЬЕРЫ</button></footer>
+        </aside>
+      </div>
+      {settingsOpen && <SettingsModal theme={theme} onThemeChange={onThemeChange} onClose={() => setSettingsOpen(false)} />}
+    </>
+  );
+}
 function SettingsModal({
   theme,
   onThemeChange,
