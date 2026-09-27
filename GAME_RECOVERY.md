@@ -683,3 +683,9 @@ Then:
 - Enlarged Finance Club typography again so the main totals and line items are readable at a glance.
 - Removed the Overview right utility rail to reclaim its unused vertical/horizontal space for the main dashboard.
 - Enlarged Overview headings, team names, score, summary numbers, match metadata, calendar rows and manager information, while keeping responsive reductions for narrow screens.
+
+### 2026-09-27 — Compact Finance round dashboard + global typography pass
+- Replaced the oversized «Последний тур» presentation with a compact «Итог тура» heading and three equal summary cards: доходы, расходы и результат.
+- Added round totals directly to the income/expense cards so the important numbers are visible without a large separate header block.
+- Increased readable typography across all in-game sections and added overflow-safe rules for headings, rows, buttons and long values; list-based screens keep their own scroll regions.
+- Kept the Overview expanded to the reclaimed two-zone layout and increased its key information scale without changing simulation or save logic.
