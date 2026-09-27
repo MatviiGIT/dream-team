@@ -1026,3 +1026,438 @@ html:fullscreen .wsc-start-screen {
   .wsc-home-grid { gap:14px; }
   .wsc-home-primary,.wsc-home-secondary { gap:14px; }
 }
+
+
+/* ---------- WSC-style main menu + career picker ---------- */
+.wsc-start-screen {
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+  background:#171b56;
+}
+.wsc-start-stage {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+}
+.wsc-brand-bar {
+  transform:none;
+  min-width:0;
+  overflow:hidden;
+}
+.wsc-brand-lockup { transform:none; }
+.wsc-start-menu-button {
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  border:0;
+  background:var(--navy-900);
+  color:var(--gold);
+  font-size:17px;
+}
+.wsc-main-menu-screen {
+  position:absolute;
+  inset:64px 0 0;
+  display:grid;
+  grid-template-columns:minmax(280px,1fr) minmax(420px,620px) minmax(280px,1fr);
+  align-items:center;
+  gap:24px;
+  padding:30px 5vw 26px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 46%, rgba(83,92,194,.25), transparent 25%),
+    radial-gradient(circle at 78% 52%, rgba(40,49,142,.24), transparent 25%),
+    #171b56;
+}
+.wsc-main-menu-screen::before,
+.wsc-main-menu-screen::after {
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  opacity:.65;
+}
+.wsc-main-menu-screen::before {
+  left:-90px;
+  bottom:3%;
+  width:300px;
+  height:220px;
+  transform:rotate(-15deg);
+  background:
+    radial-gradient(ellipse at 25% 30%, #303597 0 8%, transparent 9%),
+    radial-gradient(ellipse at 55% 62%, #20277f 0 13%, transparent 14%),
+    radial-gradient(ellipse at 80% 20%, #e6bf39 0 7%, transparent 8%);
+}
+.wsc-main-menu-screen::after {
+  right:-80px;
+  top:17%;
+  width:260px;
+  height:200px;
+  transform:rotate(18deg);
+  background:
+    radial-gradient(ellipse at 35% 35%, #282f8d 0 11%, transparent 12%),
+    radial-gradient(ellipse at 62% 72%, #303597 0 9%, transparent 10%),
+    radial-gradient(ellipse at 75% 22%, #ec5c7c 0 5%, transparent 6%);
+}
+.wsc-main-menu-brand,
+.wsc-main-menu-actions,
+.wsc-main-menu-footer {
+  position:relative;
+  z-index:2;
+}
+.wsc-main-menu-brand {
+  align-self:center;
+  justify-self:start;
+  color:#fff;
+  max-width:360px;
+}
+.wsc-main-menu-brand > span {
+  color:#d8b159;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.10em;
+}
+.wsc-main-menu-brand h1 {
+  margin:8px 0 14px;
+  font-size:clamp(55px,6vw,88px);
+  line-height:.78;
+  letter-spacing:-.05em;
+  font-weight:900;
+}
+.wsc-main-menu-brand h1 em {
+  font-style:normal;
+  color:#75a8ef;
+}
+.wsc-main-menu-brand p {
+  margin:0;
+  color:#bfc6df;
+  font-size:14px;
+  line-height:1.4;
+}
+.wsc-main-menu-actions {
+  width:100%;
+  display:grid;
+  justify-items:center;
+  gap:12px;
+}
+.wsc-menu-play {
+  width:min(430px,100%);
+  min-height:88px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  border:0;
+  background:#d8d9de;
+  color:#171b56;
+  font-size:32px;
+  font-weight:900;
+  letter-spacing:.05em;
+  box-shadow:10px 10px 0 rgba(0,0,0,.18);
+}
+.wsc-menu-play::before {
+  content:"";
+  position:absolute;
+}
+.wsc-menu-play span {
+  display:grid;
+  place-items:center;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:#fff;
+  font-size:17px;
+}
+.wsc-menu-play:hover {
+  transform:translateX(3px);
+  background:#eeeef0;
+}
+.wsc-main-menu-grid {
+  width:min(430px,100%);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.wsc-menu-panel {
+  min-height:78px;
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  align-items:center;
+  gap:9px;
+  padding:10px 12px;
+  border:0;
+  background:#c8c9cf;
+  color:#171b56;
+  text-align:left;
+  box-shadow:7px 7px 0 rgba(0,0,0,.14);
+}
+.wsc-menu-panel:hover { background:#e3e4e7; }
+.wsc-menu-icon {
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#fff;
+  font-size:17px;
+}
+.wsc-menu-panel strong {
+  display:block;
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:.04em;
+}
+.wsc-menu-panel small {
+  display:block;
+  margin-top:2px;
+  color:#555e78;
+  font-size:10px;
+}
+.wsc-main-menu-footer {
+  align-self:end;
+  justify-self:center;
+  grid-column:2;
+  color:#8089b0;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+
+.wsc-career-picker-backdrop {
+  position:fixed;
+  inset:0;
+  z-index:140;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:rgba(4,7,34,.78);
+}
+.wsc-career-picker {
+  width:min(800px,100%);
+  max-height:min(780px,90vh);
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  background:var(--paper);
+  box-shadow:11px 11px 0 rgba(0,0,0,.24);
+  overflow:hidden;
+}
+.wsc-career-picker > header {
+  flex:0 0 auto;
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:center;
+  padding:16px 20px;
+  background:var(--navy-900);
+  color:#fff;
+  border-top:7px solid var(--gold);
+}
+.wsc-career-picker > header span {
+  color:var(--gold);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.09em;
+}
+.wsc-career-picker > header h2 {
+  margin:3px 0 0;
+  font-size:25px;
+}
+.wsc-career-picker > header button {
+  width:34px;
+  height:34px;
+  border:0;
+  background:transparent;
+  color:#fff;
+  font-size:25px;
+}
+.wsc-career-picker-list {
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  padding:12px;
+  display:grid;
+  align-content:start;
+  gap:6px;
+  background:#dfe0e0;
+}
+.wsc-career-picker-row {
+  display:grid;
+  grid-template-columns:34px 50px minmax(0,1fr) 40px 34px;
+  gap:10px;
+  align-items:center;
+  min-height:70px;
+  padding:7px 8px;
+  background:#f6f6f4;
+  border-left:6px solid var(--navy-850);
+}
+.wsc-career-picker-row:hover { border-left-color:var(--gold); }
+.wsc-career-picker-index {
+  font-size:15px;
+  font-weight:900;
+  text-align:center;
+  color:var(--navy-900);
+}
+.wsc-career-picker-crest {
+  width:45px;
+  height:45px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-size:9px;
+  font-weight:900;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.35);
+}
+.wsc-career-picker-copy { min-width:0;display:flex;flex-direction:column; }
+.wsc-career-picker-copy strong { font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.wsc-career-picker-copy span { margin-top:1px;font-size:12px;color:var(--navy-800);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.wsc-career-picker-copy small { margin-top:2px;font-size:10px;color:var(--muted); }
+.wsc-career-picker-play,
+.wsc-career-picker-delete {
+  width:34px;
+  height:34px;
+  border:0;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+}
+.wsc-career-picker-play { background:var(--green);color:#082b1a; }
+.wsc-career-picker-delete { background:var(--paper-2);color:var(--navy-900); }
+.wsc-career-picker > footer {
+  flex:0 0 auto;
+  display:flex;
+  justify-content:flex-end;
+  gap:7px;
+  padding:10px 12px;
+  background:var(--navy-900);
+}
+.wsc-picker-secondary {
+  min-height:38px;
+  padding:0 14px;
+  border:2px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.05);
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
+.wsc-picker-secondary:hover { background:var(--gold);color:var(--navy-900);border-color:var(--gold); }
+.wsc-career-picker-empty {
+  min-height:200px;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:4px;
+  color:var(--muted);
+}
+.wsc-career-picker-empty strong { font-size:18px;color:var(--navy-900); }
+.wsc-career-picker-empty span { font-size:12px; }
+
+/* in-game menu */
+.wsc-game-menu-backdrop {
+  position:fixed;
+  inset:0;
+  z-index:180;
+  background:rgba(5,8,36,.56);
+}
+.wsc-game-menu {
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:min(390px,38vw);
+  min-width:310px;
+  display:flex;
+  flex-direction:column;
+  background:#171b56;
+  border-right:7px solid var(--gold);
+  box-shadow:14px 0 0 rgba(0,0,0,.16);
+}
+.wsc-game-menu > header {
+  flex:0 0 66px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 16px;
+  background:var(--gold);
+  color:var(--navy-900);
+}
+.wsc-game-menu > header span { display:block;font-size:9px;font-weight:900;letter-spacing:.09em; }
+.wsc-game-menu > header strong { display:block;font-size:17px;margin-top:2px; }
+.wsc-game-menu > header button { width:34px;height:34px;border:0;background:var(--navy-900);color:var(--gold);font-size:24px; }
+.wsc-game-menu-list {
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  padding:18px 14px;
+  display:grid;
+  align-content:start;
+  gap:8px;
+}
+.wsc-game-menu-list button {
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr) 24px;
+  align-items:center;
+  gap:9px;
+  min-height:52px;
+  padding:0 10px;
+  border:0;
+  background:#c8c9cf;
+  color:var(--navy-900);
+  text-align:left;
+  box-shadow:6px 6px 0 rgba(0,0,0,.12);
+}
+.wsc-game-menu-list button:hover,
+.wsc-game-menu-list button.active { background:#e6e7e9; }
+.wsc-game-menu-list button > span {
+  width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#fff;font-weight:900;
+}
+.wsc-game-menu-list button strong { font-size:14px;letter-spacing:.04em; }
+.wsc-game-menu-list button b { font-size:21px;text-align:right; }
+.wsc-game-menu > footer {
+  flex:0 0 auto;
+  padding:10px 14px 14px;
+  display:grid;
+  gap:6px;
+}
+.wsc-game-menu > footer button {
+  min-height:39px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.05);
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
+.wsc-game-menu > footer button:hover { background:var(--gold);color:var(--navy-900); }
+
+/* mobile-sized windows are not the target, but never allow the menu to overflow */
+@media (max-width:1000px) {
+  .wsc-main-menu-screen {
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto auto;
+    align-content:center;
+    padding:22px;
+    overflow:auto;
+  }
+  .wsc-main-menu-brand { justify-self:center;text-align:center; }
+  .wsc-main-menu-brand p { max-width:500px; }
+  .wsc-main-menu-actions { justify-self:center; }
+  .wsc-main-menu-footer { grid-column:auto;align-self:auto; }
+}
+@media (max-height:700px) {
+  .wsc-main-menu-screen { inset:54px 0 0;padding-top:14px;padding-bottom:14px;gap:10px; }
+  .wsc-main-menu-brand h1 { font-size:54px;margin:6px 0 9px; }
+  .wsc-menu-play { min-height:66px;font-size:25px; }
+  .wsc-menu-panel { min-height:60px; }
+  .wsc-main-menu-footer { margin-top:3px; }
+  .wsc-career-picker { max-height:94vh; }
+  .wsc-career-picker > header { padding:11px 15px; }
+  .wsc-career-picker-list { padding:8px; }
+  .wsc-career-picker-row { min-height:58px; }
+}
