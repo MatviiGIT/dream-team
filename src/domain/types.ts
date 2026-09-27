@@ -101,6 +101,14 @@ export interface MatchEvent {
   description: string;
 }
 
+export interface MatchResult {
+  homeTeamId: string;
+  awayTeamId: string;
+  homeGoals: number;
+  awayGoals: number;
+  events: MatchEvent[];
+}
+
 export interface Fixture {
   id: string;
   round: number;
