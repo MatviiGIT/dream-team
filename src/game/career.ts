@@ -170,6 +170,7 @@ export function createCareer(managerName: string, clubId: string): GameState {
     table: emptyTable(clubOrder),
     createdAt: now,
     updatedAt: now,
+    trainingUsed: false,
   };
 }
 
@@ -214,6 +215,7 @@ export function playNextRound(state: GameState): GameState {
     currentRound: isSeasonComplete ? 1 : nextRound,
     season: isSeasonComplete ? state.season + 1 : state.season,
     lastMatch: playerMatch ?? state.lastMatch,
+    trainingUsed: false,
     updatedAt: new Date().toISOString(),
   };
 }
