@@ -7019,3 +7019,67 @@ select optgroup {
 .workspace-grid-overview .minute {
   font-size: 14px;
 }
+
+
+
+/* 2026-09-27 - Overview stat tiles actually fill the card + unified secondary text. */
+.workspace-grid-overview .dashboard-grid {
+  gap: 12px;
+}
+.workspace-grid-overview .dashboard-grid > .card {
+  padding: 14px 16px;
+}
+.workspace-grid-overview .stat-card {
+  padding: 14px 16px;
+}
+.workspace-grid-overview .stat-card .stat-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.workspace-grid-overview .stat-card .big-stat,
+.workspace-grid-overview .stat-card .big-stat:nth-child(odd),
+.workspace-grid-overview .stat-card .big-stat:nth-child(even) {
+  min-height: 0;
+  height: 100%;
+  padding: 16px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+.workspace-grid-overview .stat-card .big-stat span {
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+.workspace-grid-overview .stat-card .big-stat strong {
+  margin-top: 8px;
+  font-size: 42px;
+  font-weight: 950;
+  line-height: .92;
+}
+.workspace-grid-overview .stat-card .big-stat small {
+  font-size: 14px;
+  margin-left: 3px;
+}
+
+/* One secondary-text scale for the Overview itself. */
+.workspace-grid-overview .eyebrow,
+.workspace-grid-overview .big-stat span,
+.workspace-grid-overview .calendar-venue,
+.workspace-grid-overview .calendar-footer,
+.workspace-grid-overview .manager-profile span,
+.workspace-grid-overview .manager-stats span,
+.workspace-grid-overview .minute {
+  font-size: 14px;
+}
+@media (max-width: 620px) {
+  .workspace-grid-overview .dashboard-grid > .card,
+  .workspace-grid-overview .stat-card {
+    padding: 14px;
+  }
+}
