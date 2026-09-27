@@ -1146,6 +1146,7 @@ function replacementFit(player: Player, slot: SquadSlot): 'good' | 'adaptable' |
 
 function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameState) => void }) {
   const club = game.clubs[game.clubId];
+  const [profilePlayerId, setProfilePlayerId] = useState<string | null>(null);
   const roster = club.playerIds.map((id) => game.players[id]).filter(Boolean);
   const initialXI = club.startingXI?.length === 11 ? club.startingXI : club.playerIds.slice(0, 11);
   const [lineupIds, setLineupIds] = useState<string[]>(initialXI);
@@ -1213,6 +1214,7 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
       <div className="section-title-row">
         <div>
           <h2>{ru.tabs.squad}</h2>
+          <span className="wsc-screen-caption">{club.name} · {game.managerName}</span>
         </div>
         <div className="squad-formation-pill">
           <strong>{club.tactic.formation}</strong>
@@ -1278,6 +1280,10 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
                     }
                   }}
                   title={player.name + ' · ' + slot.label}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    setProfilePlayerId(player.id);
+                  }}
                 >
                   <span className="squad-player-rating">{player.overall}</span>
                   <strong>{player.name.split(' ')[0]}</strong>
@@ -1342,7 +1348,76 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
           </div>
         </aside>
       </div>
+
+      {profilePlayerId && game.players[profilePlayerId] && (
+        <PlayerProfile
+          player={game.players[profilePlayerId]}
+          club={club}
+          onClose={() => setProfilePlayerId(null)}
+        />
+      )}
     </section>
+  );
+}
+
+function PlayerProfile({ player, club, onClose }: { player: Player; club: GameState['clubs'][string]; onClose: () => void }) {
+  return (
+    <div className="wsc-player-profile-backdrop" role="presentation" onMouseDown={(event) => {
+      if (event.target === event.currentTarget) onClose();
+    }}>
+      <section className="wsc-player-profile" role="dialog" aria-modal="true" aria-labelledby="player-profile-title">
+        <header>
+          <div>
+            <span>ИГРОК</span>
+            <h2 id="player-profile-title">{player.name}</h2>
+            <small>{club.name} · {positionLabel(player.position)} · {player.age} лет</small>
+          </div>
+          <button type="button" onClick={onClose} aria-label={ru.common.close}>×</button>
+        </header>
+
+        <div className="wsc-profile-grid">
+          <div className="wsc-profile-overall">
+            <small>ОБЩИЙ РЕЙТИНГ</small>
+            <strong>{player.overall}</strong>
+            <span>ПОТЕНЦИАЛ {player.potential}</span>
+          </div>
+          <div className="wsc-profile-lines">
+            <div><span>Форма</span><strong>{player.form > 0 ? '+' : ''}{player.form}</strong></div>
+            <div><span>Мораль</span><strong>{player.morale}</strong></div>
+            <div><span>Фитнес</span><strong>{player.fitness}%</strong></div>
+            <div><span>Матчи</span><strong>{player.appearances}</strong></div>
+            <div><span>Голы</span><strong>{player.goals}</strong></div>
+            <div><span>Ассисты</span><strong>{player.assists}</strong></div>
+          </div>
+        </div>
+
+        <div className="wsc-profile-attributes">
+          {[
+            ['Скорость', player.attributes.pace],
+            ['Удар', player.attributes.shooting],
+            ['Пас', player.attributes.passing],
+            ['Техника', player.attributes.technique],
+            ['Дриблинг', player.attributes.dribbling],
+            ['Защита', player.attributes.defending],
+            ['Физика', player.attributes.physical],
+            ['Выносливость', player.attributes.stamina],
+          ].map(([label, value]) => (
+            <div key={label as string}>
+              <span>{label}</span>
+              <div><i style={{ width: Math.max(5, Number(value)) + '%' }} /></div>
+              <strong>{value}</strong>
+            </div>
+          ))}
+        </div>
+
+        <footer>
+          <span>{player.preferredFoot === 'L' ? 'Левая нога' : 'Правая нога'}</span>
+          <span>{player.nationality ?? 'Без страны'}</span>
+          <span>{formatMoney(player.value)}</span>
+          <span>{formatMoney(player.wage)} / тур</span>
+        </footer>
+      </section>
+    </div>
   );
 }
 
