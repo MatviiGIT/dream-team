@@ -206,85 +206,91 @@ function App() {
   const position = Math.max(1, game.table.findIndex((row) => row.teamId === game.clubId) + 1);
 
   return (
-    <div className={`app-shell app-shell-${tab}`}>
-      <header className="game-topbar">
-        <div className="game-club-identity">
-          <div className="game-club-mark" style={{ background: club.color }}>{club.shortName}</div>
-          <div className="game-club-copy">
+    <div className={`wsc-app-shell wsc-app-${tab}`}>
+      <header className="wsc-app-header">
+        <button
+          className="wsc-header-menu"
+          type="button"
+          onClick={() => setTab('overview')}
+          aria-label={ru.common.close}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <div className="wsc-header-club">
+          <div className="wsc-header-crest" style={{ background: club.color }}>{club.shortName}</div>
+          <div className="wsc-header-club-copy">
             <strong>{club.name}</strong>
-            <span>{club.city} · {ru.app.season} {game.season} · {ru.app.round} {game.currentRound}</span>
+            <span>{ru.app.season} {game.season} · {ru.app.round} {game.currentRound}</span>
           </div>
         </div>
 
-        <div className="game-topbar-actions">
-          <button className="ghost-button" type="button" onClick={leaveToCareerMenu}>
-            {ru.app.careers}
-          </button>
-          <FullscreenButton compact />
-        </div>
+        <div className="wsc-header-spacer" />
+
+        <button className="wsc-header-icon" type="button" onClick={leaveToCareerMenu} aria-label={ru.app.careers}>
+          ↩
+        </button>
+        <FullscreenButton compact />
       </header>
 
-      <main className="content">
-        <div className="workspace-grid">
-          <section className={`workspace-main content-${tab}`}>
-            {tab === 'overview' && (
-              <Overview
-                game={game}
-                position={position}
-                row={tableRow}
-                nextFixture={nextFixture}
-                onOpenSection={(section) => setTab(section)}
-                onPlay={() => {
-                  const matchSeason = game.season;
-                  const matchRound = game.currentRound;
-                  const nextGame = playNextRound(game);
-                  if (nextGame.lastMatch) {
-                    setMatchCenter({
-                      match: nextGame.lastMatch,
-                      season: matchSeason,
-                      round: matchRound,
-                      nextGame,
-                    });
-                  }
-                }}
-              />
-            )}
+      <main className="wsc-app-content">
+        {tab === 'overview' && (
+          <Overview
+            game={game}
+            position={position}
+            row={tableRow}
+            nextFixture={nextFixture}
+            onOpenSection={(section) => setTab(section)}
+            onPlay={() => {
+              const matchSeason = game.season;
+              const matchRound = game.currentRound;
+              const nextGame = playNextRound(game);
+              if (nextGame.lastMatch) {
+                setMatchCenter({
+                  match: nextGame.lastMatch,
+                  season: matchSeason,
+                  round: matchRound,
+                  nextGame,
+                });
+              }
+            }}
+          />
+        )}
 
-            {tab !== 'overview' && (
-              <section className={`section-view section-view-${tab}`}>
-                <div className="section-view-header">
-                  <div>
-                    <div className="eyebrow">РАЗДЕЛ</div>
-                    <h1>{ru.tabs[tab]}</h1>
-                  </div>
-                  <button
-                    className="section-view-close ghost-button"
-                    type="button"
-                    onClick={() => setTab('overview')}
-                    aria-label={ru.common.close}
-                  >
-                    <span aria-hidden="true">←</span>
-                    {ru.common.close}
-                  </button>
-                </div>
+        {tab !== 'overview' && (
+          <section className={`wsc-section wsc-section-${tab}`}>
+            <div className="wsc-section-topline">
+              <button
+                className="wsc-back-button"
+                type="button"
+                onClick={() => setTab('overview')}
+              >
+                ‹
+              </button>
+              <div>
+                <span>КЛУБ</span>
+                <h1>{ru.tabs[tab]}</h1>
+              </div>
+            </div>
 
-                <div className="section-view-body">
-                  {tab === 'squad' && <Squad game={game} onChange={(nextGame) => setGame(nextGame)} />}
-                  {tab === 'transfers' && <TransferMarket game={game} onChange={(nextGame) => setGame(nextGame)} />}
-                  {tab === 'tactics' && (
-                    <Tactics
-                      game={game}
-                      onChange={(tactic) => setGame({ ...game, clubs: { ...game.clubs, [club.id]: { ...club, tactic } } })}
-                    />
-                  )}
-                  {tab === 'table' && <LeagueTable game={game} />}
-                  {tab === 'finances' && <FinanceScreen game={game} />}
-                </div>
-              </section>
-            )}
+            <div className="wsc-section-body">
+              {tab === 'squad' && <Squad game={game} onChange={(nextGame) => setGame(nextGame)} />}
+              {tab === 'transfers' && <TransferMarket game={game} onChange={(nextGame) => setGame(nextGame)} />}
+              {tab === 'tactics' && (
+                <Tactics
+                  game={game}
+                  onChange={(tactic) => setGame({ ...game, clubs: { ...game.clubs, [club.id]: { ...club, tactic } } })}
+                />
+              )}
+              {tab === 'table' && <LeagueTable game={game} />}
+              {tab === 'finances' && <FinanceScreen game={game} />}
+            </div>
           </section>
-        </div>
+        )}
       </main>
+
       {matchCenter && (
         <LiveMatch
           game={game}
@@ -299,7 +305,6 @@ function App() {
       )}
     </div>
   );
-}
 
 function StartScreen(props: {
   careers: StoredCareer[];
