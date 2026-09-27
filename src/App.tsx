@@ -598,30 +598,59 @@ function Overview({
 }) {
   const club = game.clubs[game.clubId];
   const lastMatch = game.lastMatch;
-  const opponentId = nextFixture ? (nextFixture.homeTeamId === game.clubId ? nextFixture.awayTeamId : nextFixture.homeTeamId) : undefined;
+  const opponentId = nextFixture
+    ? (nextFixture.homeTeamId === game.clubId ? nextFixture.awayTeamId : nextFixture.homeTeamId)
+    : undefined;
   const opponent = opponentId ? game.clubs[opponentId] : undefined;
   const home = nextFixture?.homeTeamId === game.clubId;
 
-  const mentalityLabels: Record<typeof club.tactic.mentality, string> = {
-    'Very Defensive': ru.tactics.options.veryDefensive,
-    Defensive: ru.tactics.options.defensive,
-    Balanced: ru.tactics.options.balanced,
-    Attacking: ru.tactics.options.attacking,
-    'Very Attacking': ru.tactics.options.veryAttacking,
-  };
-
-  const overviewSections: Array<{ tab: Exclude<Tab, 'overview'>; title: string; value: string; meta: string }> = [
-    { tab: 'squad', title: ru.tabs.squad, value: String(club.playerIds.length), meta: 'игроков' },
-    { tab: 'transfers', title: ru.tabs.transfers, value: formatMoney(club.budget), meta: 'бюджет' },
+  const overviewSections = [
     {
-      tab: 'contracts',
+      tab: 'squad' as Tab,
+      title: ru.tabs.squad,
+      value: String(club.playerIds.length),
+      meta: 'игроков',
+    },
+    {
+      tab: 'transfers' as Tab,
+      title: ru.tabs.transfers,
+      value: formatMoney(club.budget),
+      meta: 'бюджет',
+    },
+    {
+      tab: 'contracts' as Tab,
       title: ru.tabs.contracts,
-      value: String(club.playerIds.filter((id) => game.players[id]?.contract).length),
+      value: String(club.playerIds.filter((id) => Boolean(game.players[id]?.contract)).length),
       meta: 'контрактов',
     },
-    { tab: 'tactics', title: ru.tabs.tactics, value: club.tactic.formation, meta: mentalityLabels[club.tactic.mentality] },
-    { tab: 'table', title: ru.tabs.table, value: position + ru.table.placeSuffix, meta: (row?.points ?? 0) + ' очков' },
-    { tab: 'finances', title: ru.tabs.finances, value: formatMoney(club.budget), meta: 'зарплаты ' + formatMoney(club.wages) },
+    {
+      tab: 'tactics' as Tab,
+      title: ru.tabs.tactics,
+      value: club.tactic.formation,
+      meta: ru.tactics.options[
+        club.tactic.mentality === 'Very Defensive'
+          ? 'veryDefensive'
+          : club.tactic.mentality === 'Defensive'
+            ? 'defensive'
+            : club.tactic.mentality === 'Balanced'
+              ? 'balanced'
+              : club.tactic.mentality === 'Attacking'
+                ? 'attacking'
+                : 'veryAttacking'
+      ],
+    },
+    {
+      tab: 'table' as Tab,
+      title: ru.tabs.table,
+      value: position + ru.table.placeSuffix,
+      meta: (row?.points ?? 0) + ' очков',
+    },
+    {
+      tab: 'finances' as Tab,
+      title: ru.tabs.finances,
+      value: formatMoney(club.budget),
+      meta: 'зарплаты ' + formatMoney(club.wages),
+    },
   ];
 
   return (
@@ -642,90 +671,103 @@ function Overview({
       </section>
 
       <div className="dashboard-grid">
-            <section className="card next-match">
-        <div className="section-title-row next-match-header">
-          <div>
-            <div className="eyebrow">{ru.overview.nextMatch}</div>
-            <h2>{nextFixture ? `${ru.overview.matchday} ${game.currentRound}` : ru.overview.seasonComplete}</h2>
+        <section className="card next-match">
+          <div className="section-title-row next-match-header">
+            <div>
+              <div className="eyebrow">{ru.overview.nextMatch}</div>
+              <h2>{nextFixture ? `${ru.overview.matchday} ${game.currentRound}` : ru.overview.seasonComplete}</h2>
+            </div>
+            {nextFixture && (
+              <div className="next-match-meta">
+                <span className="next-match-progress">{ru.overview.matchdayProgress(game.currentRound)}</span>
+                <span className="match-tag">{home ? ru.overview.home : ru.overview.away}</span>
+              </div>
+            )}
           </div>
-          {nextFixture && (
-            <div className="next-match-meta">
-              <span className="next-match-progress">{ru.overview.matchdayProgress(game.currentRound)}</span>
-              <span className="match-tag">{home ? ru.overview.home : ru.overview.away}</span>
+          {opponent ? (
+            <>
+              <div className="fixture-line">
+                <div className="team-side">
+                  <div className="team-badge" style={{ background: club.color }}>{club.shortName}</div>
+                  <strong>{club.name}</strong>
+                </div>
+                <div className="vs">VS</div>
+                <div className="team-side">
+                  <div className="team-badge" style={{ background: opponent.color }}>{opponent.shortName}</div>
+                  <strong>{opponent.name}</strong>
+                </div>
+              </div>
+              <button className="primary-button full" onClick={onPlay}>{ru.overview.playMatch}</button>
+            </>
+          ) : (
+            <div className="empty-state">{ru.overview.noMatch}</div>
+          )}
+        </section>
+
+        <section className="card stat-card">
+          <div className="eyebrow">{ru.overview.snapshot}</div>
+          <div className="stat-grid">
+            <Stat label={ru.overview.position} value={`${position}`} suffix={ru.overview.placeSuffix} />
+            <Stat label={ru.overview.played} value={`${row?.played ?? 0}`} />
+            <Stat label={ru.overview.wins} value={`${row?.wins ?? 0}`} />
+            <Stat label={ru.overview.points} value={`${row?.points ?? 0}`} />
+          </div>
+        </section>
+
+        <section className="card last-match-card">
+          <div className="eyebrow">{ru.overview.latestResult}</div>
+          {lastMatch ? (
+            <div className="latest-result">
+              <div>{game.clubs[lastMatch.homeTeamId]?.shortName}</div>
+              <strong>{lastMatch.homeGoals} : {lastMatch.awayGoals}</strong>
+              <div>{game.clubs[lastMatch.awayTeamId]?.shortName}</div>
+            </div>
+          ) : (
+            <div className="empty-state">{ru.overview.firstMatch}</div>
+          )}
+
+          {lastMatch && (
+            <div className="mini-stats">
+              <span>xG {lastMatch.homeXg.toFixed(2)} — {lastMatch.awayXg.toFixed(2)}</span>
+              <span>{ru.overview.possession} {lastMatch.homePossession}% — {lastMatch.awayPossession}%</span>
+              <span>{ru.overview.shots} {lastMatch.homeShots} — {lastMatch.awayShots}</span>
             </div>
           )}
-        </div>
-        {opponent ? (
-          <>
-            <div className="fixture-line">
-              <div className="team-side">
-                <div className="team-badge" style={{ background: club.color }}>{club.shortName}</div>
-                <strong>{club.name}</strong>
-              </div>
-              <div className="vs">VS</div>
-              <div className="team-side">
-                <div className="team-badge" style={{ background: opponent.color }}>{opponent.shortName}</div>
-                <strong>{opponent.name}</strong>
-              </div>
+        </section>
+
+        <section className="card events-card">
+          <div className="section-title-row">
+            <div>
+              <div className="eyebrow">{ru.overview.events}</div>
+              <h2>{ru.overview.timeline}</h2>
             </div>
-            <button className="primary-button full" onClick={onPlay}>{ru.overview.playMatch}</button>
-          </>
-        ) : <div className="empty-state">{ru.overview.noMatch}</div>}
-      </section>
-
-      <section className="card stat-card">
-        <div className="eyebrow">{ru.overview.snapshot}</div>
-        <div className="stat-grid">
-          <Stat label={ru.overview.position} value={`${position}`} suffix={ru.overview.placeSuffix} />
-          <Stat label={ru.overview.played} value={`${row?.played ?? 0}`} />
-          <Stat label={ru.overview.wins} value={`${row?.wins ?? 0}`} />
-          <Stat label={ru.overview.points} value={`${row?.points ?? 0}`} />
-        </div>
-      </section>
-
-      <section className="card last-match-card">
-        <div className="eyebrow">{ru.overview.latestResult}</div>
-        {lastMatch ? (
-          <div className="latest-result">
-            <div>{game.clubs[lastMatch.homeTeamId]?.shortName}</div>
-            <strong>{lastMatch.homeGoals} : {lastMatch.awayGoals}</strong>
-            <div>{game.clubs[lastMatch.awayTeamId]?.shortName}</div>
           </div>
-        ) : <div className="empty-state">{ru.overview.firstMatch}</div>}
+          {lastMatch ? <EventTimeline game={game} /> : <div className="empty-state">{ru.overview.timelineEmpty}</div>}
+        </section>
 
-        {lastMatch && (
-          <div className="mini-stats">
-            <span>xG {lastMatch.homeXg.toFixed(2)} — {lastMatch.awayXg.toFixed(2)}</span>
-            <span>{ru.overview.possession} {lastMatch.homePossession}% — {lastMatch.awayPossession}%</span>
-            <span>{ru.overview.shots} {lastMatch.homeShots} — {lastMatch.awayShots}</span>
+        <UpcomingCalendar game={game} />
+
+        <section className="card manager-card">
+          <div className="section-title-row">
+            <div>
+              <div className="eyebrow">{ru.overview.managerPanel}</div>
+              <h2>{ru.overview.managerTitle}</h2>
+            </div>
+            <span className="future-tag">{ru.overview.futureTag}</span>
           </div>
-        )}
-      </section>
-
-      <section className="card events-card">
-        <div className="section-title-row"><div><div className="eyebrow">{ru.overview.events}</div><h2>{ru.overview.timeline}</h2></div></div>
-        {lastMatch ? <EventTimeline game={game} /> : <div className="empty-state">{ru.overview.timelineEmpty}</div>}
-      </section>
-
-      <UpcomingCalendar game={game} />
-
-      <section className="card manager-card">
-        <div className="section-title-row">
-          <div><div className="eyebrow">{ru.overview.managerPanel}</div><h2>{ru.overview.managerTitle}</h2></div>
-          <span className="future-tag">{ru.overview.futureTag}</span>
-        </div>
-        <div className="manager-profile">
-          <div className="manager-avatar">{game.managerName.slice(0, 1).toUpperCase()}</div>
-          <div>
-            <strong>{game.managerName}</strong>
-            <span>{ru.overview.managerRole}</span>
+          <div className="manager-profile">
+            <div className="manager-avatar">{game.managerName.slice(0, 1).toUpperCase()}</div>
+            <div>
+              <strong>{game.managerName}</strong>
+              <span>{ru.overview.managerRole}</span>
+            </div>
           </div>
-        </div>
-        <div className="manager-stats">
-          <div><span>{ru.overview.managerReputation}</span><strong>—</strong></div>
-          <div><span>{ru.overview.seasons}</span><strong>{Math.max(0, game.season - 1)}</strong></div>
-        </div>
-      </section>
+          <div className="manager-stats">
+            <div><span>{ru.overview.managerReputation}</span><strong>—</strong></div>
+            <div><span>{ru.overview.seasons}</span><strong>{Math.max(0, game.season - 1)}</strong></div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
