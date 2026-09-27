@@ -6957,3 +6957,65 @@ select optgroup {
     grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
+
+/* 2026-09-27 - Overview card scale, shared secondary type and pitch clipping correction. */
+@media (min-width: 761px) {
+  .workspace-grid-overview .dashboard-grid > .card {
+    padding: 18px 20px;
+  }
+}
+.workspace-grid-overview .dashboard-grid .eyebrow {
+  font-size: 14px;
+  font-weight: 900;
+}
+.workspace-grid-overview .stat-card {
+  padding: 18px 20px;
+}
+.workspace-grid-overview .stat-grid {
+  gap: 10px;
+  margin-top: 14px;
+}
+.workspace-grid-overview .big-stat,
+.workspace-grid-overview .big-stat:nth-child(odd),
+.workspace-grid-overview .big-stat:nth-child(even) {
+  padding: 18px 14px;
+  border-radius: 13px;
+}
+.workspace-grid-overview .big-stat span {
+  font-size: 15px;
+  font-weight: 850;
+}
+.workspace-grid-overview .big-stat strong {
+  margin-top: 8px;
+  font-size: 42px;
+  line-height: .95;
+}
+.workspace-grid-overview .big-stat small {
+  font-size: 16px;
+  margin-left: 3px;
+}
+.workspace-grid-overview .last-match-card {
+  padding: 18px 20px;
+}
+.workspace-grid-overview .last-match-card .eyebrow {
+  font-size: 14px;
+}
+.workspace-grid-overview .last-match-card .latest-result {
+  margin: 20px 0 12px;
+}
+.workspace-grid-overview .last-match-card .mini-stats {
+  margin-top: 4px;
+}
+
+/* Clip only the field markings to the pitch viewport; keep the pitch surface visible. */
+.squad-pitch .pitch-markings {
+  overflow: hidden;
+}
+
+/* Overview secondary metadata uses the same readable scale. */
+.workspace-grid-overview .calendar-venue,
+.workspace-grid-overview .calendar-footer,
+.workspace-grid-overview .manager-stats span,
+.workspace-grid-overview .minute {
+  font-size: 14px;
+}
