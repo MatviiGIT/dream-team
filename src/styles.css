@@ -6884,3 +6884,76 @@ select optgroup {
 .finance-page .finance-section .finance-ledger-rows {
   min-height: 0;
 }
+
+
+/* 2026-09-27 — Unified secondary type + fullscreen density cleanup. */
+.app-shell .eyebrow {
+  font-size: 14px;
+  font-weight: 900;
+}
+.workspace-round-badge {
+  min-height: 42px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .04em;
+}
+.squad-formation-pill {
+  gap: 0;
+}
+.squad-formation-pill strong {
+  font-size: 19px;
+}
+.tactics-panel .formation-heading span {
+  font-size: 19px;
+  font-weight: 900;
+}
+.tactics-panel .formation-heading > strong {
+  font-size: 19px;
+}
+.squad-pitch-wrap,
+.squad-pitch {
+  overflow: visible;
+}
+
+/* Finance round: spacing, not separator lines. */
+.finance-page .finance-section .finance-ledger-rows {
+  gap: 3px;
+  margin-top: 19px;
+}
+.finance-page .finance-section .finance-ledger-rows > div {
+  border-top: 0 !important;
+  padding: 8px 0;
+}
+.finance-page .finance-section .finance-ledger-card {
+  padding-bottom: 26px;
+}
+
+/* Fullscreen Overview: use the latest-result card as a compact information block
+   instead of leaving a large unstructured void around minimal content. */
+.workspace-grid-overview .last-match-card {
+  justify-content: center;
+}
+.workspace-grid-overview .last-match-card .latest-result {
+  margin: 16px 0 10px;
+}
+.workspace-grid-overview .last-match-card .latest-result > div {
+  font-size: 19px;
+}
+.workspace-grid-overview .last-match-card .latest-result strong {
+  min-width: 110px;
+  font-size: 42px;
+}
+.workspace-grid-overview .last-match-card .mini-stats {
+  gap: 10px;
+  margin-top: 6px;
+  font-size: 14px;
+}
+.workspace-grid-overview .last-match-card .mini-stats span {
+  padding: 9px 11px;
+}
+@media (min-width: 761px) {
+  .workspace-grid-overview .dashboard-grid {
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
