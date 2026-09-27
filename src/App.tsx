@@ -7,7 +7,7 @@ import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storag
 import { ru } from './i18n/ru';
 import { TransferMarket } from './components/TransferMarket';
 
-const tabs = ['squad', 'transfers', 'tactics', 'table', 'finances'] as const;
+const tabs = ['squad', 'transfers', 'table', 'finances'] as const;
 type Tab = 'overview' | (typeof tabs)[number];
 type Theme = 'aurora' | 'midnight' | 'light';
 
@@ -291,12 +291,6 @@ function App() {
             <div className="wsc-section-body">
               {tab === 'squad' && <Squad game={game} onChange={(nextGame) => setGame(nextGame)} />}
               {tab === 'transfers' && <TransferMarket game={game} onChange={(nextGame) => setGame(nextGame)} />}
-              {tab === 'tactics' && (
-                <Tactics
-                  game={game}
-                  onChange={(tactic) => setGame({ ...game, clubs: { ...game.clubs, [club.id]: { ...club, tactic } } })}
-                />
-              )}
               {tab === 'table' && <LeagueTable game={game} />}
               {tab === 'finances' && <FinanceScreen game={game} />}
             </div>
@@ -1151,6 +1145,7 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
   const initialXI = club.startingXI?.length === 11 ? club.startingXI : club.playerIds.slice(0, 11);
   const [lineupIds, setLineupIds] = useState<string[]>(initialXI);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
+  const [openTactic, setOpenTactic] = useState<TacticSettingKey | null>(null);
 
   useEffect(() => {
     const next = club.startingXI?.length === 11 ? club.startingXI : club.playerIds.slice(0, 11);
@@ -1221,6 +1216,95 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
         </div>
       </div>
 
+      <div className="squad-tactics-bar">
+        <div className="squad-tactics-caption">
+          <span>СХЕМА И ТАКТИКА</span>
+          <strong>{club.tactic.formation}</strong>
+        </div>
+        <div className="squad-formation-buttons">
+          {(['4-3-3', '4-4-2', '4-2-3-1'] as Tactics['formation'][]).map((formation) => (
+            <button
+              key={formation}
+              type="button"
+              className={club.tactic.formation === formation ? 'active' : ''}
+              onClick={() => onChange({
+                ...game,
+                clubs: { ...game.clubs, [club.id]: { ...club, tactic: { ...club.tactic, formation } } },
+              })}
+            >
+              {formation}
+            </button>
+          ))}
+        </div>
+        <div className="squad-tactic-choices">
+          {([
+            {
+              key: 'mentality' as TacticSettingKey,
+              label: ru.tactics.mentality,
+              options: [
+                { value: 'Very Defensive', label: ru.tactics.options.veryDefensive },
+                { value: 'Defensive', label: ru.tactics.options.defensive },
+                { value: 'Balanced', label: ru.tactics.options.balanced },
+                { value: 'Attacking', label: ru.tactics.options.attacking },
+                { value: 'Very Attacking', label: ru.tactics.options.veryAttacking },
+              ],
+            },
+            {
+              key: 'tempo' as TacticSettingKey,
+              label: ru.tactics.tempo,
+              options: [
+                { value: 'Slow', label: ru.tactics.options.slow },
+                { value: 'Normal', label: ru.tactics.options.normal },
+                { value: 'Fast', label: ru.tactics.options.fast },
+              ],
+            },
+            {
+              key: 'pressing' as TacticSettingKey,
+              label: ru.tactics.pressing,
+              options: [
+                { value: 'Low', label: ru.tactics.options.low },
+                { value: 'Medium', label: ru.tactics.options.medium },
+                { value: 'High', label: ru.tactics.options.high },
+              ],
+            },
+            {
+              key: 'defensiveLine' as TacticSettingKey,
+              label: ru.tactics.defensiveLine,
+              options: [
+                { value: 'Low', label: ru.tactics.options.low },
+                { value: 'Normal', label: ru.tactics.options.normal },
+                { value: 'High', label: ru.tactics.options.high },
+              ],
+            },
+            {
+              key: 'width' as TacticSettingKey,
+              label: ru.tactics.width,
+              options: [
+                { value: 'Narrow', label: ru.tactics.options.narrow },
+                { value: 'Balanced', label: ru.tactics.options.balanced },
+                { value: 'Wide', label: ru.tactics.options.wide },
+              ],
+            },
+          ]).map((field) => (
+            <TacticChoice
+              key={field.key}
+              label={field.label}
+              value={club.tactic[field.key]}
+              options={field.options}
+              open={openTactic === field.key}
+              onToggle={() => setOpenTactic(openTactic === field.key ? null : field.key)}
+              onChange={(value) => {
+                onChange({
+                  ...game,
+                  clubs: { ...game.clubs, [club.id]: { ...club, tactic: { ...club.tactic, [field.key]: value } as Tactics } },
+                });
+                setOpenTactic(null);
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
       <div className="team-sheet">
         <div className="squad-pitch-wrap">
           <div className="squad-pitch">
@@ -1275,8 +1359,10 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
                   onClick={() => {
                     if (selectedSlot !== null && selectedSlot !== index) {
                       swapSlots(selectedSlot, index);
+                    } else if (selected) {
+                      setSelectedSlot(null);
                     } else {
-                      setSelectedSlot(selected ? null : index);
+                      setProfilePlayerId(player.id);
                     }
                   }}
                   title={player.name + ' · ' + slot.label}
