@@ -1768,7 +1768,7 @@ function FinanceScreen({ game }: { game: GameState }) {
 
       <div className={seasonBalance >= 0 ? 'finance-season-balance positive' : 'finance-season-balance negative'}>
         <div>
-          <span>{ru.financesPage.net}</span>
+          <span>{ru.financesPage.seasonBalance}</span>
           <strong>{seasonBalance >= 0 ? '+' : ''}{formatMoney(seasonBalance)}</strong>
         </div>
       </div>
@@ -1778,26 +1778,44 @@ function FinanceScreen({ game }: { game: GameState }) {
           <div>
             <h2>{ru.financesPage.lastRound}</h2>
           </div>
-          {hasActivity && (
-            <div className={net >= 0 ? 'finance-round-result positive' : 'finance-round-result negative'}>
-              <span>{ru.financesPage.net}</span>
-              <strong>{net >= 0 ? '+' : ''}{formatMoney(net)}</strong>
-            </div>
-          )}
         </div>
 
         {hasActivity ? (
-          <div className="finance-ledger">
-            <div className="finance-ledger-section finance-ledger-card income">
-              <span className="finance-ledger-label">{ru.financesPage.incomeLabel}</span>
-              <div><span>{ru.financesPage.matchdayIncome}</span><strong>+{formatMoney(finance.lastMatchdayIncome)}</strong></div>
-              <div><span>{ru.financesPage.broadcastIncome}</span><strong>+{formatMoney(finance.lastBroadcastIncome)}</strong></div>
-              <div><span>{ru.financesPage.resultBonus}</span><strong>+{formatMoney(finance.lastResultBonus)}</strong></div>
-            </div>
-            <div className="finance-ledger-section finance-ledger-card expenses">
-              <span className="finance-ledger-label">{ru.financesPage.expenseLabel}</span>
-              <div><span>{ru.financesPage.wageExpense}</span><strong>-{formatMoney(finance.lastExpenses)}</strong></div>
-            </div>
+          <div className="finance-ledger finance-ledger-round">
+            <section className="finance-ledger-section finance-ledger-card income">
+              <div className="finance-ledger-total">
+                <div>
+                  <span>{ru.financesPage.incomeLabel}</span>
+                  <strong>+{formatMoney(finance.lastIncome)}</strong>
+                </div>
+                <span className="finance-season-badge">+</span>
+              </div>
+              <div className="finance-ledger-rows">
+                <div><span>{ru.financesPage.matchdayIncome}</span><strong>+{formatMoney(finance.lastMatchdayIncome)}</strong></div>
+                <div><span>{ru.financesPage.broadcastIncome}</span><strong>+{formatMoney(finance.lastBroadcastIncome)}</strong></div>
+                <div><span>{ru.financesPage.resultBonus}</span><strong>+{formatMoney(finance.lastResultBonus)}</strong></div>
+              </div>
+            </section>
+
+            <section className="finance-ledger-section finance-ledger-card expenses">
+              <div className="finance-ledger-total">
+                <div>
+                  <span>{ru.financesPage.expenseLabel}</span>
+                  <strong>-{formatMoney(finance.lastExpenses)}</strong>
+                </div>
+                <span className="finance-season-badge">−</span>
+              </div>
+              <div className="finance-ledger-rows">
+                <div><span>{ru.financesPage.wageExpense}</span><strong>-{formatMoney(finance.lastExpenses)}</strong></div>
+              </div>
+            </section>
+
+            <section className={net >= 0 ? 'finance-ledger-section finance-ledger-card result positive' : 'finance-ledger-section finance-ledger-card result negative'}>
+              <div className="finance-ledger-result-inner">
+                <span>{ru.financesPage.roundResult}</span>
+                <strong>{net >= 0 ? '+' : ''}{formatMoney(net)}</strong>
+              </div>
+            </section>
           </div>
         ) : (
           <div className="finance-empty">{ru.financesPage.noActivity}</div>
