@@ -7381,3 +7381,182 @@ select optgroup {
     grid-column: 1 / -1;
   }
 }
+
+
+/* 2026-09-27 — Training polish: previews, outcomes and development clarity. */
+.training-focus-card:disabled {
+  cursor: default;
+  opacity: .78;
+}
+
+.training-focus-card:disabled:hover {
+  transform: none;
+}
+
+.training-focus-card em {
+  margin-top: auto;
+  color: var(--text-soft);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.training-focus-card.active em {
+  color: #cfc6ff;
+}
+
+.training-action-row {
+  border-color: color-mix(in srgb, var(--section-accent) 18%, var(--line));
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--section-accent) 7%, transparent),
+      rgba(255,255,255,.018)
+    );
+}
+
+.training-action-row .primary-button {
+  min-width: 190px;
+}
+
+.training-result-card {
+  flex: 0 0 auto;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--section-accent) 28%, var(--line));
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--section-accent) 11%, transparent), transparent 38%),
+    rgba(255,255,255,.025);
+}
+
+.training-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.training-result-header > div:first-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.training-result-header > div:first-child span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.training-result-header > div:first-child strong {
+  font-size: 18px;
+  line-height: 1.05;
+}
+
+.training-result-summary {
+  flex: 0 0 auto;
+  color: var(--text-soft);
+  font-size: 13px;
+  text-align: right;
+}
+
+.training-result-summary b {
+  color: var(--text);
+  font-size: 16px;
+}
+
+.training-result-changes {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.training-result-changes > div {
+  min-width: 0;
+  padding: 9px 10px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 9px;
+  border: 1px solid rgba(255,255,255,.055);
+  border-radius: 10px;
+  background: rgba(255,255,255,.02);
+}
+
+.training-result-changes strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.training-result-changes > div > span {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.training-result-changes > div > b {
+  align-self: center;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.training-result-footer {
+  margin-top: 9px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.training-result-footer span {
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.035);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.training-result-footer span:first-child {
+  color: #f1a6b5;
+}
+
+.training-result-footer span:nth-child(2) {
+  color: #91dfb5;
+}
+
+.training-player-progress-up {
+  color: #91dfb5;
+}
+
+@media (max-width: 900px) {
+  .training-result-changes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .training-result-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .training-result-summary {
+    text-align: left;
+  }
+
+  .training-result-changes {
+    grid-template-columns: 1fr;
+  }
+
+  .training-action-row .primary-button {
+    min-width: 0;
+  }
+}
