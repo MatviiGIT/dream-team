@@ -1,5 +1,7 @@
 export type Position = 'GK' | 'DEF' | 'MID' | 'FWD';
 export type Formation = '4-3-3' | '4-4-2' | '4-2-3-1' | '4-5-1' | '3-5-2' | '3-4-3' | '5-3-2' | '5-4-1' | '4-1-4-1' | '3-4-2-1';
+export type TacticalMentality = 'DEFENSIVE' | 'NEUTRAL' | 'ATTACKING';
+export type TacticalPressure = 'LOW' | 'NORMAL' | 'HIGH';
 
 export interface PlayerSkills {
   speed: number;
@@ -43,6 +45,8 @@ export interface Club {
   playerIds: string[];
   startingXI: string[];
   formation: Formation;
+  mentality?: TacticalMentality;
+  pressure?: TacticalPressure;
   color: string;
   trophies: number;
 }
