@@ -285,33 +285,6 @@ function App() {
             {tab === 'finances' && <FinanceScreen game={game} />}
           </section>
 
-          {tab === "overview" && (
-            <aside className="workspace-sidebar right-sidebar">
-              <section className="side-panel finance-preview">
-              <div className="side-panel-header">
-                <div>
-                  <div className="eyebrow">{ru.sidePanel.financeEyebrow}</div>
-                  <h2>{ru.sidePanel.financeTitle}</h2>
-                </div>
-                <span className="side-panel-icon">€</span>
-              </div>
-              <div className="finance-preview-main">
-                <span>{ru.overview.transferBudget}</span>
-                <strong>{formatMoney(club.budget)}</strong>
-              </div>
-              <div className="finance-preview-grid">
-                <div>
-                  <span>{ru.sidePanel.wages}</span>
-                  <strong>{formatMoney(club.wages)}</strong>
-                </div>
-                <div>
-                  <span>{ru.sidePanel.status}</span>
-                  <strong>{ru.sidePanel.stable}</strong>
-                </div>
-              </div>
-              </section>
-            </aside>
-          )}
         </div>
       </main>
 
@@ -1724,6 +1697,9 @@ function FinanceScreen({ game }: { game: GameState }) {
   };
   const net = finance.lastNet;
   const hasActivity = finance.lastIncome > 0 || finance.lastExpenses > 0;
+  const totalIncome = finance.seasonIncome + finance.seasonTransferIncome;
+  const totalExpenses = finance.seasonExpenses + finance.seasonTransferExpenses + finance.seasonContractExpenses;
+  const seasonBalance = totalIncome - totalExpenses;
 
   return (
     <section className="card content-card finance-page">
@@ -1744,52 +1720,56 @@ function FinanceScreen({ game }: { game: GameState }) {
         </div>
       </div>
 
-      <div className="finance-summary-grid">
-        <div className="finance-summary-card income">
-          <span>{ru.financesPage.income}</span>
-          <strong>{formatMoney(finance.seasonIncome)}</strong>
-        </div>
-        <div className="finance-summary-card expenses">
-          <span>{ru.financesPage.expenses}</span>
-          <strong>{formatMoney(finance.seasonExpenses)}</strong>
-        </div>
-        <div className="finance-summary-card net">
+      <div className="finance-season-grid">
+        <section className="finance-season-card income">
+          <div className="finance-season-card-header">
+            <div>
+              <span>{ru.financesPage.income}</span>
+              <strong>{formatMoney(totalIncome)}</strong>
+            </div>
+            <span className="finance-season-badge">+</span>
+          </div>
+          <div className="finance-season-rows">
+            <div>
+              <span>{ru.financesPage.income}</span>
+              <strong>+{formatMoney(finance.seasonIncome)}</strong>
+            </div>
+            <div>
+              <span>{ru.financesPage.transferIncome}</span>
+              <strong>+{formatMoney(finance.seasonTransferIncome)}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section className="finance-season-card expenses">
+          <div className="finance-season-card-header">
+            <div>
+              <span>{ru.financesPage.expenses}</span>
+              <strong>{formatMoney(totalExpenses)}</strong>
+            </div>
+            <span className="finance-season-badge">−</span>
+          </div>
+          <div className="finance-season-rows">
+            <div>
+              <span>{ru.financesPage.wages}</span>
+              <strong>-{formatMoney(finance.seasonExpenses)}</strong>
+            </div>
+            <div>
+              <span>{ru.financesPage.transferExpenses}</span>
+              <strong>-{formatMoney(finance.seasonTransferExpenses)}</strong>
+            </div>
+            <div>
+              <span>{ru.financesPage.contractExpenses}</span>
+              <strong>-{formatMoney(finance.seasonContractExpenses)}</strong>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div className={seasonBalance >= 0 ? 'finance-season-balance positive' : 'finance-season-balance negative'}>
+        <div>
           <span>{ru.financesPage.net}</span>
-          <strong className={net > 0 ? 'positive' : net < 0 ? 'negative' : ''}>
-            {net > 0 ? '+' : ''}{formatMoney(net)}
-          </strong>
-        </div>
-      </div>
-
-      <div className="finance-transfer-strip">
-        <div className="finance-money-expense">
-          <span>{ru.financesPage.transferExpenses}</span>
-          <strong>-{formatMoney(finance.seasonTransferExpenses)}</strong>
-        </div>
-        <div className="finance-money-income">
-          <span>{ru.financesPage.transferIncome}</span>
-          <strong>+{formatMoney(finance.seasonTransferIncome)}</strong>
-        </div>
-        <div className={finance.seasonTransferIncome - finance.seasonTransferExpenses >= 0 ? 'finance-money-net-positive' : 'finance-money-net-negative'}>
-          <span>{ru.financesPage.transferNet}</span>
-          <strong className={finance.seasonTransferIncome - finance.seasonTransferExpenses >= 0 ? 'positive' : 'negative'}>
-            {(finance.seasonTransferIncome - finance.seasonTransferExpenses) > 0 ? '+' : ''}{formatMoney(finance.seasonTransferIncome - finance.seasonTransferExpenses)}
-          </strong>
-        </div>
-      </div>
-
-      <div className="finance-transfer-strip">
-        <div className="finance-money-expense">
-          <span>{ru.financesPage.transferExpenses}</span>
-          <strong>-{formatMoney(finance.seasonTransferExpenses)}</strong>
-        </div>
-        <div className="finance-money-income">
-          <span>{ru.financesPage.transferIncome}</span>
-          <strong>+{formatMoney(finance.seasonTransferIncome)}</strong>
-        </div>
-        <div className="finance-money-expense">
-          <span>{ru.financesPage.contractExpenses}</span>
-          <strong>-{formatMoney(finance.seasonContractExpenses)}</strong>
+          <strong>{seasonBalance >= 0 ? '+' : ''}{formatMoney(seasonBalance)}</strong>
         </div>
       </div>
 
