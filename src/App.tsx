@@ -232,7 +232,6 @@ function App() {
             {tab === "overview" && (
               <section className="club-header card">
                 <div>
-                  <div className="eyebrow">{ru.overview.yourClub}</div>
                   <h1>{club.name}</h1>
                   <p>{club.city} · {ru.overview.reputation} {club.reputation}</p>
                 </div>
@@ -1250,11 +1249,9 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
     <section className="card content-card squad-panel">
       <div className="section-title-row">
         <div>
-          <div className="eyebrow">{ru.squad.teamSheet}</div>
           <h2>{ru.tabs.squad}</h2>
         </div>
         <div className="squad-formation-pill">
-          <span>{ru.squad.formation}</span>
           <strong>{club.tactic.formation}</strong>
         </div>
       </div>
@@ -1331,7 +1328,6 @@ function Squad({ game, onChange }: { game: GameState; onChange: (nextGame: GameS
         <aside className={selectedSlot === null ? 'squad-roster' : 'squad-roster has-selection'}>
           <div className="squad-roster-header">
             <div>
-              <div className="eyebrow">{ru.squad.benchTitle}</div>
               <strong>{ru.squad.substitutes} · {substitutes.length}</strong>
             </div>
           </div>
@@ -1461,7 +1457,7 @@ function Tactics({ game, onChange }: { game: GameState; onChange: (tactic: Tacti
   return (
     <section className="card content-card tactics-panel">
       <div className="section-title-row">
-        <div><div className="eyebrow">{ru.tactics.eyebrow}</div><h2>{ru.tabs.tactics}</h2></div>
+        <div><h2>{ru.tabs.tactics}</h2></div>
       </div>
 
       <div className="formation-block compact-formation-selector">
