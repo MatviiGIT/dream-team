@@ -738,3 +738,9 @@ Then:
 ### 2026-09-27 — Revert Overview section navigator
 - Removed the six large «Разделы» cards from Overview after review; Overview returns to its previous dashboard presentation.
 - Kept the performance optimizations from the same pass: debounced game saves and disabled continuously animated ambient background layers.
+
+
+### 2026-09-27 — Restore Overview dashboard after navigator revert
+- Restored the complete Overview dashboard component from the last stable Overview layout.
+- Kept the performance optimization for debounced game saves and the static ambient background.
+- The Overview no longer contains the temporary six-section navigator cards.
