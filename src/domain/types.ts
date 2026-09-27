@@ -1,30 +1,12 @@
 export type Position = 'GK' | 'DEF' | 'MID' | 'FWD';
 export type Formation = '4-3-3' | '4-4-2' | '4-2-3-1';
-export type Mentality = 'Very Defensive' | 'Defensive' | 'Balanced' | 'Attacking' | 'Very Attacking';
-export type Tempo = 'Slow' | 'Normal' | 'Fast';
-export type Pressing = 'Low' | 'Medium' | 'High';
-export type DefensiveLine = 'Low' | 'Normal' | 'High';
-export type Width = 'Narrow' | 'Balanced' | 'Wide';
-export type ContractRole = 'starter' | 'rotation' | 'prospect' | 'reserve';
 
-export interface PlayerContract {
-  yearsRemaining: number;
-  releaseClause: number;
-  role: ContractRole;
-}
-
-export interface PlayerAttributes {
-  pace: number;
-  shooting: number;
+export interface PlayerSkills {
+  speed: number;
   passing: number;
-  technique: number;
-  dribbling: number;
-  defending: number;
-  physical: number;
-  stamina: number;
-  positioning: number;
-  mentality: number;
-  goalkeeper: number;
+  shooting: number;
+  tackling: number;
+  goalkeeping: number;
 }
 
 export interface Player {
@@ -32,85 +14,52 @@ export interface Player {
   name: string;
   age: number;
   position: Position;
+  nationality: string;
+  skills: PlayerSkills;
   overall: number;
   potential: number;
-  preferredFoot: 'L' | 'R';
-  nationality?: string;
-  transferListed?: boolean;
-  contract?: PlayerContract;
-  value: number;
+  marketValue: number;
   wage: number;
-  attributes: PlayerAttributes;
-  form: number;
-  morale: number;
   fitness: number;
+  morale: number;
   goals: number;
   assists: number;
   appearances: number;
-  developmentXp?: number;
-}
-
-export interface Tactics {
-  formation: Formation;
-  mentality: Mentality;
-  tempo: Tempo;
-  pressing: Pressing;
-  defensiveLine: DefensiveLine;
-  width: Width;
-}
-
-export interface ClubFinance {
-  seasonIncome: number;
-  seasonExpenses: number;
-  seasonTransferIncome: number;
-  seasonTransferExpenses: number;
-  seasonContractExpenses: number;
-  lastIncome: number;
-  lastExpenses: number;
-  lastNet: number;
-  lastMatchdayIncome: number;
-  lastBroadcastIncome: number;
-  lastResultBonus: number;
-  lastTransferIncome: number;
-  lastTransferExpense: number;
-  lastContractExpense: number;
+  careerGoals: number;
+  careerAssists: number;
+  careerAppearances: number;
+  transferListed: boolean;
 }
 
 export interface Club {
   id: string;
   name: string;
   shortName: string;
-  city: string;
+  country: string;
+  leagueId: string;
   reputation: number;
   budget: number;
-  wages: number;
-  finance?: ClubFinance;
+  wageBill: number;
   playerIds: string[];
-  startingXI?: string[];
-  tactic: Tactics;
+  startingXI: string[];
+  formation: Formation;
   color: string;
+  trophies: number;
 }
 
-export interface MatchEvent {
+export interface League {
   id: string;
-  minute: number;
-  type: 'goal' | 'chance' | 'yellow' | 'substitution' | 'injury' | 'half-time' | 'full-time';
-  teamId: string;
-  playerId?: string;
-  assistPlayerId?: string;
-  description: string;
-}
-
-export interface MatchResult {
-  homeTeamId: string;
-  awayTeamId: string;
-  homeGoals: number;
-  awayGoals: number;
-  events: MatchEvent[];
+  country: string;
+  name: string;
+  level: 1 | 2;
+  clubIds: string[];
+  promotionCount: number;
+  relegationCount: number;
 }
 
 export interface Fixture {
   id: string;
+  leagueId: string;
   round: number;
   homeTeamId: string;
   awayTeamId: string;
@@ -129,19 +78,53 @@ export interface TableRow {
   points: number;
 }
 
+export interface MatchEvent {
+  minute: number;
+  teamId: string;
+  playerId?: string;
+  assistPlayerId?: string;
+  type: 'goal' | 'chance' | 'yellow' | 'full-time';
+}
+
+export interface MatchResult {
+  homeTeamId: string;
+  awayTeamId: string;
+  homeGoals: number;
+  awayGoals: number;
+  events: MatchEvent[];
+}
+
+export interface JobOffer {
+  clubId: string;
+  reason: string;
+}
+
+export interface CareerHistorySeason {
+  season: number;
+  clubId: string;
+  clubName: string;
+  leagueName: string;
+  position: number;
+  trophies: number;
+}
+
 export interface GameState {
-  saveVersion: 2;
+  saveVersion: 3;
   careerId: string;
   managerName: string;
   clubId: string;
   season: number;
-  currentRound: number;
+  week: number;
+  managerReputation: number;
   clubs: Record<string, Club>;
   players: Record<string, Player>;
+  leagues: Record<string, League>;
   fixtures: Fixture[];
-  table: TableRow[];
+  tables: Record<string, TableRow[]>;
   lastMatch?: MatchResult;
+  lastWeekResults: MatchResult[];
+  history: CareerHistorySeason[];
+  jobOffers: JobOffer[];
   createdAt: string;
   updatedAt: string;
-  trainingUsed?: boolean;
 }
