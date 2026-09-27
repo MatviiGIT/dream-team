@@ -18,7 +18,7 @@ import {
 } from './game/wsc';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
 
-type Screen='home'|'squad'|'transfers'|'competition'|'news'|'coach'|'trophies';
+type Screen='home'|'squad'|'transfers'|'competition'|'schedule'|'news'|'coach'|'trophies'|'team';
 
 const FORMATIONS: Formation[]=[
   '4-3-3','4-4-2','4-2-3-1','4-5-1','3-5-2','3-4-3','5-3-2','5-4-1','4-1-4-1','3-4-2-1'
@@ -75,6 +75,7 @@ export default function App(){
   const [country,setCountry]=useState('Germany');
   const [leagueLevel,setLeagueLevel]=useState<1|2>(1);
   const [selectedClub,setSelectedClub]=useState('');
+  const [selectedTeamId,setSelectedTeamId]=useState('');
   const [menu,setMenu]=useState(false);
   const [settings,setSettings]=useState(false);
   const [howTo,setHowTo]=useState(false);
@@ -161,8 +162,10 @@ export default function App(){
       {screen==='home'&&<Home game={game} onScreen={setScreen} onPlay={advance}/>}
       {screen==='squad'&&<Squad game={game} onHome={()=>setScreen('home')} onChange={next=>mutate(s=>swapStartingPlayers(s,next[0],next[1]))} onFormation={f=>mutate(s=>updateFormation(s,f))} onTactics={(m,p)=>mutate(s=>updateTactics(s,m,p))}/>}
       {screen==='transfers'&&<Transfers game={game} onHome={()=>setScreen('home')} onBuy={id=>mutate(s=>buyPlayer(s,id))} onSell={id=>mutate(s=>sellPlayer(s,id))}/>}
-      {screen==='competition'&&<Competition game={game} onHome={()=>setScreen('home')}/>}
+      {screen==='competition'&&<Competition game={game} onHome={()=>setScreen('home')} onTeam={id=>{setSelectedTeamId(id);setScreen('team')}}/>}
+      {screen==='schedule'&&<Schedule game={game} onHome={()=>setScreen('home')} onTeam={id=>{setSelectedTeamId(id);setScreen('team')}}/>}
       {screen==='news'&&<NewsScreen game={game} onHome={()=>setScreen('home')}/>}
+      {screen==='team'&&<TeamViewer game={game} teamId={selectedTeamId||game.clubId} onBack={()=>setScreen('competition')}/>}
       {screen==='coach'&&<CoachRoom game={game} onHome={()=>setScreen('home')} onScreen={setScreen}/>}
       {screen==='trophies'&&<Trophies game={game} onHome={()=>setScreen('home')}/>}
     </main>
@@ -279,7 +282,7 @@ function Home({game,onScreen,onPlay}:{game:GameState;onScreen:(x:Screen)=>void;o
       </section>
 
       <section className="panel schedule">
-        <div className="panel-title"><div><span>SCHEDULE</span><strong>UPCOMING GAMES</strong></div><button onClick={()=>onScreen('competition')}>›</button></div>
+        <div className="panel-title"><div><span>SCHEDULE</span><strong>UPCOMING GAMES</strong></div><button onClick={()=>onScreen('schedule')}>›</button></div>
         <div className="schedule-list">{upcoming.map(f=>{const o=game.clubs[f.homeTeamId===club.id?f.awayTeamId:f.homeTeamId];return <div className="schedule-row" key={f.id}><b>Week {f.round}</b><span>{f.homeTeamId===club.id?'H':'A'}</span><strong>{o.name}</strong><small>{f.homeTeamId===club.id?'HOME':'AWAY'}</small></div>})}</div>
       </section>
 
@@ -379,22 +382,106 @@ function Transfers({game,onHome,onBuy,onSell}:{game:GameState;onHome:()=>void;on
   </section>;
 }
 
-function Competition({game,onHome}:{game:GameState;onHome:()=>void}){
-  const [tab,setTab]=useState<'table'|'goals'|'assists'>('table'),l=getLeague(game),rows=game.tables[l.id]??[],top=leaders(game,tab==='assists'?'assists':'goals');
-  return <section className="page"><div className="page-head"><div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>COMPETITION</span><h2>{l.name}</h2></div></div><div className="transfer-tabs">{(['table','goals','assists'] as const).map(t=><button className={tab===t?'active':''} key={t} onClick={()=>setTab(t)}>{t==='table'?'TABLE':t==='goals'?'SCORERS':'ASSISTS'}</button>)}</div></div>
-  {tab==='table'?<div className="league-table"><div className="table-head"><span>#</span><span>CLUB</span><span>P</span><span>W</span><span>D</span><span>L</span><span>GF</span><span>GA</span><span>GD</span><span>PTS</span></div>{rows.map((r,i)=>{const c=game.clubs[r.teamId];return <div className={r.teamId===game.clubId?'table-row yours':'table-row'} key={r.teamId}><b>{i+1}</b><strong>{c.name}</strong><span>{r.played}</span><span>{r.wins}</span><span>{r.draws}</span><span>{r.losses}</span><span>{r.goalsFor}</span><span>{r.goalsAgainst}</span><span>{r.goalsFor-r.goalsAgainst}</span><b>{r.points}</b></div>})}</div>
-  :<div className="leader-list">{top.map((p,i)=>{const c=Object.values(game.clubs).find(x=>x.playerIds.includes(p.id));return <div className="leader-row" key={p.id}><span>{i+1}</span><div><strong>{p.name}</strong><small>{c?.shortName??'—'} · {p.position} · {p.age}</small></div><b>{tab==='goals'?p.goals:p.assists}</b></div>})}</div>}</section>;
+function Competition({game,onHome,onTeam}:{game:GameState;onHome:()=>void;onTeam:(id:string)=>void}){
+  const [tab,setTab]=useState<'table'|'goals'|'assists'|'honours'>('table'),l=getLeague(game),rows=game.tables[l.id]??[],top=leaders(game,tab==='assists'?'assists':'goals');
+  const honourRows=Object.values(game.clubs).filter(c=>c.leagueId===l.id).sort((x,y)=>y.trophies-x.trophies||y.reputation-x.reputation);
+  return <section className="page">
+    <div className="page-head">
+      <div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>COMPETITION</span><h2>{l.name}</h2></div></div>
+      <div className="transfer-tabs">{(['table','goals','assists','honours'] as const).map(t=><button className={tab===t?'active':''} key={t} onClick={()=>setTab(t)}>{t==='table'?'TABLE':t==='goals'?'SCORERS':t==='assists'?'ASSISTS':'HONOURS'}</button>)}</div>
+    </div>
+    {tab==='table'?<div className="league-table">
+      <div className="table-head"><span>#</span><span>CLUB</span><span>P</span><span>W</span><span>D</span><span>L</span><span>GF</span><span>GA</span><span>GD</span><span>PTS</span></div>
+      {rows.map((r,i)=>{const c=game.clubs[r.teamId];return <button className={r.teamId===game.clubId?'table-row table-team-button yours':'table-row table-team-button'} key={r.teamId} onClick={()=>onTeam(c.id)}><b>{i+1}</b><strong>{c.name}</strong><span>{r.played}</span><span>{r.wins}</span><span>{r.draws}</span><span>{r.losses}</span><span>{r.goalsFor}</span><span>{r.goalsAgainst}</span><span>{r.goalsFor-r.goalsAgainst}</span><b>{r.points}</b></button>})}
+    </div>
+    :tab==='honours'?<div className="leader-list">{honourRows.map((c,i)=><button className="leader-row leader-team-button" key={c.id} onClick={()=>onTeam(c.id)}><span>{i+1}</span><div><strong>{c.name}</strong><small>{c.country} · {c.formation} · REP {c.reputation}</small></div><b>{c.trophies}</b></button>)}</div>
+    :<div className="leader-list">{top.map((p,i)=>{const c=Object.values(game.clubs).find(x=>x.playerIds.includes(p.id));return <div className="leader-row" key={p.id}><span>{i+1}</span><div><strong>{p.name}</strong><small>{c?.shortName??'—'} · {p.position} · {p.age}</small></div><b>{tab==='goals'?p.goals:p.assists}</b></div>})}</div>}
+  </section>;
+}
+
+function Schedule({game,onHome,onTeam}:{game:GameState;onHome:()=>void;onTeam:(id:string)=>void}){
+  const club=game.clubs[game.clubId],league=getLeague(game);
+  const fixtures=game.fixtures.filter(f=>f.leagueId===league.id&&(f.homeTeamId===club.id||f.awayTeamId===club.id)).sort((a,b)=>a.round-b.round);
+  return <section className="page">
+    <div className="page-head"><div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>SCHEDULE</span><h2>{league.name} · SEASON {game.season}</h2></div></div><div className="schedule-meta"><b>{fixtures.filter(f=>f.played).length}</b><span>PLAYED</span><b>{fixtures.filter(f=>!f.played).length}</b><span>REMAINING</span></div></div>
+    <div className="schedule-page-body">
+      <div className="schedule-calendar-head"><span>WEEK</span><span>OPPONENT</span><span>COMP.</span><span>VENUE</span><span>RESULT</span></div>
+      <div className="schedule-calendar-list">
+        {fixtures.map(f=>{
+          const home=f.homeTeamId===club.id,oppId=home?f.awayTeamId:f.homeTeamId,opp=game.clubs[oppId],r=f.result;
+          const resultTextValue=r?(home?String(r.homeGoals)+':'+String(r.awayGoals):String(r.awayGoals)+':'+String(r.homeGoals)):'—';
+          return <button className={f.played?'schedule-calendar-row played':'schedule-calendar-row'} key={f.id} onClick={()=>onTeam(opp.id)}>
+            <b>W{String(f.round).padStart(2,'0')}</b>
+            <span className="schedule-team"><i style={{background:opp.color}}>{opp.shortName}</i><strong>{opp.name}</strong></span>
+            <small>{league.name}</small>
+            <span>{home?'HOME':'AWAY'}</span>
+            <b className="schedule-result">{resultTextValue}</b>
+          </button>;
+        })}
+      </div>
+    </div>
+  </section>;
 }
 
 function NewsScreen({game,onHome}:{game:GameState;onHome:()=>void}){
-  const club=game.clubs[game.clubId],last=game.lastMatch;
-  const stories=[
-    {tag:'CLUB',title:last?'MATCH RESULT':'OPENING WEEK',body:last?resultText(last,game.clubs):'Your season is underway. Prepare the squad for the next round.'},
-    {tag:'WORLD',title:isTransferWindow(game)?'TRANSFER WINDOW':'LEAGUE NEWS',body:isTransferWindow(game)?'The market is open and clubs are checking squad needs.':'Clubs across the league are preparing for the next round.'},
-    {tag:'MANAGER',title:'CAREER',body:'Manager '+game.managerName+' has reputation '+game.managerReputation+' after '+game.season+' season(s).'},
+  const club=game.clubs[game.clubId],league=getLeague(game),table=game.tables[league.id]??[];
+  const leader=table[0]?game.clubs[table[0].teamId]:club;
+  const last=game.lastMatch,rows=game.lastWeekResults;
+  const topScorer=Object.values(game.players).filter(p=>p.goals>0).sort((x,y)=>y.goals-x.goals)[0];
+  const next=getCurrentFixture(game);
+  const nextOpp=next?game.clubs[next.homeTeamId===club.id?next.awayTeamId:next.homeTeamId]:undefined;
+  const headlines=[
+    last?{tag:'MATCHDAY',title:resultText(last,game.clubs),body:'The latest result has been added to the season record.'}:{tag:'SEASON',title:'THE NEW CAMPAIGN BEGINS',body:'The first round is underway across the football world.'},
+    isTransferWindow(game)?{tag:'TRANSFERS',title:'THE MARKET IS OPEN',body:'Clubs are checking their squads and searching for improvements.'}:{tag:'LEAGUE',title:leader.name.toUpperCase()+' LEAD THE TABLE',body:'The standings are updated after the latest round.'},
+    rows.length>1?{tag:'ROUNDUP',title:'ROUND '+Math.max(1,game.week-1)+' ROUND-UP',body:String(rows.length)+' matches have been simulated around the world.'}:{tag:'CLUB',title:club.name.toUpperCase(),body:'Your team is preparing for Week '+String(game.week)+'.'},
+    topScorer?{tag:'SCORERS',title:topScorer.name.toUpperCase()+' LEADS THE SCORING',body:String(topScorer.goals)+' goals in the current season so far.'}:{tag:'SCORERS',title:'THE SCORING CHART',body:'The goals table will grow as the season progresses.'},
+    game.jobOffers.length?{tag:'CAREER',title:'NEW JOB OFFERS AVAILABLE',body:'Your manager profile has attracted interest from other clubs.'}:{tag:'WORLD',title:'WORLD FOOTBALL',body:'Club reputations continue to change as seasons progress.'},
+    nextOpp?{tag:'FIXTURE',title:'NEXT: '+nextOpp.name.toUpperCase(),body:(next?.homeTeamId===club.id?'Home':'Away')+' · Week '+String(game.week)+' · '+league.name}:{tag:'FIXTURE',title:'SEASON COMPLETE',body:'There are no remaining fixtures in this season.'}
   ];
-  return <section className="page"><div className="page-head"><div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>NEWS</span><h2>NEWS ROOM</h2></div></div></div><div className="news-screen-grid">{stories.map(s=><article key={s.tag}><span>{s.tag}</span><h3>{s.title}</h3><p>{s.body}</p></article>)}<article><span>CLUB</span><h3>{club.name}</h3><p>{getLeague(game).name} · Position {getPosition(game)} · Budget {money(club.budget)}</p></article></div></section>;
+  return <section className="page">
+    <div className="page-head"><div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>NEWS</span><h2>NEWSPAPER</h2></div></div><span className="news-date">YEAR {game.season} · WEEK {game.week}</span></div>
+    <div className="newspaper-layout">
+      <div className="newspaper-paper">
+        <div className="paper-masthead"><span>THE DREAM TEAM CHRONICLE</span><b>FOOTBALL NEWS</b><small>YEAR {game.season} · WEEK {game.week}</small></div>
+        <article className="lead-story"><span>{headlines[0].tag}</span><h3>{headlines[0].title}</h3><p>{headlines[0].body}</p></article>
+        <div className="paper-grid">{headlines.slice(1).map((h,i)=><article key={i}><span>{h.tag}</span><h4>{h.title}</h4><p>{h.body}</p></article>)}</div>
+      </div>
+      <aside className="news-sidebar"><div className="news-sidebar-title">LATEST</div>{headlines.slice(0,5).map((h,i)=><button key={i}><b>{i+1}</b><div><strong>{h.title}</strong><small>{h.tag}</small></div></button>)}</aside>
+    </div>
+  </section>;
 }
+
+function TeamViewer({game,teamId,onBack}:{game:GameState;teamId:string;onBack:()=>void}){
+  const team=game.clubs[teamId]??game.clubs[game.clubId];
+  const league=game.leagues[team.leagueId],row=game.tables[team.leagueId]?.find(r=>r.teamId===team.id);
+  const players=team.playerIds.map(id=>game.players[id]).filter(Boolean) as Player[];
+  const avgAge=players.length?players.reduce((sum,p)=>sum+p.age,0)/players.length:0;
+  const avgOverall=players.length?players.reduce((sum,p)=>sum+p.overall,0)/players.length:0;
+  const attackers=players.filter(p=>p.position==='FWD'||p.position==='MID');
+  const mids=players.filter(p=>p.position==='MID');
+  const defenders=players.filter(p=>p.position==='DEF'||p.position==='GK');
+  const atk=Math.round(attackers.reduce((sum,p)=>sum+p.overall,0)/Math.max(1,attackers.length));
+  const mid=Math.round(mids.reduce((sum,p)=>sum+p.overall,0)/Math.max(1,mids.length));
+  const def=Math.round(defenders.reduce((sum,p)=>sum+p.overall,0)/Math.max(1,defenders.length));
+  const [showSquad,setShowSquad]=useState(false);
+  if(showSquad)return <section className="page team-page">
+    <div className="page-head"><div><button className="page-home-btn" onClick={()=>setShowSquad(false)}>‹ TEAM</button><div><span>{team.country} · {league?.name??''}</span><h2>SQUAD</h2></div></div><button className="team-back-main" onClick={onBack}>MAIN</button></div>
+    <div className="club-squad-body">
+      <div className="club-squad-title"><span>PLAYER</span><b>POS</b><b>AGE</b><b>SPD</b><b>PASS</b><b>SHOT</b><b>TCKL</b><b>GK</b><b>OVR</b></div>
+      <div className="club-squad-list">{players.map((p,i)=><div className={team.startingXI.includes(p.id)?'club-squad-row starter':'club-squad-row'} key={p.id}><strong><em>{i+1}</em>{p.name}</strong><span>{p.position}</span><span>{p.age}</span><b>{p.skills.speed}</b><b>{p.skills.passing}</b><b>{p.skills.shooting}</b><b>{p.skills.tackling}</b><b>{p.skills.goalkeeping}</b><b className="ovr">{p.overall}</b></div>)}</div>
+    </div>
+  </section>;
+  return <section className="page team-page">
+    <div className="page-head"><div><button className="page-home-btn" onClick={onBack}>‹ BACK</button><div><span>{team.country} · {league?.name??''}</span><h2>{team.name}</h2></div></div><button className="team-squad-open" onClick={()=>setShowSquad(true)}>SQUAD ›</button></div>
+    <div className="team-overview-body">
+      <div className="team-hero"><div className="team-big-crest" style={{background:team.color}}>{team.shortName}</div><div><span>CLUB PROFILE</span><h3>{team.name}</h3><p>{team.country} · {league?.name??'Independent club'}</p><div className="team-stars">{'★★★★★'.slice(0,Math.max(1,Math.min(5,Math.round(team.reputation/20))))}{'☆'.repeat(5-Math.max(1,Math.min(5,Math.round(team.reputation/20))))}</div></div></div>
+      <div className="team-stat-grid"><div><small>AVERAGE AGE</small><b>{avgAge.toFixed(1)}</b></div><div><small>SQUAD SIZE</small><b>{players.length}</b></div><div><small>TEAM OVR</small><b>{Math.round(avgOverall)}</b></div><div><small>DEF</small><b>{def}</b></div><div><small>MID</small><b>{mid}</b></div><div><small>ATT</small><b>{atk}</b></div></div>
+      <div className="team-detail-grid"><section><span>LEAGUE POSITION</span><strong>{row?String((game.tables[team.leagueId]??[]).findIndex(r=>r.teamId===team.id)+1):'—'}</strong></section><section><span>FORMATION</span><strong>{team.formation}</strong></section><section><span>TROPHIES</span><strong>{team.trophies}</strong></section><section><span>TRANSFER BUDGET</span><strong>{money(team.budget)}</strong></section></div>
+      <div className="team-action-strip"><button onClick={()=>setShowSquad(true)}><strong>VIEW SQUAD</strong><small>PLAYER LIST & ATTRIBUTES</small>›</button><div><span>STARTING XI</span><strong>{team.startingXI.length}/11</strong></div><div><span>ENERGY</span><strong>{Math.round(players.reduce((sum,p)=>sum+p.fitness,0)/Math.max(1,players.length))}%</strong></div></div>
+    </div>
+  </section>;
+}
+
 
 function CoachRoom({game,onHome,onScreen}:{game:GameState;onHome:()=>void;onScreen:(x:Screen)=>void}){
   const club=game.clubs[game.clubId],table=game.tables[club.leagueId]?.find(r=>r.teamId===club.id);
