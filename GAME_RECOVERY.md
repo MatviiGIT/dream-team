@@ -744,3 +744,11 @@ Then:
 - Restored the complete Overview dashboard component from the last stable Overview layout.
 - Kept the performance optimization for debounced game saves and the static ambient background.
 - The Overview no longer contains the temporary six-section navigator cards.
+
+
+### 2026-09-27 — Training system MVP
+- Added a «Тренировки» management screen with four focuses: attack, passing, defense and physical.
+- Added one training session per round for the user's club; completing a match resets training availability for the next round.
+- Added cumulative player development XP. Players with room up to their potential can convert 100 XP into a +1 attribute improvement, then OVR/value/wage are recalculated.
+- Training slightly reduces fitness and increases morale, so the mechanic has a trade-off with match readiness.
+- Added optional save-state fields for training availability and player development progress; existing saves remain compatible.
