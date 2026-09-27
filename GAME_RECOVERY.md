@@ -752,3 +752,10 @@ Then:
 - Added cumulative player development XP. Players with room up to their potential can convert 100 XP into a +1 attribute improvement, then OVR/value/wage are recalculated.
 - Training slightly reduces fitness and increases morale, so the mechanic has a trade-off with match readiness.
 - Added optional save-state fields for training availability and player development progress; existing saves remain compatible.
+
+
+### 2026-09-27 — Training system polish
+- Training effectiveness now depends on player position: each focus has stronger and weaker positional fit instead of giving identical progress to every player.
+- Added pre-training feedback for average XP and the positions that benefit most from the selected focus.
+- Added a persistent-on-screen session result after training, including upgraded attributes, OVR changes, fitness/morale impact and the selected focus.
+- Clarified the player development bar as «XP / 100» and explicitly marks players whose OVR has reached their potential.
