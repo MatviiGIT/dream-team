@@ -1,4 +1,4 @@
-import type { Club, Formation, MatchEvent, MatchPlayerStats, MatchResult, Player, Position } from '../domain/types';
+import type { Club, Formation, MatchEvent, MatchResult, Player, Position } from '../domain/types';
 import { SeededRng } from './rng';
 
 interface TeamProfile {
@@ -348,37 +348,76 @@ export function simulateMatch(
         teamId: homeTeam.id,
         description: 'Half-time',
       });
+      continue;
     }
 
-    const lateBoost = minute > 70 ? 1.1 : minute < 15 ? 0.95 : 1;
-    const eventProbability = clamp(((homeChance + awayChance) / 90) * lateBoost, 0, 0.08);
+    const lateBoost = minute > 70 ? 1.18 : minute < 15 ? 0.90 : 1;
+    const intensity = clamp(((homeChance + awayChance) / 90) * lateBoost * 1.12, 0.008, 0.065);
+    const homeShareValue = homeShare(homeChance, awayChance);
 
-    if (rng.chance(eventProbability)) {
-      const homeShare = homeChance / (homeChance + awayChance);
-      const scoringHome = rng.chance(homeShare);
-      const scoringTeam = scoringHome ? homeTeam : awayTeam;
-      const scorer = selectScorer(scoringTeam, players, rng);
+    if (rng.chance(intensity)) {
+      const isHomeAttack = rng.chance(homeShareValue);
+      const attackingTeam = isHomeAttack ? homeTeam : awayTeam;
+      const attackingQuality = isHomeAttack ? homeChance : awayChance;
+      const scorer = selectScorer(attackingTeam, players, rng);
+      const conversionChance = clamp(0.23 + (attackingQuality - 1) * 0.08, 0.18, 0.38);
 
-      if (scoringHome) homeGoals += 1;
-      else awayGoals += 1;
+      if (rng.chance(conversionChance)) {
+        if (isHomeAttack) homeGoals += 1;
+        else awayGoals += 1;
+
+        events.push({
+          id: `event_goal_${seed}_${minute}_${homeGoals}_${awayGoals}`,
+          minute,
+          type: 'goal',
+          teamId: attackingTeam.id,
+          playerId: scorer?.id,
+          description: `${scorer?.name ?? 'A player'} scores for ${attackingTeam.name}!`,
+        });
+      } else {
+        events.push({
+          id: `event_chance_${seed}_${minute}`,
+          minute,
+          type: 'chance',
+          teamId: attackingTeam.id,
+          description: `${attackingTeam.name} create a promising chance.`,
+        });
+      }
+    } else if (rng.chance(0.012)) {
+      const team = rng.chance(homeShareValue) ? homeTeam : awayTeam;
+      const teamIds = team.startingXI?.length === 11 ? team.startingXI : team.playerIds.slice(0, 11);
+      const playerId = teamIds.length ? teamIds[rng.int(0, teamIds.length - 1)] : undefined;
 
       events.push({
-        id: `event_goal_${seed}_${minute}_${homeGoals}_${awayGoals}`,
+        id: `event_yellow_${seed}_${minute}`,
         minute,
-        type: 'goal',
-        teamId: scoringTeam.id,
-        playerId: scorer?.id,
-        description: `${scorer?.name ?? 'A player'} scores for ${scoringTeam.name}!`,
-      });
-    } else if (rng.chance(0.045)) {
-      const chanceHome = rng.chance(homeShare(homeChance, awayChance));
-      const team = chanceHome ? homeTeam : awayTeam;
-      events.push({
-        id: `event_chance_${seed}_${minute}`,
-        minute,
-        type: 'chance',
+        type: 'yellow',
         teamId: team.id,
-        description: `${team.name} create a promising chance.`,
+        playerId,
+        description: `${team.name} receive a yellow card.`,
+      });
+    } else if (minute >= 58 && rng.chance(0.006)) {
+      const team = rng.chance(homeShareValue) ? homeTeam : awayTeam;
+
+      events.push({
+        id: `event_sub_${seed}_${minute}`,
+        minute,
+        type: 'substitution',
+        teamId: team.id,
+        description: `${team.name} make a substitution.`,
+      });
+    } else if (minute >= 18 && rng.chance(0.0025)) {
+      const team = rng.chance(homeShareValue) ? homeTeam : awayTeam;
+      const teamIds = team.startingXI?.length === 11 ? team.startingXI : team.playerIds.slice(0, 11);
+      const playerId = teamIds.length ? teamIds[rng.int(0, teamIds.length - 1)] : undefined;
+
+      events.push({
+        id: `event_injury_${seed}_${minute}`,
+        minute,
+        type: 'injury',
+        teamId: team.id,
+        playerId,
+        description: `${team.name} have a player needing attention.`,
       });
     }
   }
@@ -403,11 +442,6 @@ export function simulateMatch(
     }
   }
 
-  const playerStats = {
-    ...buildTeamPlayerStats(homeTeam, players, homeShots, homeGoals, awayGoals, events, rng),
-    ...buildTeamPlayerStats(awayTeam, players, awayShots, awayGoals, homeGoals, events, rng),
-  };
-
   return {
     homeTeamId: homeTeam.id,
     awayTeamId: awayTeam.id,
@@ -420,7 +454,6 @@ export function simulateMatch(
     homePossession: Math.round(homePossession),
     awayPossession: Math.round(awayPossession),
     events,
-    playerStats,
   };
 }
 
