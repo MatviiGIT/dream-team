@@ -33,6 +33,7 @@ export interface Player {
   careerAssists: number;
   careerAppearances: number;
   transferListed: boolean;
+  developmentXp?: number;
 }
 
 export interface Club {
