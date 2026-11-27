@@ -43,22 +43,22 @@ function focusFor(value: TrainingFocus): FocusOption {
   return FOCUSES.find((focus) => focus.id === value)!;
 }
 
-function skillFor(player: Player, focus: TrainingFocus): keyof Player['skills'] {
+type VisibleSkill = 'speed' | 'passing' | 'shooting' | 'tackling' | 'goalkeeping';
+
+function skillFor(player: Player, focus: TrainingFocus): VisibleSkill {
   if (focus === 'attack') return 'shooting';
   if (focus === 'passing') return 'passing';
   if (focus === 'defense') return player.position === 'GK' ? 'goalkeeping' : 'tackling';
   return 'speed';
 }
 
-function skillLabel(skill: keyof Player['skills']): string {
+function skillLabel(skill: VisibleSkill): string {
   const labels: Record<keyof Player['skills'], string> = {
     speed: 'SPEED',
     passing: 'PASSING',
     shooting: 'SHOOTING',
     tackling: 'TACKLING',
     goalkeeping: 'GOALKEEPING',
-    technique: 'TECHNIQUE',
-    physical: 'PHYSICAL',
   };
   return labels[skill];
 }
