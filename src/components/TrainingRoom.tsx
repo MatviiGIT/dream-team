@@ -188,6 +188,11 @@ export function TrainingRoom({
             ) : (
               <p className="training-no-growth">The squad has reached its current potential. Focus on fitness and match preparation.</p>
             )}
+            <div className="training-report-condition">
+              <span>CONDITION IMPACT</span>
+              <b>FITNESS −{focus.id === 'physical' ? 4 : 2} per developing player</b>
+              <b>MORALE +1</b>
+            </div>
           </section>
         )}
 
