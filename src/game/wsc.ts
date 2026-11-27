@@ -38,7 +38,15 @@ function overall(s:InternalSkills,p:Position){
   return Math.round(s.shooting*.40+s.speed*.25+s.passing*.10+s.technique*.25);
 }
 function publicSkills(s:InternalSkills):PlayerSkills{
-  return {speed:s.speed,passing:s.passing,shooting:s.shooting,tackling:s.tackling,goalkeeping:s.goalkeeping};
+  return {
+    speed:s.speed,
+    passing:s.passing,
+    shooting:s.shooting,
+    tackling:s.tackling,
+    goalkeeping:s.goalkeeping,
+    technique:s.technique,
+    physical:s.physical,
+  };
 }
 function makePlayer(country:string, seedText:string, strength:number, index:number):Player{
   const r=rnd(hash(seedText)); const positions: Position[]=['GK','DEF','DEF','DEF','DEF','MID','MID','MID','MID','FWD','FWD','FWD','DEF','MID','FWD','GK']; const pos=positions[index];
