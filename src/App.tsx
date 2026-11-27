@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { GameState, Player, Club, Formation, TacticalMentality, TacticalPressure } from './domain/types';
+import { TrainingRoom } from './components/TrainingRoom';
 import {
   buyPlayer,
   createCareer,
@@ -18,7 +19,7 @@ import {
 } from './game/wsc';
 import { deleteCareer, loadCareers, saveGame, type StoredCareer } from './storage/gameStorage';
 
-type Screen='home'|'squad'|'transfers'|'competition'|'schedule'|'news'|'coach'|'trophies'|'team';
+type Screen='home'|'squad'|'transfers'|'competition'|'schedule'|'news'|'coach'|'training'|'trophies'|'team';
 
 const FORMATIONS: Formation[]=[
   '4-3-3','4-4-2','4-2-3-1','4-5-1','3-5-2','3-4-3','5-3-2','5-4-1','4-1-4-1','3-4-2-1'
@@ -167,6 +168,7 @@ export default function App(){
       {screen==='news'&&<NewsScreen game={game} onHome={()=>setScreen('home')}/>}
       {screen==='team'&&<TeamViewer game={game} teamId={selectedTeamId||game.clubId} onBack={()=>setScreen('competition')}/>}
       {screen==='coach'&&<CoachRoom game={game} onHome={()=>setScreen('home')} onScreen={setScreen}/>}
+      {screen==='training'&&<TrainingRoom game={game} onHome={()=>setScreen('home')} onChange={next=>mutate(()=>next)}/>}
       {screen==='trophies'&&<Trophies game={game} onHome={()=>setScreen('home')}/>}
     </main>
 
@@ -488,6 +490,7 @@ function CoachRoom({game,onHome,onScreen}:{game:GameState;onHome:()=>void;onScre
   return <section className="page"><div className="page-head"><div><button className="page-home-btn" onClick={onHome}>‹ MAIN</button><div><span>MANAGER</span><h2>COACH ROOM</h2></div></div></div><div className="coach-room-grid">
     <section className="coach-profile"><div className="coach-avatar">DT</div><div><small>MANAGER</small><strong>{game.managerName}</strong><span>Reputation {game.managerReputation}</span></div></section>
     <section className="coach-note"><span>CLUB OBJECTIVE</span><strong>Keep improving the squad</strong><p>Current position {getPosition(game)} · {table?.points??0} points · Year {game.season}</p></section>
+    <button className="coach-action" onClick={()=>onScreen('training')}><span>DEVELOPMENT</span><strong>TEAM TRAINING</strong><small>IMPROVE PLAYER SKILLS</small></button>
     <button className="coach-action" onClick={()=>onScreen('squad')}><span>TEAM</span><strong>OPEN SQUAD</strong><small>MANAGE FORMATION</small></button>
     <button className="coach-action" onClick={()=>onScreen('transfers')}><span>MARKET</span><strong>OPEN TRANSFERS</strong><small>BUILD YOUR SQUAD</small></button>
   </div></section>;
