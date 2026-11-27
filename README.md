@@ -32,3 +32,11 @@ Open the local Vite URL shown in the terminal.
 - Russian development UI
 - responsive dashboard layout
 - fixed application viewport with independently scrollable content
+
+## GitHub Pages deployment
+
+The production site is built with Vite and deployed from the generated `dist` directory by the GitHub Actions workflow in `.github/workflows/deploy-pages.yml`.
+
+In the repository settings, open **Settings → Pages** and select **GitHub Actions** as the deployment source. Do not publish the repository root directly: it contains the TypeScript source entry point, which must be compiled by Vite first.
+
+The expected project URL is `https://matviigit.github.io/dream-team/`.
