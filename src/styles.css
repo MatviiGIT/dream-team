@@ -695,3 +695,89 @@ html:fullscreen .app,html:fullscreen .start{position:absolute;inset:0;width:100%
   .team-action-strip{grid-template-columns:1fr}
   .career-save-list{grid-template-columns:1fr}
 }
+
+
+/* -------- weekly player development / training room -------- */
+.coach-room-grid{grid-template-columns:1.2fr 1fr 1fr}
+.coach-action{cursor:pointer;transition:background .12s ease,transform .12s ease}
+.coach-action:hover{background:#35384f;transform:translateY(-1px)}
+.coach-action:first-of-type{border-bottom:4px solid #e2b451}
+
+.training-room-page{background:#e4e5e3;color:#192047}
+.training-room-page .page-head{background:#f7f7f4}
+.training-status{padding:8px 11px;font-size:9px;font-weight:900;letter-spacing:.08em;white-space:nowrap}
+.training-status.ready{background:#d9f0e1;color:#166b3d;border:1px solid #a9d8b8}
+.training-status.used{background:#e6e7e9;color:#6a7181;border:1px solid #c8cbd0}
+.training-room-content{flex:1;min-height:0;overflow:auto;padding:12px 14px 18px;display:flex;flex-direction:column;gap:11px}
+.training-focus-area{background:#f7f7f5;border:1px solid #cbd0d4;padding:14px}
+.training-section-heading,.training-roster-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:11px}
+.training-section-heading>div,.training-roster-heading>div{display:flex;flex-direction:column;gap:3px}
+.training-section-heading span,.training-roster-heading span{font-size:9px;color:#747b8b;font-weight:900;letter-spacing:.1em}
+.training-section-heading strong,.training-roster-heading strong{font-size:18px;color:#19204f}
+.training-section-heading>small,.training-roster-heading>small{font-size:9px;color:#737b8d;font-weight:900}
+.training-focus-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.training-focus-option{min-width:0;min-height:145px;padding:12px;border:1px solid #c9cdd2;border-left:4px solid #c9cdd2;background:#eceeec;color:#192047;text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:6px;transition:background .12s ease,border-color .12s ease}
+.training-focus-option:hover{background:#e5e8e8}
+.training-focus-option.active{background:#fff7e5;border-color:#d8ad4c;border-left-color:#d7a735;box-shadow:inset 0 0 0 1px rgba(215,167,53,.15)}
+.training-focus-option:disabled{cursor:not-allowed;opacity:.66}
+.training-focus-kicker{font-size:8px;color:#777e8e;font-weight:900;letter-spacing:.06em}
+.training-focus-option strong{font-size:17px;color:#19204f;letter-spacing:.02em}
+.training-focus-option p{margin:0;color:#5f687b;font-size:11px;line-height:1.35}
+.training-focus-option small{margin-top:auto;color:#7a6a42;font-size:8px;font-weight:900;line-height:1.25}
+.training-preview-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin-top:10px;background:#cdd1d6;border:1px solid #cdd1d6}
+.training-preview-strip>div{min-height:62px;background:#17204e;color:#fff;padding:9px 11px;display:flex;flex-direction:column;justify-content:center;gap:4px}
+.training-preview-strip span{font-size:8px;color:#c5c9d5;font-weight:900;letter-spacing:.06em}
+.training-preview-strip strong{font-size:19px;color:#f0c15b;line-height:1}
+.training-plan-summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 12px;margin-top:10px;background:#e8e9e8;border-left:4px solid #d9ae4c}
+.training-plan-summary>div{min-width:0;display:flex;flex-direction:column;gap:3px}
+.training-plan-summary span{font-size:8px;color:#737b8d;font-weight:900;letter-spacing:.08em}
+.training-plan-summary strong{font-size:14px;color:#19204f}
+.training-plan-summary p{margin:0;color:#626a7b;font-size:10px;line-height:1.35}
+.training-run-btn{flex:0 0 auto;min-height:40px;padding:0 16px;border:0;background:#e0b34d;color:#1a214d;font-size:10px;font-weight:900;letter-spacing:.04em;box-shadow:3px 3px 0 rgba(0,0,0,.12)}
+.training-run-btn:hover{background:#ecc668}
+.training-run-btn:disabled{background:#c5c8cc;color:#717889;box-shadow:none;cursor:not-allowed}
+.training-session-report{background:#eff6ef;border:1px solid #b5d5bb;border-left:5px solid #4b9e69;padding:12px 14px}
+.training-session-report>header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.training-session-report>header>div:first-child{display:flex;flex-direction:column;gap:3px}
+.training-session-report>header>div:first-child span{font-size:8px;color:#598064;font-weight:900;letter-spacing:.1em}
+.training-session-report>header>div:first-child strong{font-size:16px;color:#17492c}
+.training-report-summary{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
+.training-report-summary b{font-size:18px;color:#21623b;margin-left:8px}
+.training-report-summary span{font-size:8px;color:#62756a;font-weight:900}
+.training-report-list{margin-top:9px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.training-report-list>div{min-width:0;min-height:40px;padding:7px 9px;background:#fff;border:1px solid #d6e5d8;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;align-items:center}
+.training-report-list>div strong{font-size:10px;color:#20324b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.training-report-list>div span{font-size:8px;color:#687487;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.training-report-list>div b{grid-column:2;grid-row:1/3;font-size:11px;color:#286a42}
+.training-report-list p,.training-no-growth{margin:7px 0 0;color:#59745f;font-size:10px;line-height:1.4}
+.training-roster-heading{padding:2px 1px 0;margin:2px 0 0}
+.training-roster-list{min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.training-roster-player{min-width:0;min-height:62px;padding:8px 10px;background:#f7f7f5;border:1px solid #cbd0d4;display:grid;grid-template-columns:minmax(0,1fr) 38px 38px minmax(90px,.8fr);gap:8px;align-items:center}
+.training-roster-player.maxed{background:#e9e9e8}
+.training-roster-identity{min-width:0;display:flex;flex-direction:column;gap:3px}
+.training-roster-identity strong{font-size:11px;color:#1d274e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.training-roster-identity span{font-size:8px;color:#737b8d;font-weight:700}
+.training-roster-ovr,.training-roster-pot{display:flex;flex-direction:column;align-items:center;gap:2px}
+.training-roster-ovr strong{font-size:17px;color:#19204f}
+.training-roster-pot strong{font-size:14px;color:#737b8d}
+.training-roster-ovr small,.training-roster-pot small{font-size:7px;color:#848b99;font-weight:900}
+.training-roster-progress{min-width:0;display:flex;flex-direction:column;gap:4px}
+.training-roster-progress>div{height:6px;background:#dfe1e3;overflow:hidden;border-radius:20px}
+.training-roster-progress>div>span{display:block;height:100%;background:linear-gradient(90deg,#d4a33a,#edca73);border-radius:20px}
+.training-roster-progress small{font-size:7px;color:#737b8d;font-weight:900;text-align:right;white-space:nowrap}
+.training-roster-player.maxed .training-roster-progress>div>span{background:#87918a}
+
+@media(max-width:1200px){
+  .coach-room-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .training-focus-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .training-roster-list{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .training-room-content{padding:8px}
+  .training-preview-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .training-plan-summary{align-items:stretch;flex-direction:column}
+  .training-run-btn{width:100%}
+  .training-session-report>header{align-items:flex-start;flex-direction:column}
+  .training-report-list{grid-template-columns:1fr}
+  .training-roster-player{grid-template-columns:minmax(0,1fr) 34px 34px minmax(70px,.8fr);gap:5px;padding:7px}
+}
