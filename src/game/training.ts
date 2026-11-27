@@ -13,7 +13,9 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-function targetSkill(player: Player, focus: TrainingFocus): keyof PlayerSkills {
+type VisibleTrainingSkill = 'speed' | 'passing' | 'shooting' | 'tackling' | 'goalkeeping';
+
+function targetSkill(player: Player, focus: TrainingFocus): VisibleTrainingSkill {
   if (focus === 'attack') return 'shooting';
   if (focus === 'passing') return 'passing';
   if (focus === 'defense') return player.position === 'GK' ? 'goalkeeping' : 'tackling';
