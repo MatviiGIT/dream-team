@@ -9,6 +9,8 @@ export interface PlayerSkills {
   shooting: number;
   tackling: number;
   goalkeeping: number;
+  technique?: number;
+  physical?: number;
 }
 
 export interface Player {
@@ -131,4 +133,5 @@ export interface GameState {
   jobOffers: JobOffer[];
   createdAt: string;
   updatedAt: string;
+  lastTrainingKey?: string;
 }
