@@ -781,3 +781,8 @@ html:fullscreen .app,html:fullscreen .start{position:absolute;inset:0;width:100%
   .training-report-list{grid-template-columns:1fr}
   .training-roster-player{grid-template-columns:minmax(0,1fr) 34px 34px minmax(70px,.8fr);gap:5px;padding:7px}
 }
+
+
+.training-report-condition{margin-top:9px;padding-top:8px;border-top:1px solid #d0e0d2;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.training-report-condition span{font-size:8px;font-weight:900;letter-spacing:.08em;color:#6d7d71}
+.training-report-condition b{font-size:9px;color:#45654e;background:#fff;padding:5px 7px;border:1px solid #d5e4d7}
