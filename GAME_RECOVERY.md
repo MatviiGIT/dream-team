@@ -34,3 +34,13 @@ The project now uses a single WSC-style career engine instead of the previous cu
 ## Data / saves
 - Save format is v3.
 - Old save formats are intentionally ignored.
+
+
+## 2026-11-27 — Training room refinement for WSC architecture
+- Adapted player training to the current WSC career engine and opened it from the Coach Room.
+- Added four weekly training plans: attack, playmaking, defending and physical.
+- Training XP is modified by player age, remaining potential and position suitability; goalkeeper defence sessions improve goalkeeping.
+- Preserved hidden technique and physical ratings in player saves so training can recalculate positional OVR using the same formula as the match engine.
+- Added a session preview, weekly availability state, per-player progress bars, and a post-session report with skill/OVR changes.
+- Training costs fitness, updates player value/wage when OVR changes, and recalculates the club wage bill.
+- Persisted the last training key by season and week, preventing repeat sessions while allowing a fresh session at a new week or season.
