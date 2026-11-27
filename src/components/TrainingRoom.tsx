@@ -53,7 +53,7 @@ function skillFor(player: Player, focus: TrainingFocus): VisibleSkill {
 }
 
 function skillLabel(skill: VisibleSkill): string {
-  const labels: Record<keyof Player['skills'], string> = {
+  const labels: Record<VisibleSkill, string> = {
     speed: 'SPEED',
     passing: 'PASSING',
     shooting: 'SHOOTING',
