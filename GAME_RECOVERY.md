@@ -44,3 +44,4 @@ The project now uses a single WSC-style career engine instead of the previous cu
 - Added a session preview, weekly availability state, per-player progress bars, and a post-session report with skill/OVR changes.
 - Training costs fitness, updates player value/wage when OVR changes, and recalculates the club wage bill.
 - Persisted the last training key by season and week, preventing repeat sessions while allowing a fresh session at a new week or season.
+- The post-session report explicitly shows fitness cost and morale change so the manager can judge the training trade-off.
