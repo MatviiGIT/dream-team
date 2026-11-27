@@ -68,7 +68,7 @@ function makeReport(before: GameState, after: GameState, focus: TrainingFocus): 
   return club.playerIds.flatMap((id) => {
     const oldPlayer = before.players[id];
     const newPlayer = after.players[id];
-    if (!oldPlayer || !newPlayer || (newPlayer.developmentXp ?? 0) === (oldPlayer.developmentXp ?? 0)) return [];
+    if (!oldPlayer || !newPlayer || oldPlayer === newPlayer) return [];
     const skill = skillFor(oldPlayer, focus);
     return [{
       id,
